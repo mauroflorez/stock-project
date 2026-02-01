@@ -92,13 +92,16 @@ class StockVisualizer:
             showlegend=True
         ))
 
-        # Add vertical line at forecast start
+        # Add vertical line at forecast start (without annotation to avoid datetime issue)
         if hist_dates:
-            fig.add_vline(
-                x=hist_dates[-1],
-                line_dash="dash",
-                line_color="gray",
-                annotation_text="Forecast Start"
+            fig.add_shape(
+                type="line",
+                x0=hist_dates[-1],
+                x1=hist_dates[-1],
+                y0=0,
+                y1=1,
+                yref="paper",
+                line=dict(color="gray", width=1, dash="dash")
             )
 
         fig.update_layout(

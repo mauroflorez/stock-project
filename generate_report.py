@@ -73,6 +73,11 @@ class HTMLReportGenerator:
         stats_analysis = data['agents']['statistical_expert']['analysis']
         financial_analysis = data['agents']['financial_expert']['analysis']
         synthesis = data['agents']['investment_synthesizer']['synthesis']
+
+        # Extract forecast data if available
+        forecast_data = data['agents'].get('forecaster', {})
+        forecast_summary = forecast_data.get('summary', {})
+        forecast_charts = forecast_data.get('charts', {})
         
         # Get recommendation
         recommendation, confidence = self.extract_recommendation(synthesis)
@@ -106,6 +111,7 @@ class HTMLReportGenerator:
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{symbol} Stock Analysis - {company_name}</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
     <style>
         * {{
             margin: 0;
@@ -244,6 +250,16 @@ class HTMLReportGenerator:
             margin-top: 30px;
             color: #92400e;
         }}
+
+        .forecast-chart {{
+            width: 100%;
+            min-height: 400px;
+            margin-top: 20px;
+        }}
+
+        .forecast-chart .plotly-graph-div {{
+            width: 100% !important;
+        }}
         
         @media (max-width: 768px) {{
             .stock-title {{
@@ -290,7 +306,35 @@ class HTMLReportGenerator:
             <div class="rec-badge">{recommendation}</div>
             <div class="confidence">Confidence: {confidence}</div>
         </div>
-        
+
+        <!-- Price Forecast -->
+        <div class="agent-section">
+            <div class="agent-title">
+                <span class="agent-icon">🔮</span>
+                Price Forecast (10-Day)
+            </div>
+            <div class="forecast-metrics" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                <div class="metric" style="border-left-color: #10b981;">
+                    <div class="metric-label">Next Day Prediction</div>
+                    <div class="metric-value" style="color: #10b981;">${forecast_summary.get('next_day_prediction', current_price):.2f}</div>
+                    <div style="font-size: 0.9em; color: #6b7280;">{forecast_summary.get('next_day_expected_return', 'N/A')}</div>
+                </div>
+                <div class="metric" style="border-left-color: #667eea;">
+                    <div class="metric-label">10-Day Prediction</div>
+                    <div class="metric-value" style="color: #667eea;">${forecast_summary.get('day_10_prediction', current_price):.2f}</div>
+                    <div style="font-size: 0.9em; color: #6b7280;">{forecast_summary.get('day_10_expected_return', 'N/A')}</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Forecast Confidence</div>
+                    <div class="metric-value" style="font-size: 1.4em;">{forecast_summary.get('confidence', 'N/A')}</div>
+                    <div style="font-size: 0.9em; color: #6b7280;">Models: {', '.join(forecast_summary.get('models_used', ['N/A']))}</div>
+                </div>
+            </div>
+            <div class="forecast-chart">
+                {forecast_charts.get('1y', '<p>Chart not available</p>')}
+            </div>
+        </div>
+
         <!-- Investment Synthesis -->
         <div class="agent-section">
             <div class="agent-title">
