@@ -7,7 +7,7 @@ OLLAMA_MODEL = "deepseek-r1:8b"  # Change to "llama3.1:8b" if preferred
 OLLAMA_BASE_URL = "http://localhost:11434"
 
 # Stock Configuration
-STOCKS = ["GOOGL"]  # Add more stocks here: ["GOOGL", "AAPL", "MSFT"]
+STOCKS = ["GOOGL", "MSFT", "AAPL"]
 STOCK_SYMBOLS = STOCKS  # Alias for compatibility
 STOCK_NAMES = {
     "GOOGL": "Alphabet Inc.",

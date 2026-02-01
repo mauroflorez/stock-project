@@ -20,8 +20,10 @@ from agents.news_analyst import NewsAnalystAgent
 from agents.statistical_expert import StatisticalExpertAgent
 from agents.financial_expert import FinancialExpertAgent
 from agents.investment_synthesizer import InvestmentSynthesizerAgent
+from agents.forecaster import ForecasterAgent
 from utils.data_fetcher import DataFetcher
 from utils.ollama_client import OllamaClient
+from utils.visualizations import StockVisualizer
 from config import STOCK_SYMBOLS, STOCK_NAMES, OUTPUT_DIR
 
 import json
@@ -37,7 +39,9 @@ class StockAnalysisOrchestrator:
         self.news_agent = NewsAnalystAgent()
         self.stats_agent = StatisticalExpertAgent()
         self.financial_agent = FinancialExpertAgent()
+        self.forecaster_agent = ForecasterAgent()
         self.synthesizer_agent = InvestmentSynthesizerAgent()
+        self.visualizer = StockVisualizer()
         
     def check_ollama(self) -> bool:
         """Check if Ollama is running"""
@@ -59,40 +63,63 @@ class StockAnalysisOrchestrator:
         print(f"{'='*80}\n")
         
         # Step 1: Fetch data
-        print("📊 Step 1/5: Fetching stock price data...")
+        print("📊 Step 1/6: Fetching stock price data...")
         stock_data = self.data_fetcher.get_stock_prices(symbol)
         stock_formatted = self.data_fetcher.format_price_data_for_agent(stock_data)
-        
-        print("📰 Step 2/5: Fetching news data...")
+
+        print("📰 Step 2/6: Fetching news data...")
         news_data = self.data_fetcher.get_news(
-            symbol, 
+            symbol,
             STOCK_NAMES.get(symbol, symbol)
         )
         news_formatted = self.data_fetcher.format_news_for_agent(news_data)
-        
+
         # Step 2: Run agents
         print("\n🤖 Running AI Agents...\n")
-        
+
         # News Analysis
+        print("🗞️  Step 3/6: News Analysis...")
         news_result = self.news_agent.analyze(news_formatted, symbol)
         print("✅ News analysis complete\n")
-        
+
         # Statistical Analysis
+        print("📈 Step 4/6: Statistical Analysis...")
         stats_result = self.stats_agent.analyze(
             stock_formatted,
             stock_data.get('historical_close', []),
             symbol
         )
         print("✅ Statistical analysis complete\n")
-        
+
+        # Forecasting
+        print("🔮 Step 5/6: Time Series Forecasting...")
+        forecast_result = self.forecaster_agent.analyze(
+            prices=stock_data.get('historical_close', []),
+            dates=stock_data.get('historical_dates', []),
+            symbol=symbol,
+            forecast_days=10
+        )
+
+        # Generate forecast charts
+        forecast_charts = self.visualizer.create_multi_timeframe_chart(symbol, forecast_result)
+        forecast_result['charts'] = forecast_charts
+        print("✅ Forecasting complete\n")
+
         # Financial Analysis
+        print("💼 Step 6/6: Financial Analysis...")
         financial_result = self.financial_agent.analyze(stock_formatted, symbol)
         print("✅ Financial analysis complete\n")
-        
-        # Synthesis
+
+        # Synthesis (includes forecast summary in context)
+        forecast_summary = f"""
+FORECAST SUMMARY:
+- Next Day Prediction: ${forecast_result['summary']['next_day_prediction']:.2f} ({forecast_result['summary']['next_day_expected_return']})
+- 10-Day Prediction: ${forecast_result['summary']['day_10_prediction']:.2f} ({forecast_result['summary']['day_10_expected_return']})
+- Confidence: {forecast_result['summary']['confidence']}
+"""
         synthesis_result = self.synthesizer_agent.synthesize(
             news_result['analysis'],
-            stats_result['analysis'],
+            stats_result['analysis'] + forecast_summary,
             financial_result['analysis'],
             symbol
         )
@@ -108,6 +135,7 @@ class StockAnalysisOrchestrator:
             "agents": {
                 "news_analyst": news_result,
                 "statistical_expert": stats_result,
+                "forecaster": forecast_result,
                 "financial_expert": financial_result,
                 "investment_synthesizer": synthesis_result
             }
@@ -124,7 +152,7 @@ class StockAnalysisOrchestrator:
         
         if format == "json":
             filename = f"{OUTPUT_DIR}/{symbol}_analysis_{timestamp}.json"
-            with open(filename, 'w') as f:
+            with open(filename, 'w', encoding='utf-8') as f:
                 json.dump(results, f, indent=2, default=str)
             print(f"📄 Results saved to: {filename}")
             return filename
