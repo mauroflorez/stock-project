@@ -3,6 +3,12 @@ HTML Report Generator
 Converts JSON analysis results into beautiful HTML reports for GitHub Pages
 """
 
+import sys
+
+# Fix Windows console encoding for emoji support
+if sys.platform == "win32":
+    sys.stdout.reconfigure(encoding='utf-8')
+
 import json
 import os
 from datetime import datetime
@@ -14,7 +20,7 @@ class HTMLReportGenerator:
     """Generates HTML reports from analysis results"""
     
     def __init__(self):
-        self.output_dir = "output"
+        self.output_dir = "reports"  # Where JSON analysis files are saved
         self.web_dir = "docs"  # GitHub Pages serves from /docs
     
     def get_latest_analysis(self, symbol: str) -> Dict[str, Any]:
@@ -517,7 +523,7 @@ class HTMLReportGenerator:
                 html = self.generate_html(data)
                 filename = f"{self.web_dir}/{symbol.lower()}.html"
                 
-                with open(filename, 'w') as f:
+                with open(filename, 'w', encoding='utf-8') as f:
                     f.write(html)
                 
                 print(f"✅ Generated: {filename}")
@@ -526,7 +532,7 @@ class HTMLReportGenerator:
         index_html = self.generate_index(symbols)
         index_file = f"{self.web_dir}/index.html"
         
-        with open(index_file, 'w') as f:
+        with open(index_file, 'w', encoding='utf-8') as f:
             f.write(index_html)
         
         print(f"✅ Generated: {index_file}")

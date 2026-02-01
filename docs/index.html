@@ -1,0 +1,144 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Investment Planner - AI-Powered Analysis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero {
+            background: white;
+            border-radius: 20px;
+            padding: 60px 40px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 40px;
+        }
+        
+        h1 {
+            font-size: 3em;
+            color: #1f2937;
+            margin-bottom: 20px;
+        }
+        
+        .subtitle {
+            font-size: 1.3em;
+            color: #6b7280;
+            margin-bottom: 30px;
+        }
+        
+        .stock-list {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .stock-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px;
+            border-bottom: 2px solid #f3f4f6;
+            transition: all 0.3s;
+        }
+        
+        .stock-item:last-child {
+            border-bottom: none;
+        }
+        
+        .stock-item:hover {
+            background: #f9fafb;
+            transform: translateX(10px);
+        }
+        
+        .stock-info {
+            flex: 1;
+        }
+        
+        .stock-symbol {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        
+        .stock-name {
+            color: #6b7280;
+            margin-top: 5px;
+        }
+        
+        .stock-date {
+            color: #9ca3af;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        
+        .view-btn {
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .view-btn:hover {
+            background: #5568d3;
+            transform: scale(1.05);
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <h1>📊 Stock Investment Planner</h1>
+            <p class="subtitle">AI-Powered Multi-Agent Stock Analysis</p>
+            <p style="color: #6b7280;">Combining News Analysis, Statistical Modeling, and Financial Expertise</p>
+        </div>
+        
+        <div class="stock-list">
+
+            <div class="stock-item">
+                <div class="stock-info">
+                    <div class="stock-symbol">GOOGL</div>
+                    <div class="stock-name">Alphabet Inc.</div>
+                    <div class="stock-date">Latest Analysis: 2026-02-01</div>
+                </div>
+                <a href="googl.html" class="view-btn">View Analysis →</a>
+            </div>
+
+        </div>
+        
+        <div class="footer">
+            <p>Powered by Ollama AI Agents | For Educational Purposes Only</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">Not Financial Advice</p>
+        </div>
+    </div>
+</body>
+</html>
