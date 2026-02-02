@@ -1,397 +1,206 @@
-# 📊 Stock Investment Planner
+# Stock Investment Planner
 
-AI-powered multi-agent system for stock analysis using **100% local AI models** with Ollama. No API costs, runs completely on your machine!
+AI-powered multi-agent system for stock analysis using **100% local AI models** with Ollama. No API costs, runs completely on your machine.
 
-## 🌟 Features
+## Features
 
-- **4 Specialized AI Agents:**
-  - 📰 **News Analyst** - Analyzes recent news and sentiment
-  - 📈 **Statistical Analyst** - Time series predictions using Prophet/ARIMA
-  - 💼 **Financial Expert** - Fundamental analysis and company evaluation
-  - 🎯 **Investment Synthesizer** - Final buy/hold/sell recommendation
+- **5 Specialized AI Agents:**
+  - **News Analyst** - Analyzes recent news and sentiment
+  - **Statistical Expert** - Technical analysis and trend detection
+  - **Forecaster** - ARIMA/Holt-Winters/Prophet ensemble predictions
+  - **Financial Expert** - Fundamental analysis and valuation
+  - **Investment Synthesizer** - Final buy/hold/sell recommendation
 
 - **100% Local & Free:**
-  - Uses Ollama for AI (no API costs!)
+  - Uses Ollama for AI (no API costs)
   - Free data sources (Yahoo Finance, Google News)
   - Runs completely offline after setup
 
 - **Beautiful Reports:**
-  - Interactive HTML dashboards
-  - Automated GitHub Pages deployment
+  - Summary table with sparkline trends and color-coded recommendations
+  - Executive summary for quick insights
+  - Interactive Plotly forecast charts
   - Mobile-responsive design
+  - GitHub Pages deployment
 
-- **Automated:**
-  - Schedule daily analysis runs
-  - Auto-deploy to GitHub Pages
-  - JSON exports for further analysis
-
-## 📋 Prerequisites
-
-### Required
+## Prerequisites
 
 1. **Python 3.8+**
-   ```bash
-   python3 --version
-   ```
+2. **Ollama** - Download from https://ollama.com
+3. **Git** (for GitHub Pages deployment)
 
-2. **Ollama** (for local AI)
-   - **macOS**: Download from https://ollama.com
-   - **Windows**: Download from https://ollama.com
-   - **Linux**:
-     ```bash
-     curl -fsSL https://ollama.com/install.sh | sh
-     ```
+**System Requirements:**
+- 8GB+ RAM (16GB recommended)
+- 10GB free disk space
 
-3. **Git** (for GitHub Pages)
-   ```bash
-   git --version
-   ```
+## Quick Start
 
-### Recommended
-
-- **8GB+ RAM** (16GB better for larger models)
-- **10GB free disk space**
-- Stable internet connection (for data fetching)
-
-## 🚀 Quick Start
-
-### Step 1: Install Ollama Model
+### 1. Install Ollama Model
 
 ```bash
-# Recommended model (best quality)
 ollama pull deepseek-r1:8b
-
-# Alternative (faster)
-ollama pull llama3.1:8b
-
-# Start Ollama (if not running)
 ollama serve
 ```
 
-### Step 2: Clone/Download This Project
+### 2. Install Dependencies
 
 ```bash
-# If you have the files, navigate to the directory
-cd stock-investment-planner
-
-# Install Python dependencies
 pip install -r requirements.txt
 ```
 
-### Step 3: Configure Your Stocks
+### 3. Configure Stocks
 
 Edit `config.py`:
 
 ```python
-# Add your stocks here
 STOCKS = ["GOOGL", "AAPL", "MSFT"]
-
-# Set your preferred run time
-RUN_TIME = "09:00"  # 9 AM daily
-TIMEZONE = "America/Los_Angeles"
+STOCK_NAMES = {
+    "GOOGL": "Alphabet Inc.",
+    "AAPL": "Apple Inc.",
+    "MSFT": "Microsoft Corporation",
+}
 ```
 
-### Step 4: Test the System
+### 4. Run Analysis
 
 ```bash
-# Test Ollama connection
-python ollama_utils.py
+# Run the analysis pipeline
+python main.py
 
-# Test data fetching
-python data_fetcher.py
+# Generate HTML reports
+python generate_report.py
 
-# Run first analysis
-python run_analysis.py
+# Open reports in browser
+start docs/index.html  # Windows
+open docs/index.html   # macOS
 ```
 
-This will create reports in the `stock-reports-github/` folder!
+## Adding New Stocks
 
-### Step 5: View Your Reports
+1. **Edit `config.py`:**
+   ```python
+   STOCKS = ["GOOGL", "MSFT", "AAPL", "NVDA"]  # Add symbol
+   STOCK_NAMES = {
+       # ... existing ...
+       "NVDA": "NVIDIA Corporation",  # Add name
+   }
+   ```
 
-```bash
-# Open the HTML report in your browser
-open stock-reports-github/index.html
-# or on Linux: xdg-open stock-reports-github/index.html
-# or on Windows: start stock-reports-github/index.html
-```
-
-## 🌐 Deploy to GitHub Pages
-
-### Setup (One Time)
-
-1. **Run setup script:**
+2. **Run analysis and generate reports:**
    ```bash
-   bash setup_github.sh
+   python main.py
+   python generate_report.py
    ```
-   Enter your GitHub username and repository name.
 
-2. **Create repository on GitHub:**
-   - Go to https://github.com/new
-   - Name: `stock-analysis` (or whatever you chose)
-   - Make it **Public**
-   - Don't initialize with README
-   - Click "Create repository"
-
-3. **Push to GitHub:**
+3. **Commit and push:**
    ```bash
-   cd stock-reports-github
-   git push -u origin main
+   git add .
+   git commit -m "Add NVDA stock analysis"
+   git push
    ```
 
-4. **Enable GitHub Pages:**
-   - Go to your repository on GitHub
-   - Settings → Pages
-   - Source: "Deploy from a branch"
-   - Branch: `main`, folder: `/ (root)`
-   - Save
+## Project Structure
 
-5. **Your site will be live at:**
+```
+stock-project/
+├── main.py                  # Analysis orchestrator
+├── generate_report.py       # HTML report generator
+├── config.py                # Configuration (stocks, model, etc.)
+├── app.py                   # Streamlit dashboard
+├── agents/
+│   ├── news_analyst.py      # News sentiment analysis
+│   ├── statistical_expert.py # Technical analysis
+│   ├── forecaster.py        # Time series forecasting
+│   ├── financial_expert.py  # Fundamental analysis
+│   └── investment_synthesizer.py # Final recommendation
+├── utils/
+│   ├── ollama_client.py     # Ollama API wrapper
+│   ├── data_fetcher.py      # Stock data & news fetching
+│   └── visualizations.py    # Chart generation
+├── reports/                 # JSON analysis output
+└── docs/                    # HTML reports (GitHub Pages)
+```
+
+## GitHub Pages Deployment
+
+1. **Enable GitHub Pages:**
+   - Go to repository Settings > Pages
+   - Source: Deploy from branch
+   - Branch: `main`, folder: `/docs`
+
+2. **After each analysis run:**
+   ```bash
+   python main.py
+   python generate_report.py
+   git add docs/
+   git commit -m "Update stock analysis"
+   git push
    ```
-   https://YOUR-USERNAME.github.io/YOUR-REPO-NAME/
+
+3. **Your site will be at:**
+   ```
+   https://YOUR-USERNAME.github.io/YOUR-REPO/
    ```
 
-### Update Reports (Daily)
+## Streamlit Dashboard
 
-After running analysis:
-
-```bash
-bash deploy_to_github.sh
-```
-
-This automatically commits and pushes new reports to GitHub Pages!
-
-## ⏰ Automate Daily Analysis
-
-### Option 1: Python Scheduler (Recommended)
+For an interactive experience:
 
 ```bash
-# Run the scheduler (keeps running)
-python scheduler.py
+streamlit run app.py
 ```
 
-This will:
-- Run analysis daily at your configured time
-- Auto-deploy to GitHub Pages
-- Keep running in the background
+## Configuration Options
 
-**To run 24/7:**
+In `config.py`:
 
+| Setting | Description | Default |
+|---------|-------------|---------|
+| `OLLAMA_MODEL` | AI model to use | `deepseek-r1:8b` |
+| `STOCKS` | List of ticker symbols | `["GOOGL", "MSFT", "AAPL"]` |
+| `DAYS_OF_HISTORICAL_DATA` | Historical data range | `365` |
+| `PREDICTION_DAYS` | Forecast horizon | `30` |
+| `MAX_NEWS_ARTICLES` | News articles to analyze | `10` |
+
+## Output
+
+**HTML Reports (`docs/`):**
+- `index.html` - Summary table with all stocks
+- `{symbol}.html` - Detailed analysis per stock
+
+**JSON Reports (`reports/`):**
+- `{SYMBOL}_analysis_{timestamp}.json` - Raw analysis data
+
+## Troubleshooting
+
+**"Cannot connect to Ollama"**
 ```bash
-# Using nohup (Linux/Mac)
-nohup python scheduler.py > scheduler.log 2>&1 &
-
-# Or use screen
-screen -S stock-planner
-python scheduler.py
-# Press Ctrl+A then D to detach
+ollama serve  # Start Ollama
+ollama list   # Verify model is installed
 ```
 
-### Option 2: Cron Job (Linux/Mac)
-
+**"Model not found"**
 ```bash
-# Edit crontab
-crontab -e
-
-# Add this line (runs daily at 9 AM)
-0 9 * * * cd /path/to/stock-investment-planner && python run_analysis.py && bash deploy_to_github.sh
-```
-
-### Option 3: Windows Task Scheduler
-
-1. Open Task Scheduler
-2. Create Basic Task
-3. Trigger: Daily at 9:00 AM
-4. Action: Start a program
-5. Program: `python`
-6. Arguments: `C:\path\to\stock-investment-planner\run_analysis.py`
-7. Save and enable
-
-## 📁 Project Structure
-
-```
-stock-investment-planner/
-├── config.py                 # Configuration (stocks, schedule, etc.)
-├── requirements.txt          # Python dependencies
-├── ollama_utils.py          # Ollama API integration
-├── data_fetcher.py          # Stock data & news fetching
-├── predictions.py           # Time series forecasting
-├── agents.py                # 4 AI agents
-├── stock_analyzer.py        # Main analysis orchestrator
-├── report_generator.py      # HTML report generation
-├── run_analysis.py          # Main runner script
-├── scheduler.py             # Automated scheduling
-├── setup_github.sh          # GitHub Pages setup
-├── deploy_to_github.sh      # Deployment script
-└── stock-reports-github/    # Output directory (git repo)
-    ├── index.html           # Dashboard
-    ├── GOOGL_report.html    # Individual stock reports
-    └── ...
-```
-
-## 🔧 Configuration Options
-
-### config.py
-
-```python
-# Ollama Settings
-OLLAMA_MODEL = "deepseek-r1:8b"  # AI model to use
-OLLAMA_BASE_URL = "http://localhost:11434"
-
-# Stocks to Analyze
-STOCKS = ["GOOGL", "AAPL", "MSFT"]
-
-# Analysis Settings
-DAYS_OF_HISTORICAL_DATA = 365  # 1 year
-PREDICTION_DAYS = 30           # Forecast 30 days ahead
-MAX_NEWS_ARTICLES = 10         # News articles to analyze
-
-# Scheduling
-RUN_TIME = "09:00"             # 24-hour format
-TIMEZONE = "America/Los_Angeles"
-
-# Output
-OUTPUT_DIR = "reports"                    # JSON reports
-GITHUB_REPO_DIR = "stock-reports-github"  # HTML for GitHub
-```
-
-## 📊 Understanding the Output
-
-### JSON Reports (`reports/` folder)
-- Detailed JSON with all data and analyses
-- Good for further processing/analysis
-- One file per stock per day
-
-### HTML Reports (`stock-reports-github/` folder)
-- Beautiful visual dashboards
-- Mobile-friendly
-- Auto-deployed to GitHub Pages
-- `index.html` = Main dashboard
-- `{TICKER}_report.html` = Individual stock reports
-
-## 🐛 Troubleshooting
-
-### "Cannot connect to Ollama"
-
-```bash
-# Check if Ollama is running
-ollama list
-
-# If not, start it
-ollama serve
-
-# Or restart the Ollama app (Mac/Windows)
-```
-
-### "Model not found"
-
-```bash
-# Pull the model
 ollama pull deepseek-r1:8b
-
-# Verify it's installed
-ollama list
 ```
 
-### "No module named 'prophet'"
+**"Analysis takes too long"**
+- Use a faster model: `OLLAMA_MODEL = "llama3.1:8b"`
+- Analyze fewer stocks at once
 
-```bash
-# Prophet can be tricky, try:
-pip install prophet --break-system-packages
+## Cost
 
-# On Mac with M1/M2:
-conda install -c conda-forge prophet
-```
+**Total: $0.00/month**
 
-### "Analysis takes too long"
+- Ollama (local AI): Free
+- Yahoo Finance data: Free
+- Google News RSS: Free
+- GitHub Pages hosting: Free
 
-1. Use a smaller/faster model:
-   ```python
-   OLLAMA_MODEL = "llama3.1:8b"  # Faster than deepseek-r1
-   ```
+## Disclaimer
 
-2. Reduce token limits in `config.py`:
-   ```python
-   MAX_OLLAMA_TOKENS = 2000  # Lower from 4000
-   ```
+This tool is for **educational purposes only**. Not financial advice. Always consult a qualified financial advisor before making investment decisions.
 
-3. Analyze fewer stocks at once
+## License
 
-### GitHub Pages not updating
-
-1. Check if push succeeded:
-   ```bash
-   cd stock-reports-github
-   git status
-   ```
-
-2. Verify GitHub Pages is enabled in repository settings
-
-3. Wait 2-3 minutes for GitHub to build the site
-
-4. Check GitHub Actions tab for build errors
-
-## 💰 Cost Breakdown
-
-### 100% Free Setup:
-- ✅ Ollama (local AI): **FREE**
-- ✅ Stock data (Yahoo Finance): **FREE**
-- ✅ News (Google News RSS): **FREE**
-- ✅ GitHub Pages hosting: **FREE**
-- ✅ Time series analysis: **FREE**
-
-### Total Monthly Cost: **$0.00**
-
-No subscriptions, no API fees, no hidden costs!
-
-## ⚠️ Important Disclaimers
-
-**This tool is for EDUCATIONAL purposes only:**
-
-- ❌ NOT professional financial advice
-- ❌ NOT a registered investment advisor
-- ❌ NOT guaranteed to be accurate
-- ✅ Always consult a qualified financial advisor
-- ✅ Do your own research (DYOR)
-- ✅ Invest responsibly
-
-**Past performance does not guarantee future results.**
-
-## 🤝 Contributing
-
-Feel free to:
-- Add more stocks
-- Improve agent prompts
-- Add new data sources
-- Enhance visualizations
-- Share your improvements!
-
-## 📝 License
-
-This project is for educational purposes. Use at your own risk.
-
-## 🆘 Support
-
-If you encounter issues:
-
-1. Check the troubleshooting section above
-2. Verify all prerequisites are installed
-3. Test each component individually
-4. Check `ollama_utils.py` and `data_fetcher.py` test modes
-
-## 🎯 Next Steps
-
-After setup:
-
-1. ✅ Run your first analysis
-2. ✅ View the HTML reports
-3. ✅ Deploy to GitHub Pages
-4. ✅ Set up automation
-5. ✅ Add more stocks
-6. ✅ Customize agent prompts
-7. ✅ Share your results!
-
----
-
-**Happy Investing! 📈💰**
-
-(Remember: This is not financial advice! Always DYOR and consult professionals.)
+For educational purposes. Use at your own risk.

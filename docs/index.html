@@ -11,148 +11,257 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 40px 20px;
         }
-        
+
         .container {
-            max-width: 800px;
+            max-width: 1400px;
             margin: 0 auto;
         }
-        
+
         .hero {
             background: white;
             border-radius: 20px;
-            padding: 60px 40px;
+            padding: 40px;
             text-align: center;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             margin-bottom: 40px;
         }
-        
+
         h1 {
-            font-size: 3em;
+            font-size: 2.5em;
             color: #1f2937;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
-        
+
         .subtitle {
-            font-size: 1.3em;
+            font-size: 1.2em;
             color: #6b7280;
-            margin-bottom: 30px;
         }
-        
-        .stock-list {
+
+        .stock-table-container {
             background: white;
             border-radius: 20px;
-            padding: 40px;
+            padding: 30px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow-x: auto;
         }
-        
-        .stock-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 25px;
-            border-bottom: 2px solid #f3f4f6;
-            transition: all 0.3s;
+
+        .stock-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95em;
         }
-        
-        .stock-item:last-child {
-            border-bottom: none;
-        }
-        
-        .stock-item:hover {
+
+        .stock-table th {
             background: #f9fafb;
-            transform: translateX(10px);
+            padding: 15px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+            white-space: nowrap;
         }
-        
-        .stock-info {
-            flex: 1;
+
+        .stock-table td {
+            padding: 18px 12px;
+            border-bottom: 1px solid #f3f4f6;
+            vertical-align: middle;
         }
-        
-        .stock-symbol {
-            font-size: 1.5em;
+
+        .stock-table tr:hover {
+            background: #f9fafb;
+        }
+
+        .symbol-cell {
             font-weight: 700;
+            font-size: 1.1em;
             color: #1f2937;
         }
-        
-        .stock-name {
+
+        .company-name {
+            font-size: 0.85em;
             color: #6b7280;
-            margin-top: 5px;
+            margin-top: 3px;
         }
-        
-        .stock-date {
-            color: #9ca3af;
-            font-size: 0.9em;
-            margin-top: 5px;
+
+        .price-cell {
+            font-weight: 600;
+            color: #1f2937;
         }
-        
-        .view-btn {
-            background: #667eea;
+
+        .prediction-cell {
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
             color: white;
-            padding: 12px 30px;
-            border-radius: 25px;
+        }
+
+        .badge-bullish { background: #10b981; }
+        .badge-bearish { background: #ef4444; }
+        .badge-neutral { background: #f59e0b; }
+        .badge-undervalued { background: #10b981; }
+        .badge-overvalued { background: #ef4444; }
+        .badge-fair { background: #f59e0b; }
+
+        .rec-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            color: white;
+            font-size: 0.9em;
+        }
+
+        .view-link {
+            color: #667eea;
             text-decoration: none;
             font-weight: 600;
-            transition: all 0.3s;
+            transition: color 0.2s;
         }
-        
-        .view-btn:hover {
-            background: #5568d3;
-            transform: scale(1.05);
+
+        .view-link:hover {
+            color: #5568d3;
+            text-decoration: underline;
         }
-        
+
         .footer {
             text-align: center;
             color: white;
             margin-top: 40px;
             opacity: 0.9;
         }
+
+        .legend {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            font-size: 0.85em;
+            color: #6b7280;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        @media (max-width: 1024px) {
+            .stock-table {
+                font-size: 0.85em;
+            }
+            .stock-table th, .stock-table td {
+                padding: 12px 8px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="hero">
-            <h1>📊 Stock Investment Planner</h1>
+            <h1>Stock Investment Planner</h1>
             <p class="subtitle">AI-Powered Multi-Agent Stock Analysis</p>
-            <p style="color: #6b7280;">Combining News Analysis, Statistical Modeling, and Financial Expertise</p>
         </div>
-        
-        <div class="stock-list">
 
-            <div class="stock-item">
-                <div class="stock-info">
-                    <div class="stock-symbol">GOOGL</div>
-                    <div class="stock-name">Alphabet Inc.</div>
-                    <div class="stock-date">Latest Analysis: 2026-02-01</div>
-                </div>
-                <a href="googl.html" class="view-btn">View Analysis →</a>
+        <div class="stock-table-container">
+            <table class="stock-table">
+                <thead>
+                    <tr>
+                        <th>Symbol</th>
+                        <th>Price</th>
+                        <th>Trend</th>
+                        <th>10-Day Prediction</th>
+                        <th>News</th>
+                        <th>Technical</th>
+                        <th>Fundamental</th>
+                        <th>Recommendation</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td>
+                            <div class="symbol-cell">GOOGL</div>
+                            <div class="company-name">Alphabet Inc.</div>
+                        </td>
+                        <td class="price-cell">$338.23</td>
+                        <td><svg width="80" height="30" viewBox="0 0 80 30" style="vertical-align: middle;">
+            <path d="M0.0,11.8 L6.2,4.2 L12.3,4.4 L18.5,10.1 L24.6,15.2 L30.8,30.0 L36.9,18.2 L43.1,14.2 L49.2,19.1 L55.4,9.2 L61.5,6.8 L67.7,4.1 L73.8,0.0 L80.0,0.5" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg></td>
+                        <td class="prediction-cell">$337.07</td>
+                        <td><span class="badge badge-bullish">Bullish</span></td>
+                        <td><span class="badge badge-neutral">Neutral</span></td>
+                        <td><span class="badge badge-fair">Fair</span></td>
+                        <td><span class="rec-badge" style="background: #f59e0b;">HOLD</span></td>
+                        <td><a href="googl.html" class="view-link">View →</a></td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <div class="symbol-cell">MSFT</div>
+                            <div class="company-name">Microsoft Corporation</div>
+                        </td>
+                        <td class="price-cell">$430.29</td>
+                        <td><svg width="80" height="30" viewBox="0 0 80 30" style="vertical-align: middle;">
+            <path d="M0.0,2.6 L6.2,6.4 L12.3,13.0 L18.5,14.6 L24.6,12.7 L30.8,15.8 L36.9,21.9 L43.1,17.8 L49.2,9.2 L55.4,6.6 L61.5,0.6 L67.7,0.0 L73.8,28.1 L80.0,30.0" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg></td>
+                        <td class="prediction-cell">$442.19</td>
+                        <td><span class="badge badge-bearish">Bearish</span></td>
+                        <td><span class="badge badge-neutral">Neutral</span></td>
+                        <td><span class="badge badge-fair">Fair</span></td>
+                        <td><span class="rec-badge" style="background: #f59e0b;">HOLD</span></td>
+                        <td><a href="msft.html" class="view-link">View →</a></td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <div class="symbol-cell">AAPL</div>
+                            <div class="company-name">Apple Inc.</div>
+                        </td>
+                        <td class="price-cell">$259.48</td>
+                        <td><svg width="80" height="30" viewBox="0 0 80 30" style="vertical-align: middle;">
+            <path d="M0.0,1.7 L6.2,0.0 L12.3,2.3 L18.5,5.9 L24.6,11.5 L30.8,30.0 L36.9,28.0 L43.1,26.6 L49.2,27.2 L55.4,11.8 L61.5,5.8 L67.7,9.6 L73.8,5.8 L80.0,3.3" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg></td>
+                        <td class="prediction-cell">$264.72</td>
+                        <td><span class="badge badge-neutral">Neutral</span></td>
+                        <td><span class="badge badge-neutral">Neutral</span></td>
+                        <td><span class="badge badge-overvalued">Overvalued</span></td>
+                        <td><span class="rec-badge" style="background: #f59e0b;">HOLD</span></td>
+                        <td><a href="aapl.html" class="view-link">View →</a></td>
+                    </tr>
+
+                </tbody>
+            </table>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-dot" style="background: #10b981;"></div> Bullish / Buy</div>
+                <div class="legend-item"><div class="legend-dot" style="background: #f59e0b;"></div> Neutral / Hold</div>
+                <div class="legend-item"><div class="legend-dot" style="background: #ef4444;"></div> Bearish / Sell</div>
             </div>
-
-            <div class="stock-item">
-                <div class="stock-info">
-                    <div class="stock-symbol">MSFT</div>
-                    <div class="stock-name">Microsoft Corporation</div>
-                    <div class="stock-date">Latest Analysis: 2026-02-01</div>
-                </div>
-                <a href="msft.html" class="view-btn">View Analysis →</a>
-            </div>
-
-            <div class="stock-item">
-                <div class="stock-info">
-                    <div class="stock-symbol">AAPL</div>
-                    <div class="stock-name">Apple Inc.</div>
-                    <div class="stock-date">Latest Analysis: 2026-02-01</div>
-                </div>
-                <a href="aapl.html" class="view-btn">View Analysis →</a>
-            </div>
-
         </div>
-        
+
         <div class="footer">
             <p>Powered by Ollama AI Agents | For Educational Purposes Only</p>
             <p style="margin-top: 10px; font-size: 0.9em;">Not Financial Advice</p>
