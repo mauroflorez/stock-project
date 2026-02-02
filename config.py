@@ -7,7 +7,7 @@ OLLAMA_MODEL = "deepseek-r1:8b"  # Change to "llama3.1:8b" if preferred
 OLLAMA_BASE_URL = "http://localhost:11434"
 
 # Stock Configuration
-STOCKS = ["GOOGL", "MSFT", "AAPL"]
+STOCKS = ["GOOGL", "MSFT", "AAPL", "AMZN", "NVDA", "META", "TSLA", "VOO"]
 STOCK_SYMBOLS = STOCKS  # Alias for compatibility
 STOCK_NAMES = {
     "GOOGL": "Alphabet Inc.",
@@ -17,6 +17,7 @@ STOCK_NAMES = {
     "NVDA": "NVIDIA Corporation",
     "META": "Meta Platforms Inc.",
     "TSLA": "Tesla Inc.",
+    "VOO": "Vanguard S&P 500 ETF"
 }
 
 # Analysis Settings
