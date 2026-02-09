@@ -1,6 +1,7 @@
 """
 HTML Report Generator
 Converts JSON analysis results into beautiful HTML reports for GitHub Pages
+Modern glassmorphism design with animations and dark mode support
 """
 
 import sys
@@ -18,8 +19,25 @@ from typing import Dict, Any, List, Tuple
 
 
 class HTMLReportGenerator:
-    """Generates HTML reports from analysis results"""
-    
+    """Generates HTML reports from analysis results with modern styling"""
+
+    # Modern color palette
+    COLORS = {
+        'primary': '#6366f1',      # Indigo
+        'primary_dark': '#4f46e5',
+        'success': '#10b981',       # Emerald
+        'warning': '#f59e0b',       # Amber
+        'danger': '#ef4444',        # Red
+        'dark': '#0f172a',          # Slate 900
+        'dark_card': '#1e293b',     # Slate 800
+        'dark_border': '#334155',   # Slate 700
+        'light': '#f8fafc',         # Slate 50
+        'light_card': '#ffffff',
+        'text_dark': '#1e293b',
+        'text_light': '#f1f5f9',
+        'text_muted': '#64748b',
+    }
+
     def __init__(self):
         self.output_dir = "reports"  # Where JSON analysis files are saved
         self.web_dir = "docs"  # GitHub Pages serves from /docs
@@ -183,32 +201,55 @@ class HTMLReportGenerator:
 
         return valuation, summary
 
-    def generate_sparkline_svg(self, prices: List[float], width: int = 80, height: int = 30) -> str:
-        """Generate an inline SVG sparkline chart"""
+    def generate_sparkline_svg(self, prices: List[float], width: int = 100, height: int = 40) -> str:
+        """Generate an inline SVG sparkline chart with gradient fill"""
         if not prices or len(prices) < 2:
             return ""
 
-        # Use last 14 days of data
-        prices = prices[-14:]
+        # Use last 20 days of data for smoother chart
+        prices = prices[-20:]
 
         min_price = min(prices)
         max_price = max(prices)
         price_range = max_price - min_price if max_price > min_price else 1
 
+        # Add padding to prevent clipping
+        padding = 4
+        chart_width = width - (padding * 2)
+        chart_height = height - (padding * 2)
+
         # Normalize prices to SVG coordinates
         points = []
         for i, price in enumerate(prices):
-            x = (i / (len(prices) - 1)) * width
-            y = height - ((price - min_price) / price_range) * height
+            x = padding + (i / (len(prices) - 1)) * chart_width
+            y = padding + chart_height - ((price - min_price) / price_range) * chart_height
             points.append(f"{x:.1f},{y:.1f}")
 
         # Determine color based on trend
-        color = "#10b981" if prices[-1] >= prices[0] else "#ef4444"
+        is_positive = prices[-1] >= prices[0]
+        color = "#10b981" if is_positive else "#ef4444"
+        color_light = "#34d399" if is_positive else "#f87171"
 
         path_data = "M" + " L".join(points)
 
+        # Create area fill path (closes to bottom)
+        first_point = points[0]
+        last_point = points[-1]
+        area_path = f"M{first_point} L" + " L".join(points[1:]) + f" L{last_point.split(',')[0]},{height - padding} L{padding},{height - padding} Z"
+
+        # Unique ID for gradient
+        grad_id = f"grad_{hash(tuple(prices)) % 10000}"
+
         return f'''<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" style="vertical-align: middle;">
+            <defs>
+                <linearGradient id="{grad_id}" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:{color};stop-opacity:0.3"/>
+                    <stop offset="100%" style="stop-color:{color};stop-opacity:0"/>
+                </linearGradient>
+            </defs>
+            <path d="{area_path}" fill="url(#{grad_id})"/>
             <path d="{path_data}" fill="none" stroke="{color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="{points[-1].split(',')[0]}" cy="{points[-1].split(',')[1]}" r="3" fill="{color}"/>
         </svg>'''
 
     def generate_executive_summary(self, data: Dict[str, Any]) -> str:
@@ -350,13 +391,429 @@ class HTMLReportGenerator:
         else:
             return "#f59e0b"  # Orange
     
+    def get_common_css(self, is_detail_page: bool = False) -> str:
+        """Generate common CSS styles for all pages"""
+        return """
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --success: #10b981;
+            --success-light: #34d399;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-dark: #0f172a;
+            --bg-card-dark: #1e293b;
+            --bg-card-dark-hover: #273449;
+            --border-dark: #334155;
+            --bg-light: #f1f5f9;
+            --bg-card-light: #ffffff;
+            --text-dark: #1e293b;
+            --text-light: #f1f5f9;
+            --text-muted: #64748b;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            --shadow-lg: 0 35px 60px -15px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Glass card effect */
+        .card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 24px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+
+        /* Navigation */
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            margin-bottom: 24px;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 12px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--text-light);
+            background: rgba(99, 102, 241, 0.2);
+            border-color: var(--primary);
+        }
+
+        /* Typography */
+        h1, h2, h3 {
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        h1 { font-size: 2.5rem; margin-bottom: 8px; }
+        h2 { font-size: 1.5rem; margin-bottom: 16px; color: var(--text-light); }
+        h3 { font-size: 1.125rem; color: var(--text-muted); }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-success { background: rgba(16, 185, 129, 0.2); color: var(--success-light); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-warning { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .badge-danger { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .badge-primary { background: rgba(99, 102, 241, 0.2); color: var(--primary-light); border: 1px solid rgba(99, 102, 241, 0.3); }
+
+        .badge-bullish, .badge-undervalued { background: rgba(16, 185, 129, 0.2); color: var(--success-light); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-bearish, .badge-overvalued { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .badge-neutral, .badge-fair { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+
+        /* Recommendation badge - large */
+        .rec-badge-large {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 48px;
+            border-radius: 16px;
+            font-size: 1.75rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            box-shadow: 0 10px 40px -10px currentColor;
+        }
+
+        .rec-buy { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+        .rec-sell { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+        .rec-hold { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+
+        /* Metrics grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+        }
+
+        .metric-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-dark);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .metric-card:hover {
+            background: rgba(15, 23, 42, 0.8);
+            border-color: var(--primary);
+        }
+
+        .metric-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .metric-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        .metric-value.positive { color: var(--success); }
+        .metric-value.negative { color: var(--danger); }
+        .metric-value.primary { color: var(--primary-light); }
+
+        .metric-sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Collapsible sections */
+        .collapsible {
+            cursor: pointer;
+        }
+
+        .collapsible-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-dark);
+        }
+
+        .collapsible-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .collapsible-icon {
+            font-size: 1.5rem;
+        }
+
+        .collapsible-toggle {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 8px;
+            color: var(--primary-light);
+            transition: all 0.2s ease;
+        }
+
+        .collapsible:hover .collapsible-toggle {
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .collapsible.open .collapsible-content {
+            max-height: 5000px;
+            transition: max-height 0.5s ease-in;
+        }
+
+        .collapsible.open .collapsible-toggle {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-body {
+            padding: 24px 0;
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+
+        .collapsible-body h4 {
+            color: var(--primary-light);
+            margin: 24px 0 12px 0;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .collapsible-body p {
+            margin: 8px 0;
+        }
+
+        .collapsible-body ul, .collapsible-body ol {
+            margin: 12px 0 12px 24px;
+        }
+
+        .collapsible-body li {
+            margin: 6px 0;
+        }
+
+        /* Summary cards */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .summary-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-dark);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.2s ease;
+        }
+
+        .summary-card:hover {
+            border-color: var(--primary);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .summary-icon {
+            font-size: 1.5rem;
+        }
+
+        .summary-title {
+            flex: 1;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .summary-text {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* Conclusion box */
+        .conclusion-box {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 24px;
+        }
+
+        .conclusion-box strong {
+            color: var(--primary-light);
+            font-size: 1rem;
+        }
+
+        /* Disclaimer */
+        .disclaimer {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 16px;
+            padding: 20px 24px;
+            color: #fbbf24;
+            font-size: 0.9rem;
+        }
+
+        .disclaimer strong {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 32px 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Chart container */
+        .chart-container {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 16px;
+            padding: 16px;
+            margin-top: 24px;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; opacity: 0; }
+        .delay-2 { animation-delay: 0.2s; opacity: 0; }
+        .delay-3 { animation-delay: 0.3s; opacity: 0; }
+        .delay-4 { animation-delay: 0.4s; opacity: 0; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container { padding: 16px; }
+            h1 { font-size: 1.75rem; }
+            .card { padding: 24px; border-radius: 20px; }
+            .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+            .metric-value { font-size: 1.5rem; }
+            .rec-badge-large { padding: 12px 32px; font-size: 1.25rem; }
+        }
+
+        /* Plotly chart styling */
+        .js-plotly-plot .plotly .modebar {
+            background: transparent !important;
+        }
+        .js-plotly-plot .plotly .modebar-btn path {
+            fill: var(--text-muted) !important;
+        }
+        """
+
     def generate_html(self, data: Dict[str, Any]) -> str:
-        """Generate HTML report from analysis data"""
-        
+        """Generate HTML report from analysis data with modern styling"""
+
         symbol = data['symbol']
         company_name = data['company_name']
         analysis_date = datetime.fromisoformat(data['analysis_date']).strftime("%B %d, %Y at %I:%M %p")
-        
+
         # Extract analyses
         news_analysis = data['agents']['news_analyst']['analysis']
         stats_analysis = data['agents']['statistical_expert']['analysis']
@@ -367,18 +824,18 @@ class HTMLReportGenerator:
         forecast_data = data['agents'].get('forecaster', {})
         forecast_summary = forecast_data.get('summary', {})
         forecast_charts = forecast_data.get('charts', {})
-        
+
         # Get recommendation
         recommendation, confidence = self.extract_recommendation(synthesis)
-        rec_color = self.get_recommendation_color(recommendation)
-        
+        rec_class = "rec-buy" if "BUY" in recommendation.upper() else "rec-sell" if "SELL" in recommendation.upper() else "rec-hold"
+
         # Get stock metrics
         stock_data = data['stock_data']
         current_price = stock_data.get('current_price', 0)
         day_change = stock_data.get('day_change', 0)
         day_change_pct = stock_data.get('day_change_percent', 0)
         market_cap = stock_data.get('market_cap', 0)
-        
+
         # Format market cap
         if market_cap:
             if market_cap >= 1e12:
@@ -389,396 +846,247 @@ class HTMLReportGenerator:
                 market_cap_str = f"${market_cap/1e6:.2f}M"
         else:
             market_cap_str = "N/A"
-        
-        change_color = "#10b981" if day_change >= 0 else "#ef4444"
-        change_symbol = "▲" if day_change >= 0 else "▼"
-        
+
+        change_class = "positive" if day_change >= 0 else "negative"
+        change_symbol = "+" if day_change >= 0 else ""
+
+        # Extract summaries for executive summary
+        news_sentiment, news_summary = self.extract_news_sentiment(news_analysis)
+        stat_trend, stat_summary = self.extract_statistical_outlook(stats_analysis)
+        fin_outlook, fin_summary = self.extract_financial_outlook(financial_analysis)
+
+        news_badge_class = self._get_badge_class(news_sentiment)
+        stat_badge_class = self._get_badge_class(stat_trend)
+        fin_badge_class = self._get_valuation_badge_class(fin_outlook)
+
+        # Get synthesis summary
+        synthesis_summary = self._extract_synthesis_summary(synthesis, recommendation, confidence)
+
         html = f"""
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{symbol} Stock Analysis - {company_name}</title>
+    <title>{symbol} - {company_name} | Stock Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
     <style>
-        * {{
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }}
-        
-        body {{
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-            color: #1f2937;
-        }}
-        
-        .container {{
-            max-width: 1200px;
-            margin: 0 auto;
-        }}
-        
-        .header {{
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            margin-bottom: 30px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }}
-        
-        .stock-title {{
-            font-size: 2.5em;
-            font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 10px;
-        }}
-        
-        .stock-symbol {{
-            font-size: 1.2em;
-            color: #6b7280;
-            margin-bottom: 20px;
-        }}
-        
-        .metrics {{
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
-        }}
-        
-        .metric {{
-            background: #f9fafb;
-            padding: 20px;
-            border-radius: 12px;
-            border-left: 4px solid #667eea;
-        }}
-        
-        .metric-label {{
-            font-size: 0.9em;
-            color: #6b7280;
-            margin-bottom: 8px;
-        }}
-        
-        .metric-value {{
-            font-size: 1.8em;
-            font-weight: 700;
-            color: #1f2937;
-        }}
-        
-        .recommendation {{
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            margin-bottom: 30px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            text-align: center;
-        }}
-        
-        .rec-badge {{
-            display: inline-block;
-            background: {rec_color};
-            color: white;
-            padding: 15px 40px;
-            border-radius: 50px;
-            font-size: 2em;
-            font-weight: 700;
-            margin: 20px 0;
-        }}
-        
-        .confidence {{
-            font-size: 1.2em;
-            color: #6b7280;
-            margin-top: 10px;
-        }}
-        
-        .agent-section {{
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            margin-bottom: 30px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }}
-        
-        .agent-title {{
-            font-size: 1.8em;
-            font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }}
-        
-        .agent-icon {{
-            font-size: 1.2em;
-        }}
-        
-        .agent-content {{
-            white-space: pre-wrap;
-            line-height: 1.8;
-            color: #374151;
-            font-size: 1.05em;
-        }}
-        
-        .timestamp {{
-            text-align: center;
-            color: white;
-            margin-top: 30px;
-            font-size: 0.9em;
-            opacity: 0.8;
-        }}
-        
-        .disclaimer {{
-            background: #fef3c7;
-            border-left: 4px solid #f59e0b;
-            padding: 20px;
-            border-radius: 12px;
-            margin-top: 30px;
-            color: #92400e;
-        }}
-
-        .executive-summary {{
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            margin-bottom: 30px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }}
-
-        .executive-summary h2 {{
-            font-size: 1.8em;
-            color: #1f2937;
-            margin-bottom: 25px;
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 10px;
-        }}
-
-        .summary-grid {{
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin-bottom: 25px;
-        }}
-
-        .summary-item {{
-            background: #f9fafb;
-            padding: 20px;
-            border-radius: 12px;
-            border-left: 4px solid #667eea;
-        }}
-
-        .summary-header {{
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
-        }}
-
-        .summary-icon {{
-            font-size: 1.3em;
-        }}
-
-        .summary-title {{
-            font-weight: 600;
-            color: #1f2937;
-            flex-grow: 1;
-        }}
-
-        .summary-badge {{
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 600;
-        }}
-
-        .summary-text {{
-            color: #4b5563;
-            line-height: 1.6;
-            font-size: 0.95em;
-        }}
-
-        .summary-conclusion {{
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-            line-height: 1.7;
-        }}
-
-        .summary-conclusion strong {{
-            display: block;
-            margin-bottom: 8px;
-            font-size: 1.1em;
-        }}
-
-        .agent-content h4 {{
-            color: #667eea;
-            margin: 20px 0 10px 0;
-            font-size: 1.1em;
-        }}
-
-        .agent-content p {{
-            margin: 8px 0;
-            line-height: 1.7;
-        }}
-
-        .agent-content ol, .agent-content ul {{
-            margin: 10px 0 10px 25px;
-            line-height: 1.8;
-        }}
-
-        .agent-content li {{
-            margin: 5px 0;
-        }}
-
-        .forecast-chart {{
-            width: 100%;
-            min-height: 400px;
-            margin-top: 20px;
-        }}
-
-        .forecast-chart .plotly-graph-div {{
-            width: 100% !important;
-        }}
-        
-        @media (max-width: 768px) {{
-            .stock-title {{
-                font-size: 2em;
-            }}
-            .metrics {{
-                grid-template-columns: 1fr;
-            }}
-        }}
+        {self.get_common_css(is_detail_page=True)}
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <div class="stock-title">{company_name}</div>
-            <div class="stock-symbol">{symbol}</div>
-            
-            <div class="metrics">
-                <div class="metric">
+        <!-- Navigation -->
+        <nav class="nav animate-in">
+            <a href="index.html" class="nav-brand">Stock Planner</a>
+            <a href="index.html" class="nav-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Back to Dashboard
+            </a>
+        </nav>
+
+        <!-- Header Card -->
+        <div class="card animate-in delay-1">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 24px;">
+                <div>
+                    <h1>{company_name}</h1>
+                    <h3>{symbol}</h3>
+                </div>
+                <div class="rec-badge-large {rec_class}">{recommendation}</div>
+            </div>
+
+            <div class="metrics-grid" style="margin-top: 32px;">
+                <div class="metric-card">
                     <div class="metric-label">Current Price</div>
                     <div class="metric-value">${current_price:.2f}</div>
                 </div>
-                <div class="metric">
+                <div class="metric-card">
                     <div class="metric-label">Day Change</div>
-                    <div class="metric-value" style="color: {change_color};">
-                        {change_symbol} ${abs(day_change):.2f} ({abs(day_change_pct):.2f}%)
-                    </div>
+                    <div class="metric-value {change_class}">{change_symbol}${abs(day_change):.2f}</div>
+                    <div class="metric-sub">{change_symbol}{abs(day_change_pct):.2f}%</div>
                 </div>
-                <div class="metric">
+                <div class="metric-card">
                     <div class="metric-label">Market Cap</div>
                     <div class="metric-value">{market_cap_str}</div>
                 </div>
-                <div class="metric">
-                    <div class="metric-label">Analysis Date</div>
-                    <div class="metric-value" style="font-size: 1.2em;">{analysis_date}</div>
+                <div class="metric-card">
+                    <div class="metric-label">Confidence</div>
+                    <div class="metric-value primary">{confidence}</div>
                 </div>
             </div>
-        </div>
-        
-        <!-- Recommendation -->
-        <div class="recommendation">
-            <h2>Investment Recommendation</h2>
-            <div class="rec-badge">{recommendation}</div>
-            <div class="confidence">Confidence: {confidence}</div>
         </div>
 
         <!-- Executive Summary -->
-        {self.generate_executive_summary(data)}
+        <div class="card animate-in delay-2">
+            <h2>Executive Summary</h2>
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <span class="summary-icon">📰</span>
+                        <span class="summary-title">News Sentiment</span>
+                        <span class="badge {news_badge_class}">{news_sentiment}</span>
+                    </div>
+                    <p class="summary-text">{news_summary if news_summary else "Recent news coverage analyzed for market impact."}</p>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <span class="summary-icon">📊</span>
+                        <span class="summary-title">Technical Analysis</span>
+                        <span class="badge {stat_badge_class}">{stat_trend}</span>
+                    </div>
+                    <p class="summary-text">{stat_summary if stat_summary else "Statistical indicators evaluated for trend signals."}</p>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <span class="summary-icon">💰</span>
+                        <span class="summary-title">Fundamental Analysis</span>
+                        <span class="badge {fin_badge_class}">{fin_outlook}</span>
+                    </div>
+                    <p class="summary-text">{fin_summary if fin_summary else "Financial metrics and valuation assessed."}</p>
+                </div>
+            </div>
+            <div class="conclusion-box">
+                <strong>Conclusion</strong>
+                <p style="margin-top: 8px; color: var(--text-muted);">{synthesis_summary}</p>
+            </div>
+        </div>
 
         <!-- Price Forecast -->
-        <div class="agent-section">
-            <div class="agent-title">
-                <span class="agent-icon">🔮</span>
-                Price Forecast (10-Day)
-            </div>
-            <div class="forecast-metrics" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
-                <div class="metric" style="border-left-color: #10b981;">
-                    <div class="metric-label">Next Day Prediction</div>
-                    <div class="metric-value" style="color: #10b981;">${forecast_summary.get('next_day_prediction', current_price):.2f}</div>
-                    <div style="font-size: 0.9em; color: #6b7280;">{forecast_summary.get('next_day_expected_return', 'N/A')}</div>
+        <div class="card animate-in delay-3">
+            <h2>Price Forecast (10-Day)</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Next Day</div>
+                    <div class="metric-value primary">${forecast_summary.get('next_day_prediction', current_price):.2f}</div>
+                    <div class="metric-sub">{forecast_summary.get('next_day_expected_return', 'N/A')}</div>
                 </div>
-                <div class="metric" style="border-left-color: #667eea;">
-                    <div class="metric-label">10-Day Prediction</div>
-                    <div class="metric-value" style="color: #667eea;">${forecast_summary.get('day_10_prediction', current_price):.2f}</div>
-                    <div style="font-size: 0.9em; color: #6b7280;">{forecast_summary.get('day_10_expected_return', 'N/A')}</div>
+                <div class="metric-card">
+                    <div class="metric-label">10-Day Target</div>
+                    <div class="metric-value primary">${forecast_summary.get('day_10_prediction', current_price):.2f}</div>
+                    <div class="metric-sub">{forecast_summary.get('day_10_expected_return', 'N/A')}</div>
                 </div>
-                <div class="metric">
+                <div class="metric-card">
                     <div class="metric-label">Forecast Confidence</div>
-                    <div class="metric-value" style="font-size: 1.4em;">{forecast_summary.get('confidence', 'N/A')}</div>
-                    <div style="font-size: 0.9em; color: #6b7280;">Models: {', '.join(forecast_summary.get('models_used', ['N/A']))}</div>
+                    <div class="metric-value">{forecast_summary.get('confidence', 'N/A')}</div>
+                    <div class="metric-sub">Models: {', '.join(forecast_summary.get('models_used', ['N/A']))}</div>
                 </div>
             </div>
-            <div class="forecast-chart">
-                {forecast_charts.get('1y', '<p>Chart not available</p>')}
+            <div class="chart-container">
+                {forecast_charts.get('1y', '<p style="text-align: center; color: var(--text-muted); padding: 40px;">Chart not available</p>')}
             </div>
         </div>
 
-        <!-- Investment Synthesis -->
-        <div class="agent-section">
-            <div class="agent-title">
-                <span class="agent-icon">🎯</span>
-                Investment Synthesis
+        <!-- Detailed Analysis Sections (Collapsible) -->
+        <div class="card animate-in delay-4">
+            <h2>Detailed Analysis</h2>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">🎯</span>
+                        Investment Synthesis
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body">{self.markdown_to_html(synthesis)}</div>
+                </div>
             </div>
-            <div class="agent-content">{self.markdown_to_html(synthesis)}</div>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">📰</span>
+                        News Analysis
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body">{self.markdown_to_html(news_analysis)}</div>
+                </div>
+            </div>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">📈</span>
+                        Statistical Analysis
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body">{self.markdown_to_html(stats_analysis)}</div>
+                </div>
+            </div>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">💼</span>
+                        Financial Analysis
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body">{self.markdown_to_html(financial_analysis)}</div>
+                </div>
+            </div>
         </div>
 
-        <!-- News Analysis -->
-        <div class="agent-section">
-            <div class="agent-title">
-                <span class="agent-icon">🗞️</span>
-                News Analysis
-            </div>
-            <div class="agent-content">{self.markdown_to_html(news_analysis)}</div>
-        </div>
-
-        <!-- Statistical Analysis -->
-        <div class="agent-section">
-            <div class="agent-title">
-                <span class="agent-icon">📈</span>
-                Statistical Analysis
-            </div>
-            <div class="agent-content">{self.markdown_to_html(stats_analysis)}</div>
-        </div>
-
-        <!-- Financial Analysis -->
-        <div class="agent-section">
-            <div class="agent-title">
-                <span class="agent-icon">💼</span>
-                Financial Analysis
-            </div>
-            <div class="agent-content">{self.markdown_to_html(financial_analysis)}</div>
-        </div>
-        
         <!-- Disclaimer -->
-        <div class="disclaimer">
-            <strong>⚠️ Important Disclaimer:</strong><br>
-            This analysis is generated by AI agents for educational purposes only. It should NOT be considered 
-            financial advice. Stock markets are inherently risky and unpredictable. Always conduct your own 
-            thorough research and consult with a qualified financial advisor before making any investment decisions. 
-            Past performance does not guarantee future results.
+        <div class="disclaimer animate-in delay-4">
+            <strong>Important Disclaimer</strong>
+            This analysis is generated by AI agents for educational purposes only. It should NOT be considered
+            financial advice. Always conduct your own research and consult with a qualified financial advisor
+            before making any investment decisions.
         </div>
-        
-        <div class="timestamp">
-            Generated by Stock Investment Planner on {analysis_date}
+
+        <!-- Footer -->
+        <div class="footer">
+            Generated on {analysis_date}
         </div>
     </div>
 </body>
 </html>
 """
         return html
+
+    def _extract_synthesis_summary(self, synthesis: str, recommendation: str, confidence: str) -> str:
+        """Extract a brief summary from the synthesis"""
+        lines = synthesis.split('\n')
+        for i, line in enumerate(lines):
+            if 'SUMMARY:' in line.upper():
+                summary_lines = []
+                for j in range(i+1, min(i+4, len(lines))):
+                    if lines[j].strip():
+                        summary_lines.append(lines[j].strip())
+                return self._clean_text(' '.join(summary_lines))[:300]
+
+        return f"Based on comprehensive analysis, the recommendation is {recommendation} with {confidence} confidence."
     
     def generate_index(self, symbols: list):
-        """Generate index.html with links to all stock reports"""
+        """Generate index.html with links to all stock reports - modern dashboard"""
 
         reports = []
         for symbol in symbols:
@@ -786,16 +1094,19 @@ class HTMLReportGenerator:
             if data:
                 stock_data = data.get('stock_data', {})
                 current_price = stock_data.get('current_price', 0)
+                day_change = stock_data.get('day_change', 0)
+                day_change_pct = stock_data.get('day_change_percent', 0)
 
                 # Get historical prices for sparkline
                 hist_prices = stock_data.get('historical_prices', {})
                 prices = list(hist_prices.values()) if hist_prices else []
-                sparkline = self.generate_sparkline_svg(prices)
+                sparkline = self.generate_sparkline_svg(prices, width=100, height=40)
 
                 # Get forecast prediction
                 forecast_data = data['agents'].get('forecaster', {})
                 forecast_summary = forecast_data.get('summary', {})
                 prediction = forecast_summary.get('day_10_prediction', current_price)
+                pred_change = ((prediction - current_price) / current_price * 100) if current_price else 0
 
                 # Get per-agent recommendations
                 news_analysis = data['agents']['news_analyst']['analysis']
@@ -814,255 +1125,365 @@ class HTMLReportGenerator:
                     'date': datetime.fromisoformat(data['analysis_date']).strftime("%Y-%m-%d"),
                     'file': f"{symbol.lower()}.html",
                     'price': current_price,
+                    'day_change': day_change,
+                    'day_change_pct': day_change_pct,
                     'sparkline': sparkline,
                     'prediction': prediction,
+                    'pred_change': pred_change,
                     'news_sentiment': news_sentiment,
                     'stat_trend': stat_trend,
                     'fin_outlook': fin_outlook,
                     'recommendation': recommendation,
-                    'rec_color': self.get_recommendation_color(recommendation)
+                    'confidence': confidence
                 })
-        
-        html = """
+
+        # Count recommendations for summary
+        buy_count = sum(1 for r in reports if 'BUY' in r['recommendation'].upper())
+        sell_count = sum(1 for r in reports if 'SELL' in r['recommendation'].upper())
+        hold_count = len(reports) - buy_count - sell_count
+
+        html = f"""
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stock Investment Planner - AI-Powered Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        {self.get_common_css()}
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 40px 20px;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .hero {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
+        /* Index-specific styles */
+        .hero {{
             text-align: center;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            margin-bottom: 40px;
-        }
+            padding: 48px 32px;
+        }}
 
-        h1 {
-            font-size: 2.5em;
-            color: #1f2937;
-            margin-bottom: 15px;
-        }
+        .hero h1 {{
+            font-size: 3rem;
+            background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+        }}
 
-        .subtitle {
-            font-size: 1.2em;
-            color: #6b7280;
-        }
+        .hero-subtitle {{
+            color: var(--text-muted);
+            font-size: 1.125rem;
+        }}
 
-        .stock-table-container {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow-x: auto;
-        }
+        /* Stats row */
+        .stats-row {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }}
 
-        .stock-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.95em;
-        }
-
-        .stock-table th {
-            background: #f9fafb;
-            padding: 15px 12px;
-            text-align: left;
-            font-weight: 600;
-            color: #374151;
-            border-bottom: 2px solid #e5e7eb;
-            white-space: nowrap;
-        }
-
-        .stock-table td {
-            padding: 18px 12px;
-            border-bottom: 1px solid #f3f4f6;
-            vertical-align: middle;
-        }
-
-        .stock-table tr:hover {
-            background: #f9fafb;
-        }
-
-        .symbol-cell {
-            font-weight: 700;
-            font-size: 1.1em;
-            color: #1f2937;
-        }
-
-        .company-name {
-            font-size: 0.85em;
-            color: #6b7280;
-            margin-top: 3px;
-        }
-
-        .price-cell {
-            font-weight: 600;
-            color: #1f2937;
-        }
-
-        .prediction-cell {
-            color: #667eea;
-            font-weight: 500;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.8em;
-            font-weight: 600;
-            color: white;
-        }
-
-        .badge-bullish { background: #10b981; }
-        .badge-bearish { background: #ef4444; }
-        .badge-neutral { background: #f59e0b; }
-        .badge-undervalued { background: #10b981; }
-        .badge-overvalued { background: #ef4444; }
-        .badge-fair { background: #f59e0b; }
-
-        .rec-badge {
-            display: inline-block;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-weight: 700;
-            color: white;
-            font-size: 0.9em;
-        }
-
-        .view-link {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.2s;
-        }
-
-        .view-link:hover {
-            color: #5568d3;
-            text-decoration: underline;
-        }
-
-        .footer {
+        .stat-card {{
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid var(--border-dark);
+            border-radius: 16px;
+            padding: 24px;
             text-align: center;
-            color: white;
-            margin-top: 40px;
-            opacity: 0.9;
-        }
+        }}
 
-        .legend {
-            display: flex;
+        .stat-value {{
+            font-size: 2.5rem;
+            font-weight: 800;
+        }}
+
+        .stat-label {{
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }}
+
+        /* Stock grid */
+        .stock-grid {{
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
             gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #e5e7eb;
-            font-size: 0.85em;
-            color: #6b7280;
-        }
+        }}
 
-        .legend-item {
+        .stock-card {{
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-dark);
+            border-radius: 20px;
+            padding: 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }}
+
+        .stock-card:hover {{
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px -15px rgba(99, 102, 241, 0.3);
+        }}
+
+        .stock-header {{
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }}
+
+        .stock-info h3 {{
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-light);
+            margin-bottom: 4px;
+        }}
+
+        .stock-info .company {{
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }}
+
+        .stock-price {{
+            text-align: right;
+        }}
+
+        .stock-price .current {{
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }}
+
+        .stock-price .change {{
+            font-size: 0.9rem;
+            font-weight: 600;
+        }}
+
+        .stock-price .change.positive {{ color: var(--success); }}
+        .stock-price .change.negative {{ color: var(--danger); }}
+
+        .stock-chart {{
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+        }}
+
+        .stock-metrics {{
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }}
+
+        .stock-metric {{
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 10px;
+            padding: 12px;
+        }}
+
+        .stock-metric .label {{
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }}
+
+        .stock-metric .value {{
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-top: 4px;
+        }}
+
+        .stock-badges {{
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+        }}
+
+        .stock-recommendation {{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-dark);
+        }}
+
+        .rec-pill {{
+            padding: 8px 20px;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }}
+
+        .rec-pill.buy {{ background: linear-gradient(135deg, #10b981, #059669); color: white; }}
+        .rec-pill.sell {{ background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }}
+        .rec-pill.hold {{ background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }}
+
+        .view-arrow {{
+            color: var(--primary-light);
+            font-weight: 600;
             display: flex;
             align-items: center;
             gap: 6px;
-        }
+        }}
 
-        .legend-dot {
-            width: 10px;
-            height: 10px;
+        /* Legend */
+        .legend {{
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-top: 32px;
+            padding: 20px;
+            background: rgba(30, 41, 59, 0.4);
+            border-radius: 12px;
+        }}
+
+        .legend-item {{
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }}
+
+        .legend-dot {{
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
-        }
+        }}
 
-        @media (max-width: 1024px) {
-            .stock-table {
-                font-size: 0.85em;
-            }
-            .stock-table th, .stock-table td {
-                padding: 12px 8px;
-            }
-        }
+        @media (max-width: 768px) {{
+            .hero h1 {{ font-size: 2rem; }}
+            .stock-grid {{ grid-template-columns: 1fr; }}
+            .stats-row {{ grid-template-columns: repeat(2, 1fr); }}
+        }}
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="hero">
+        <!-- Hero -->
+        <div class="card hero animate-in">
             <h1>Stock Investment Planner</h1>
-            <p class="subtitle">AI-Powered Multi-Agent Stock Analysis</p>
+            <p class="hero-subtitle">AI-Powered Multi-Agent Stock Analysis</p>
         </div>
 
-        <div class="stock-table-container">
-            <table class="stock-table">
-                <thead>
-                    <tr>
-                        <th>Symbol</th>
-                        <th>Price</th>
-                        <th>Trend</th>
-                        <th>10-Day Prediction</th>
-                        <th>News</th>
-                        <th>Technical</th>
-                        <th>Fundamental</th>
-                        <th>Recommendation</th>
-                        <th>Details</th>
-                    </tr>
-                </thead>
-                <tbody>
+        <!-- Stats Summary -->
+        <div class="stats-row animate-in delay-1">
+            <div class="stat-card">
+                <div class="stat-value" style="color: var(--success);">{buy_count}</div>
+                <div class="stat-label">Buy Signals</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" style="color: var(--warning);">{hold_count}</div>
+                <div class="stat-label">Hold Signals</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" style="color: var(--danger);">{sell_count}</div>
+                <div class="stat-label">Sell Signals</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" style="color: var(--primary-light);">{len(reports)}</div>
+                <div class="stat-label">Stocks Analyzed</div>
+            </div>
+        </div>
+
+        <!-- Stock Grid -->
+        <div class="stock-grid animate-in delay-2">
 """
 
-        for report in reports:
+        for i, report in enumerate(reports):
             news_badge_class = self._get_badge_class(report['news_sentiment'])
             stat_badge_class = self._get_badge_class(report['stat_trend'])
             fin_badge_class = self._get_valuation_badge_class(report['fin_outlook'])
 
+            rec_upper = report['recommendation'].upper()
+            rec_class = "buy" if "BUY" in rec_upper else "sell" if "SELL" in rec_upper else "hold"
+
+            change_class = "positive" if report['day_change'] >= 0 else "negative"
+            change_symbol = "+" if report['day_change'] >= 0 else ""
+
+            pred_class = "positive" if report['pred_change'] >= 0 else "negative"
+            pred_symbol = "+" if report['pred_change'] >= 0 else ""
+
             html += f"""
-                    <tr>
-                        <td>
-                            <div class="symbol-cell">{report['symbol']}</div>
-                            <div class="company-name">{report['company']}</div>
-                        </td>
-                        <td class="price-cell">${report['price']:.2f}</td>
-                        <td>{report['sparkline']}</td>
-                        <td class="prediction-cell">${report['prediction']:.2f}</td>
-                        <td><span class="badge {news_badge_class}">{report['news_sentiment']}</span></td>
-                        <td><span class="badge {stat_badge_class}">{report['stat_trend']}</span></td>
-                        <td><span class="badge {fin_badge_class}">{report['fin_outlook']}</span></td>
-                        <td><span class="rec-badge" style="background: {report['rec_color']};">{report['recommendation']}</span></td>
-                        <td><a href="{report['file']}" class="view-link">View →</a></td>
-                    </tr>
+            <a href="{report['file']}" class="stock-card">
+                <div class="stock-header">
+                    <div class="stock-info">
+                        <h3>{report['symbol']}</h3>
+                        <div class="company">{report['company']}</div>
+                    </div>
+                    <div class="stock-price">
+                        <div class="current">${report['price']:.2f}</div>
+                        <div class="change {change_class}">{change_symbol}{report['day_change_pct']:.2f}%</div>
+                    </div>
+                </div>
+
+                <div class="stock-chart">
+                    {report['sparkline']}
+                </div>
+
+                <div class="stock-metrics">
+                    <div class="stock-metric">
+                        <div class="label">10-Day Target</div>
+                        <div class="value">${report['prediction']:.2f}</div>
+                    </div>
+                    <div class="stock-metric">
+                        <div class="label">Expected Change</div>
+                        <div class="value" style="color: var({'--success' if report['pred_change'] >= 0 else '--danger'});">{pred_symbol}{report['pred_change']:.1f}%</div>
+                    </div>
+                </div>
+
+                <div class="stock-badges">
+                    <span class="badge {news_badge_class}">{report['news_sentiment']}</span>
+                    <span class="badge {stat_badge_class}">{report['stat_trend']}</span>
+                    <span class="badge {fin_badge_class}">{report['fin_outlook']}</span>
+                </div>
+
+                <div class="stock-recommendation">
+                    <span class="rec-pill {rec_class}">{report['recommendation']}</span>
+                    <span class="view-arrow">
+                        View Details
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </span>
+                </div>
+            </a>
 """
 
         html += """
-                </tbody>
-            </table>
-            <div class="legend">
-                <div class="legend-item"><div class="legend-dot" style="background: #10b981;"></div> Bullish / Buy</div>
-                <div class="legend-item"><div class="legend-dot" style="background: #f59e0b;"></div> Neutral / Hold</div>
-                <div class="legend-item"><div class="legend-dot" style="background: #ef4444;"></div> Bearish / Sell</div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend animate-in delay-3">
+            <div class="legend-item">
+                <div class="legend-dot" style="background: var(--success);"></div>
+                Bullish / Buy
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background: var(--warning);"></div>
+                Neutral / Hold
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background: var(--danger);"></div>
+                Bearish / Sell
             </div>
         </div>
 
+        <!-- Footer -->
         <div class="footer">
-            <p>Powered by Ollama AI Agents | For Educational Purposes Only</p>
-            <p style="margin-top: 10px; font-size: 0.9em;">Not Financial Advice</p>
+            <p>Powered by Ollama AI Agents</p>
+            <p style="margin-top: 8px; opacity: 0.7;">For Educational Purposes Only - Not Financial Advice</p>
         </div>
     </div>
 </body>

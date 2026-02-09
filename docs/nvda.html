@@ -4,371 +4,550 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NVDA Stock Analysis - NVIDIA Corporation</title>
+    <title>NVDA - NVIDIA Corporation | Stock Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
     <style>
+        
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --success: #10b981;
+            --success-light: #34d399;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-dark: #0f172a;
+            --bg-card-dark: #1e293b;
+            --bg-card-dark-hover: #273449;
+            --border-dark: #334155;
+            --bg-light: #f1f5f9;
+            --bg-card-light: #ffffff;
+            --text-dark: #1e293b;
+            --text-light: #f1f5f9;
+            --text-muted: #64748b;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            --shadow-lg: 0 35px 60px -15px rgba(0, 0, 0, 0.3);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            background-attachment: fixed;
             min-height: 100vh;
-            padding: 20px;
-            color: #1f2937;
+            color: var(--text-light);
+            line-height: 1.6;
         }
-        
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
+            padding: 24px;
         }
-        
-        .header {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            margin-bottom: 30px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+
+        /* Glass card effect */
+        .card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 24px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        
-        .stock-title {
-            font-size: 2.5em;
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+
+        /* Navigation */
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            margin-bottom: 24px;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
             font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
         }
-        
-        .stock-symbol {
-            font-size: 1.2em;
-            color: #6b7280;
-            margin-bottom: 20px;
-        }
-        
-        .metrics {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
-        }
-        
-        .metric {
-            background: #f9fafb;
-            padding: 20px;
+
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
             border-radius: 12px;
-            border-left: 4px solid #667eea;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
         }
-        
+
+        .nav-link:hover {
+            color: var(--text-light);
+            background: rgba(99, 102, 241, 0.2);
+            border-color: var(--primary);
+        }
+
+        /* Typography */
+        h1, h2, h3 {
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        h1 { font-size: 2.5rem; margin-bottom: 8px; }
+        h2 { font-size: 1.5rem; margin-bottom: 16px; color: var(--text-light); }
+        h3 { font-size: 1.125rem; color: var(--text-muted); }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-success { background: rgba(16, 185, 129, 0.2); color: var(--success-light); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-warning { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .badge-danger { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .badge-primary { background: rgba(99, 102, 241, 0.2); color: var(--primary-light); border: 1px solid rgba(99, 102, 241, 0.3); }
+
+        .badge-bullish, .badge-undervalued { background: rgba(16, 185, 129, 0.2); color: var(--success-light); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-bearish, .badge-overvalued { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .badge-neutral, .badge-fair { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+
+        /* Recommendation badge - large */
+        .rec-badge-large {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 48px;
+            border-radius: 16px;
+            font-size: 1.75rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            box-shadow: 0 10px 40px -10px currentColor;
+        }
+
+        .rec-buy { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+        .rec-sell { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+        .rec-hold { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+
+        /* Metrics grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+        }
+
+        .metric-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-dark);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .metric-card:hover {
+            background: rgba(15, 23, 42, 0.8);
+            border-color: var(--primary);
+        }
+
         .metric-label {
-            font-size: 0.9em;
-            color: #6b7280;
+            font-size: 0.85rem;
+            color: var(--text-muted);
             margin-bottom: 8px;
+            font-weight: 500;
         }
-        
+
         .metric-value {
-            font-size: 1.8em;
+            font-size: 1.75rem;
             font-weight: 700;
-            color: #1f2937;
+            color: var(--text-light);
         }
-        
-        .recommendation {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            margin-bottom: 30px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            text-align: center;
+
+        .metric-value.positive { color: var(--success); }
+        .metric-value.negative { color: var(--danger); }
+        .metric-value.primary { color: var(--primary-light); }
+
+        .metric-sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 4px;
         }
-        
-        .rec-badge {
-            display: inline-block;
-            background: #f59e0b;
-            color: white;
-            padding: 15px 40px;
-            border-radius: 50px;
-            font-size: 2em;
-            font-weight: 700;
-            margin: 20px 0;
+
+        /* Collapsible sections */
+        .collapsible {
+            cursor: pointer;
         }
-        
-        .confidence {
-            font-size: 1.2em;
-            color: #6b7280;
-            margin-top: 10px;
-        }
-        
-        .agent-section {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            margin-bottom: 30px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-        
-        .agent-title {
-            font-size: 1.8em;
-            font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 20px;
+
+        .collapsible-header {
             display: flex;
             align-items: center;
-            gap: 15px;
+            justify-content: space-between;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-dark);
         }
-        
-        .agent-icon {
-            font-size: 1.2em;
+
+        .collapsible-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.25rem;
+            font-weight: 600;
         }
-        
-        .agent-content {
-            white-space: pre-wrap;
+
+        .collapsible-icon {
+            font-size: 1.5rem;
+        }
+
+        .collapsible-toggle {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 8px;
+            color: var(--primary-light);
+            transition: all 0.2s ease;
+        }
+
+        .collapsible:hover .collapsible-toggle {
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .collapsible.open .collapsible-content {
+            max-height: 5000px;
+            transition: max-height 0.5s ease-in;
+        }
+
+        .collapsible.open .collapsible-toggle {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-body {
+            padding: 24px 0;
+            color: var(--text-muted);
             line-height: 1.8;
-            color: #374151;
-            font-size: 1.05em;
-        }
-        
-        .timestamp {
-            text-align: center;
-            color: white;
-            margin-top: 30px;
-            font-size: 0.9em;
-            opacity: 0.8;
-        }
-        
-        .disclaimer {
-            background: #fef3c7;
-            border-left: 4px solid #f59e0b;
-            padding: 20px;
-            border-radius: 12px;
-            margin-top: 30px;
-            color: #92400e;
         }
 
-        .executive-summary {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            margin-bottom: 30px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        .collapsible-body h4 {
+            color: var(--primary-light);
+            margin: 24px 0 12px 0;
+            font-size: 1rem;
+            font-weight: 600;
         }
 
-        .executive-summary h2 {
-            font-size: 1.8em;
-            color: #1f2937;
-            margin-bottom: 25px;
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 10px;
+        .collapsible-body p {
+            margin: 8px 0;
         }
 
+        .collapsible-body ul, .collapsible-body ol {
+            margin: 12px 0 12px 24px;
+        }
+
+        .collapsible-body li {
+            margin: 6px 0;
+        }
+
+        /* Summary cards */
         .summary-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
-            margin-bottom: 25px;
         }
 
-        .summary-item {
-            background: #f9fafb;
-            padding: 20px;
-            border-radius: 12px;
-            border-left: 4px solid #667eea;
+        .summary-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-dark);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.2s ease;
+        }
+
+        .summary-card:hover {
+            border-color: var(--primary);
+            background: rgba(15, 23, 42, 0.8);
         }
 
         .summary-header {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
         }
 
         .summary-icon {
-            font-size: 1.3em;
+            font-size: 1.5rem;
         }
 
         .summary-title {
+            flex: 1;
             font-weight: 600;
-            color: #1f2937;
-            flex-grow: 1;
-        }
-
-        .summary-badge {
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 600;
+            color: var(--text-light);
         }
 
         .summary-text {
-            color: #4b5563;
+            color: var(--text-muted);
+            font-size: 0.9rem;
             line-height: 1.6;
-            font-size: 0.95em;
         }
 
-        .summary-conclusion {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-            line-height: 1.7;
+        /* Conclusion box */
+        .conclusion-box {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 24px;
         }
 
-        .summary-conclusion strong {
+        .conclusion-box strong {
+            color: var(--primary-light);
+            font-size: 1rem;
+        }
+
+        /* Disclaimer */
+        .disclaimer {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 16px;
+            padding: 20px 24px;
+            color: #fbbf24;
+            font-size: 0.9rem;
+        }
+
+        .disclaimer strong {
             display: block;
             margin-bottom: 8px;
-            font-size: 1.1em;
         }
 
-        .agent-content h4 {
-            color: #667eea;
-            margin: 20px 0 10px 0;
-            font-size: 1.1em;
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 32px 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
         }
 
-        .agent-content p {
-            margin: 8px 0;
-            line-height: 1.7;
+        /* Chart container */
+        .chart-container {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 16px;
+            padding: 16px;
+            margin-top: 24px;
         }
 
-        .agent-content ol, .agent-content ul {
-            margin: 10px 0 10px 25px;
-            line-height: 1.8;
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .agent-content li {
-            margin: 5px 0;
+        .animate-in {
+            animation: fadeIn 0.5s ease-out forwards;
         }
 
-        .forecast-chart {
-            width: 100%;
-            min-height: 400px;
-            margin-top: 20px;
+        .delay-1 { animation-delay: 0.1s; opacity: 0; }
+        .delay-2 { animation-delay: 0.2s; opacity: 0; }
+        .delay-3 { animation-delay: 0.3s; opacity: 0; }
+        .delay-4 { animation-delay: 0.4s; opacity: 0; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container { padding: 16px; }
+            h1 { font-size: 1.75rem; }
+            .card { padding: 24px; border-radius: 20px; }
+            .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+            .metric-value { font-size: 1.5rem; }
+            .rec-badge-large { padding: 12px 32px; font-size: 1.25rem; }
         }
 
-        .forecast-chart .plotly-graph-div {
-            width: 100% !important;
+        /* Plotly chart styling */
+        .js-plotly-plot .plotly .modebar {
+            background: transparent !important;
+        }
+        .js-plotly-plot .plotly .modebar-btn path {
+            fill: var(--text-muted) !important;
         }
         
-        @media (max-width: 768px) {
-            .stock-title {
-                font-size: 2em;
-            }
-            .metrics {
-                grid-template-columns: 1fr;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <div class="stock-title">NVIDIA Corporation</div>
-            <div class="stock-symbol">NVDA</div>
-            
-            <div class="metrics">
-                <div class="metric">
+        <!-- Navigation -->
+        <nav class="nav animate-in">
+            <a href="index.html" class="nav-brand">Stock Planner</a>
+            <a href="index.html" class="nav-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Back to Dashboard
+            </a>
+        </nav>
+
+        <!-- Header Card -->
+        <div class="card animate-in delay-1">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 24px;">
+                <div>
+                    <h1>NVIDIA Corporation</h1>
+                    <h3>NVDA</h3>
+                </div>
+                <div class="rec-badge-large rec-hold">HOLD</div>
+            </div>
+
+            <div class="metrics-grid" style="margin-top: 32px;">
+                <div class="metric-card">
                     <div class="metric-label">Current Price</div>
                     <div class="metric-value">$185.41</div>
                 </div>
-                <div class="metric">
+                <div class="metric-card">
                     <div class="metric-label">Day Change</div>
-                    <div class="metric-value" style="color: #10b981;">
-                        ▲ $13.60 (7.92%)
-                    </div>
+                    <div class="metric-value positive">+$13.60</div>
+                    <div class="metric-sub">+7.92%</div>
                 </div>
-                <div class="metric">
+                <div class="metric-card">
                     <div class="metric-label">Market Cap</div>
                     <div class="metric-value">$4.51T</div>
                 </div>
-                <div class="metric">
-                    <div class="metric-label">Analysis Date</div>
-                    <div class="metric-value" style="font-size: 1.2em;">February 08, 2026 at 09:34 PM</div>
+                <div class="metric-card">
+                    <div class="metric-label">Confidence</div>
+                    <div class="metric-value primary">Medium</div>
                 </div>
             </div>
-        </div>
-        
-        <!-- Recommendation -->
-        <div class="recommendation">
-            <h2>Investment Recommendation</h2>
-            <div class="rec-badge">HOLD</div>
-            <div class="confidence">Confidence: Medium</div>
         </div>
 
         <!-- Executive Summary -->
-        
-        <div class="executive-summary">
+        <div class="card animate-in delay-2">
             <h2>Executive Summary</h2>
             <div class="summary-grid">
-                <div class="summary-item news">
+                <div class="summary-card">
                     <div class="summary-header">
                         <span class="summary-icon">📰</span>
                         <span class="summary-title">News Sentiment</span>
-                        <span class="summary-badge" style="background: #10b981;">Bullish</span>
+                        <span class="badge badge-bullish">Bullish</span>
                     </div>
                     <p class="summary-text">The current news landscape for NVDA is dominated by extremely positive sentiment. Analysts are upgrading forecasts, citing explosive demand for AI technology, and company leadership is expressing stro</p>
                 </div>
-                <div class="summary-item stats">
+                <div class="summary-card">
                     <div class="summary-header">
                         <span class="summary-icon">📊</span>
                         <span class="summary-title">Technical Analysis</span>
-                        <span class="summary-badge" style="background: #ef4444;">Bearish</span>
+                        <span class="badge badge-bearish">Bearish</span>
                     </div>
                     <p class="summary-text">Strong Positive Trend: The data clearly shows a statistically significant upward drift over the last year (last 250 days). 2.  High Momentum: NVDA is currently trading above key short-term moving aver</p>
                 </div>
-                <div class="summary-item financial">
+                <div class="summary-card">
                     <div class="summary-header">
                         <span class="summary-icon">💰</span>
                         <span class="summary-title">Fundamental Analysis</span>
-                        <span class="summary-badge" style="background: #f59e0b;">Fair</span>
+                        <span class="badge badge-fair">Fair</span>
                     </div>
-                    <p class="summary-text">Financial metrics and valuation have been assessed.</p>
+                    <p class="summary-text">Financial metrics and valuation assessed.</p>
                 </div>
             </div>
-            <div class="summary-conclusion">
-                <strong>Conclusion:</strong> NVDA presents a classic high-risk, high-reward opportunity due to its leadership in AI and strong technical momentum. While sentiment and short-term indicators are bullish, significant valuation concerns and market risks exist. A medium-term Hold recommendation is appropriate for investors with high conviction and risk tolerance, but with clear stop-losses and profit-taking strategies in place. Long-term investors should focus on fundamental execution and valuation discipline.
+            <div class="conclusion-box">
+                <strong>Conclusion</strong>
+                <p style="margin-top: 8px; color: var(--text-muted);">NVDA presents a classic high-risk, high-reward opportunity due to its leadership in AI and strong technical momentum. While sentiment and short-term indicators are bullish, significant valuation concerns and market risks exist. A medium-term Hold recommendation is appropriate for investors with high</p>
             </div>
         </div>
-        
 
         <!-- Price Forecast -->
-        <div class="agent-section">
-            <div class="agent-title">
-                <span class="agent-icon">🔮</span>
-                Price Forecast (10-Day)
-            </div>
-            <div class="forecast-metrics" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
-                <div class="metric" style="border-left-color: #10b981;">
-                    <div class="metric-label">Next Day Prediction</div>
-                    <div class="metric-value" style="color: #10b981;">$183.65</div>
-                    <div style="font-size: 0.9em; color: #6b7280;">-0.95%</div>
+        <div class="card animate-in delay-3">
+            <h2>Price Forecast (10-Day)</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Next Day</div>
+                    <div class="metric-value primary">$183.65</div>
+                    <div class="metric-sub">-0.95%</div>
                 </div>
-                <div class="metric" style="border-left-color: #667eea;">
-                    <div class="metric-label">10-Day Prediction</div>
-                    <div class="metric-value" style="color: #667eea;">$183.60</div>
-                    <div style="font-size: 0.9em; color: #6b7280;">-0.98%</div>
+                <div class="metric-card">
+                    <div class="metric-label">10-Day Target</div>
+                    <div class="metric-value primary">$183.60</div>
+                    <div class="metric-sub">-0.98%</div>
                 </div>
-                <div class="metric">
+                <div class="metric-card">
                     <div class="metric-label">Forecast Confidence</div>
-                    <div class="metric-value" style="font-size: 1.4em;">Medium</div>
-                    <div style="font-size: 0.9em; color: #6b7280;">Models: ARIMA(5,1,0), Holt-Winters (Additive Trend), Prophet</div>
+                    <div class="metric-value">Medium</div>
+                    <div class="metric-sub">Models: ARIMA(5,1,0), Holt-Winters (Additive Trend), Prophet</div>
                 </div>
             </div>
-            <div class="forecast-chart">
+            <div class="chart-container">
                 <div>                        <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
         <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.3.1.min.js" integrity="sha256-4rD3fugVb/nVJYUv5Ky3v+fYXoouHaBSP20WIJuEiWg=" crossorigin="anonymous"></script>                <div id="c2d1b284-1ff4-4b26-acc2-f46678bd1654" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("c2d1b284-1ff4-4b26-acc2-f46678bd1654")) {                    Plotly.newPlot(                        "c2d1b284-1ff4-4b26-acc2-f46678bd1654",                        [{"line":{"color":"#667eea","width":2},"mode":"lines","name":"Historical","x":["2025-02-10T00:00:00","2025-02-11T00:00:00","2025-02-12T00:00:00","2025-02-13T00:00:00","2025-02-14T00:00:00","2025-02-18T00:00:00","2025-02-19T00:00:00","2025-02-20T00:00:00","2025-02-21T00:00:00","2025-02-24T00:00:00","2025-02-25T00:00:00","2025-02-26T00:00:00","2025-02-27T00:00:00","2025-02-28T00:00:00","2025-03-03T00:00:00","2025-03-04T00:00:00","2025-03-05T00:00:00","2025-03-06T00:00:00","2025-03-07T00:00:00","2025-03-10T00:00:00","2025-03-11T00:00:00","2025-03-12T00:00:00","2025-03-13T00:00:00","2025-03-14T00:00:00","2025-03-17T00:00:00","2025-03-18T00:00:00","2025-03-19T00:00:00","2025-03-20T00:00:00","2025-03-21T00:00:00","2025-03-24T00:00:00","2025-03-25T00:00:00","2025-03-26T00:00:00","2025-03-27T00:00:00","2025-03-28T00:00:00","2025-03-31T00:00:00","2025-04-01T00:00:00","2025-04-02T00:00:00","2025-04-03T00:00:00","2025-04-04T00:00:00","2025-04-07T00:00:00","2025-04-08T00:00:00","2025-04-09T00:00:00","2025-04-10T00:00:00","2025-04-11T00:00:00","2025-04-14T00:00:00","2025-04-15T00:00:00","2025-04-16T00:00:00","2025-04-17T00:00:00","2025-04-21T00:00:00","2025-04-22T00:00:00","2025-04-23T00:00:00","2025-04-24T00:00:00","2025-04-25T00:00:00","2025-04-28T00:00:00","2025-04-29T00:00:00","2025-04-30T00:00:00","2025-05-01T00:00:00","2025-05-02T00:00:00","2025-05-05T00:00:00","2025-05-06T00:00:00","2025-05-07T00:00:00","2025-05-08T00:00:00","2025-05-09T00:00:00","2025-05-12T00:00:00","2025-05-13T00:00:00","2025-05-14T00:00:00","2025-05-15T00:00:00","2025-05-16T00:00:00","2025-05-19T00:00:00","2025-05-20T00:00:00","2025-05-21T00:00:00","2025-05-22T00:00:00","2025-05-23T00:00:00","2025-05-27T00:00:00","2025-05-28T00:00:00","2025-05-29T00:00:00","2025-05-30T00:00:00","2025-06-02T00:00:00","2025-06-03T00:00:00","2025-06-04T00:00:00","2025-06-05T00:00:00","2025-06-06T00:00:00","2025-06-09T00:00:00","2025-06-10T00:00:00","2025-06-11T00:00:00","2025-06-12T00:00:00","2025-06-13T00:00:00","2025-06-16T00:00:00","2025-06-17T00:00:00","2025-06-18T00:00:00","2025-06-20T00:00:00","2025-06-23T00:00:00","2025-06-24T00:00:00","2025-06-25T00:00:00","2025-06-26T00:00:00","2025-06-27T00:00:00","2025-06-30T00:00:00","2025-07-01T00:00:00","2025-07-02T00:00:00","2025-07-03T00:00:00","2025-07-07T00:00:00","2025-07-08T00:00:00","2025-07-09T00:00:00","2025-07-10T00:00:00","2025-07-11T00:00:00","2025-07-14T00:00:00","2025-07-15T00:00:00","2025-07-16T00:00:00","2025-07-17T00:00:00","2025-07-18T00:00:00","2025-07-21T00:00:00","2025-07-22T00:00:00","2025-07-23T00:00:00","2025-07-24T00:00:00","2025-07-25T00:00:00","2025-07-28T00:00:00","2025-07-29T00:00:00","2025-07-30T00:00:00","2025-07-31T00:00:00","2025-08-01T00:00:00","2025-08-04T00:00:00","2025-08-05T00:00:00","2025-08-06T00:00:00","2025-08-07T00:00:00","2025-08-08T00:00:00","2025-08-11T00:00:00","2025-08-12T00:00:00","2025-08-13T00:00:00","2025-08-14T00:00:00","2025-08-15T00:00:00","2025-08-18T00:00:00","2025-08-19T00:00:00","2025-08-20T00:00:00","2025-08-21T00:00:00","2025-08-22T00:00:00","2025-08-25T00:00:00","2025-08-26T00:00:00","2025-08-27T00:00:00","2025-08-28T00:00:00","2025-08-29T00:00:00","2025-09-02T00:00:00","2025-09-03T00:00:00","2025-09-04T00:00:00","2025-09-05T00:00:00","2025-09-08T00:00:00","2025-09-09T00:00:00","2025-09-10T00:00:00","2025-09-11T00:00:00","2025-09-12T00:00:00","2025-09-15T00:00:00","2025-09-16T00:00:00","2025-09-17T00:00:00","2025-09-18T00:00:00","2025-09-19T00:00:00","2025-09-22T00:00:00","2025-09-23T00:00:00","2025-09-24T00:00:00","2025-09-25T00:00:00","2025-09-26T00:00:00","2025-09-29T00:00:00","2025-09-30T00:00:00","2025-10-01T00:00:00","2025-10-02T00:00:00","2025-10-03T00:00:00","2025-10-06T00:00:00","2025-10-07T00:00:00","2025-10-08T00:00:00","2025-10-09T00:00:00","2025-10-10T00:00:00","2025-10-13T00:00:00","2025-10-14T00:00:00","2025-10-15T00:00:00","2025-10-16T00:00:00","2025-10-17T00:00:00","2025-10-20T00:00:00","2025-10-21T00:00:00","2025-10-22T00:00:00","2025-10-23T00:00:00","2025-10-24T00:00:00","2025-10-27T00:00:00","2025-10-28T00:00:00","2025-10-29T00:00:00","2025-10-30T00:00:00","2025-10-31T00:00:00","2025-11-03T00:00:00","2025-11-04T00:00:00","2025-11-05T00:00:00","2025-11-06T00:00:00","2025-11-07T00:00:00","2025-11-10T00:00:00","2025-11-11T00:00:00","2025-11-12T00:00:00","2025-11-13T00:00:00","2025-11-14T00:00:00","2025-11-17T00:00:00","2025-11-18T00:00:00","2025-11-19T00:00:00","2025-11-20T00:00:00","2025-11-21T00:00:00","2025-11-24T00:00:00","2025-11-25T00:00:00","2025-11-26T00:00:00","2025-11-28T00:00:00","2025-12-01T00:00:00","2025-12-02T00:00:00","2025-12-03T00:00:00","2025-12-04T00:00:00","2025-12-05T00:00:00","2025-12-08T00:00:00","2025-12-09T00:00:00","2025-12-10T00:00:00","2025-12-11T00:00:00","2025-12-12T00:00:00","2025-12-15T00:00:00","2025-12-16T00:00:00","2025-12-17T00:00:00","2025-12-18T00:00:00","2025-12-19T00:00:00","2025-12-22T00:00:00","2025-12-23T00:00:00","2025-12-24T00:00:00","2025-12-26T00:00:00","2025-12-29T00:00:00","2025-12-30T00:00:00","2025-12-31T00:00:00","2026-01-02T00:00:00","2026-01-05T00:00:00","2026-01-06T00:00:00","2026-01-07T00:00:00","2026-01-08T00:00:00","2026-01-09T00:00:00","2026-01-12T00:00:00","2026-01-13T00:00:00","2026-01-14T00:00:00","2026-01-15T00:00:00","2026-01-16T00:00:00","2026-01-20T00:00:00","2026-01-21T00:00:00","2026-01-22T00:00:00","2026-01-23T00:00:00","2026-01-26T00:00:00","2026-01-27T00:00:00","2026-01-28T00:00:00","2026-01-29T00:00:00","2026-01-30T00:00:00","2026-02-02T00:00:00","2026-02-03T00:00:00","2026-02-04T00:00:00","2026-02-05T00:00:00","2026-02-06T00:00:00"],"y":[133.53347778320312,132.76370239257812,131.10414123535156,135.2530059814453,138.81204223632812,139.3618927001953,139.19192504882812,140.07168579101562,134.3932342529297,130.244384765625,126.59537506103516,131.24411010742188,120.11714935302734,124.8858413696289,114.02880859375,115.95828247070312,117.2679214477539,110.53976440429688,112.65918731689453,106.95074462890625,108.73026275634766,115.71900177001953,115.55902862548828,121.64791870117188,119.50830841064453,115.40904998779297,117.49867248535156,118.50848388671875,117.67863464355469,121.38796997070312,120.66809844970703,113.7393569946289,111.40978240966797,109.65010070800781,108.3603286743164,110.1300048828125,110.39995574951172,101.78152465820312,94.29288482666016,97.62227630615234,96.28252410888672,114.30924987792969,107.55047607421875,110.90986633300781,110.68990325927734,112.17963409423828,104.47103881835938,101.4715805053711,96.89241790771484,98.87205505371094,102.69136047363281,106.41067504882812,110.98986053466797,108.71026611328125,109.00021362304688,108.90023040771484,111.5897445678711,114.4792251586914,113.79934692382812,113.51940155029297,117.03875732421875,117.34870910644531,116.62882995605469,122.9776840209961,129.9064178466797,135.3154296875,134.80552673339844,135.37542724609375,135.54539489746094,134.35560607910156,131.7760772705078,132.80589294433594,131.26617431640625,135.47540283203125,134.78553771972656,139.1647491455078,135.10548400878906,137.35507202148438,141.19436645507812,141.8942413330078,139.964599609375,141.69427490234375,142.6041259765625,143.9338836669922,142.81399536132812,144.98374938964844,141.95408630371094,144.6737823486328,144.1038360595703,145.46368408203125,143.83387756347656,144.15383911132812,147.88340759277344,154.29270935058594,155.00262451171875,157.73231506347656,157.97230529785156,153.2828369140625,157.2323760986328,159.3221435546875,158.22227478027344,159.98207092285156,162.86175537109375,164.0816192626953,164.90151977539062,164.05162048339844,170.6808624267578,171.35079956054688,172.98062133789062,172.39068603515625,171.36080932617188,167.01129150390625,170.7608642578125,173.7205352783203,173.48056030273438,176.73019409179688,175.49032592773438,179.2499237060547,177.85006713867188,173.70053100585938,179.97982788085938,178.24002075195312,179.39988708496094,180.749755859375,182.6795196533203,182.0395965576172,183.1394805908203,181.5696563720703,181.99960327148438,180.42977905273438,181.98959350585938,175.6203155517578,175.38034057617188,174.96038818359375,177.97006225585938,179.78985595703125,181.7496337890625,181.57965087890625,180.14981079101562,174.1604766845703,170.7608642578125,170.60089111328125,171.64077758789062,167.0012969970703,168.2911376953125,170.74085998535156,177.3101348876953,177.16014099121094,177.8101043701172,177.74009704589844,174.87026977539062,170.280517578125,176.23019409179688,176.66015625,183.5997772216797,178.42005920410156,176.96014404296875,177.68011474609375,178.18008422851562,181.8398895263672,186.56961059570312,187.22958374023438,188.87948608398438,187.6095428466797,185.5296630859375,185.02969360351562,189.09947204589844,192.5592803955078,183.14981079101562,188.3095245361328,180.0199737548828,179.8199920654297,181.7998809814453,183.20980834960938,182.6298370361328,181.14991760253906,180.26995849609375,182.1498565673828,186.24961853027344,191.47933959960938,201.01881408691406,207.02847290039062,202.8787078857422,202.47872924804688,206.8684844970703,198.67893981933594,195.1991424560547,188.0695343017578,188.1395263671875,199.03892517089844,193.1492462158203,193.78921508789062,186.84959411621094,190.15940856933594,186.58961486816406,181.3498992919922,186.50961303710938,180.62994384765625,178.8700408935547,182.5398406982422,177.8101043701172,180.2499542236328,176.99014282226562,179.9099884033203,181.4499053955078,179.5800018310547,183.3800048828125,182.41000366210938,185.5500030517578,184.97000122070312,183.77999877929688,180.92999267578125,175.02000427246094,176.2899932861328,177.72000122070312,170.94000244140625,174.13999938964844,180.99000549316406,183.69000244140625,189.2100067138672,188.61000061035156,190.52999877929688,188.22000122070312,187.5399932861328,186.5,188.85000610351562,188.1199951171875,187.24000549316406,189.11000061035156,185.0399932861328,184.86000061035156,184.94000244140625,185.80999755859375,183.13999938964844,187.0500030517578,186.22999572753906,178.07000732421875,183.32000732421875,184.83999633789062,187.6699981689453,186.47000122070312,188.52000427246094,191.52000427246094,192.50999450683594,191.1300048828125,185.61000061035156,180.33999633789062,174.19000244140625,171.8800048828125,185.41000366210938],"type":"scatter"},{"line":{"color":"#10b981","dash":"dash","width":2},"marker":{"size":6},"mode":"lines+markers","name":"Forecast","x":["2026-02-07T00:00:00","2026-02-08T00:00:00","2026-02-09T00:00:00","2026-02-10T00:00:00","2026-02-11T00:00:00","2026-02-12T00:00:00","2026-02-13T00:00:00","2026-02-14T00:00:00","2026-02-15T00:00:00","2026-02-16T00:00:00"],"y":[183.6510666589529,184.73969713834452,185.01184743188705,184.11006264128463,184.26734470562886,183.79216125016393,183.8449458884681,183.17168209797748,183.06300574261877,183.5976065810491],"type":"scatter"},{"fill":"toself","fillcolor":"rgba(16, 185, 129, 0.2)","line":{"color":"rgba(255,255,255,0)"},"name":"95% Confidence Interval","showlegend":true,"x":["2026-02-07T00:00:00","2026-02-08T00:00:00","2026-02-09T00:00:00","2026-02-10T00:00:00","2026-02-11T00:00:00","2026-02-12T00:00:00","2026-02-13T00:00:00","2026-02-14T00:00:00","2026-02-15T00:00:00","2026-02-16T00:00:00","2026-02-16T00:00:00","2026-02-15T00:00:00","2026-02-14T00:00:00","2026-02-13T00:00:00","2026-02-12T00:00:00","2026-02-11T00:00:00","2026-02-10T00:00:00","2026-02-09T00:00:00","2026-02-08T00:00:00","2026-02-07T00:00:00"],"y":[190.77553968649846,192.77024884714865,194.16787382922703,194.02577778430708,194.67902338058184,194.7748365181157,195.04315330521055,194.84056757176683,195.12337903568272,196.14337377823782,171.09632210913733,171.13606161585898,171.45694171048478,172.64528674908183,172.94475759874643,173.873184610753,174.21820242952992,175.7668177208184,176.75913232828796,176.5126081598019],"type":"scatter"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"shapes":[{"line":{"color":"gray","dash":"dash","width":1},"type":"line","x0":"2026-02-06T00:00:00","x1":"2026-02-06T00:00:00","y0":0,"y1":1,"yref":"paper"}],"legend":{"yanchor":"top","y":0.99,"xanchor":"left","x":0.01},"margin":{"l":60,"r":30,"t":60,"b":60},"title":{"text":"NVDA Price Forecast (1 Year history)"},"xaxis":{"title":{"text":"Date"}},"yaxis":{"title":{"text":"Price ($)"}},"hovermode":"x unified"},                        {"responsive": true}                    )                };            </script>        </div>
             </div>
         </div>
 
-        <!-- Investment Synthesis -->
-        <div class="agent-section">
-            <div class="agent-title">
-                <span class="agent-icon">🎯</span>
-                Investment Synthesis
-            </div>
-            <div class="agent-content"><p>Okay, here is the synthesized investment recommendation for NVDA, incorporating the analyses from the News Analyst, Statistical Expert, and Financial Expert.</p>
+        <!-- Detailed Analysis Sections (Collapsible) -->
+        <div class="card animate-in delay-4">
+            <h2>Detailed Analysis</h2>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">🎯</span>
+                        Investment Synthesis
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body"><p>Okay, here is the synthesized investment recommendation for NVDA, incorporating the analyses from the News Analyst, Statistical Expert, and Financial Expert.</p>
 
 <p><strong>RECOMMENDATION:</strong> <strong>HOLD</strong></p>
 
@@ -410,15 +589,23 @@
 
 <p><strong>DISCLAIMER:</strong></p>
 <p>This analysis is for educational purposes only and should not be considered financial advice. Always conduct your own research and consult with a qualified financial advisor before making investment decisions.</p></div>
-        </div>
-
-        <!-- News Analysis -->
-        <div class="agent-section">
-            <div class="agent-title">
-                <span class="agent-icon">🗞️</span>
-                News Analysis
+                </div>
             </div>
-            <div class="agent-content"><p>Okay, here is the analysis of the recent news for NVDA:</p>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">📰</span>
+                        News Analysis
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body"><p>Okay, here is the analysis of the recent news for NVDA:</p>
 
 <p>SENTIMENT: <strong>Bullish</strong></p>
 
@@ -447,15 +634,23 @@
 
 <h4>SUMMARY:</h4>
 <p>The current news landscape for NVDA is dominated by extremely positive sentiment. Analysts are upgrading forecasts, citing explosive demand for AI technology, and company leadership is expressing strong confidence in the company's future. The stock price has been trending upwards, reflecting this strong positive outlook from multiple sources.</p></div>
-        </div>
-
-        <!-- Statistical Analysis -->
-        <div class="agent-section">
-            <div class="agent-title">
-                <span class="agent-icon">📈</span>
-                Statistical Analysis
+                </div>
             </div>
-            <div class="agent-content"><p>Okay, here is a statistical analysis of the provided NVDA data, focusing on data-driven insights and acknowledging uncertainty.</p>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">📈</span>
+                        Statistical Analysis
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body"><p>Okay, here is a statistical analysis of the provided NVDA data, focusing on data-driven insights and acknowledging uncertainty.</p>
 
 <p><strong>TREND ANALYSIS:</strong></p>
 <p>The data indicates a <strong>clear upward trend</strong> in NVDA's price over the analyzed period (last 250 days). The calculated slope of 0.3645 confirms this positive drift. The current price ($185.41) is significantly above both the 7-day ($183.01) and 30-day ($185.78) moving averages, reinforcing this short-term bullish momentum. While the 52-week range shows considerable volatility ($86.62 to $212.19), the overall trajectory since the data point provided is upward.</p>
@@ -491,15 +686,23 @@
 <li><strong>Overextension Risk:</strong> Being near the 52-week high increases the risk of a pullback or correction if buying pressure subsides or profit-taking intensifies.</li>
 <li><strong>Event Risk:</strong> Future events like earnings reports, Fed announcements, or geopolitical shifts could trigger unpredictable volatility and trend reversals.</li>
 </ol></div>
-        </div>
-
-        <!-- Financial Analysis -->
-        <div class="agent-section">
-            <div class="agent-title">
-                <span class="agent-icon">💼</span>
-                Financial Analysis
+                </div>
             </div>
-            <div class="agent-content"><p>Okay, let's break down NVIDIA Corporation (NVDA) based on the provided data and general knowledge.</p>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">💼</span>
+                        Financial Analysis
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body"><p>Okay, let's break down NVIDIA Corporation (NVDA) based on the provided data and general knowledge.</p>
 
 <p><strong>COMPANY OVERVIEW</strong></p>
 
@@ -567,19 +770,21 @@
 </ul>
 
 <p><strong>Conclusion:</strong> NVDA presents a classic high-growth, high-risk investment case. The company is the undisputed leader in a rapidly growing market (AI), justifying its high market cap and P/E ratio among sophisticated investors seeking exposure to the AI boom. However, the valuation is stretched, and execution risks remain. It is suitable for investors with a high risk tolerance and strong conviction in the company's ability to maintain leadership and execute its strategy, who can afford to potentially see valuations contract during periods of slowed growth or increased competition. Due diligence on the company's specific financials (profitability, debt, margins) is crucial before making an investment decision.</p></div>
+                </div>
+            </div>
         </div>
-        
+
         <!-- Disclaimer -->
-        <div class="disclaimer">
-            <strong>⚠️ Important Disclaimer:</strong><br>
-            This analysis is generated by AI agents for educational purposes only. It should NOT be considered 
-            financial advice. Stock markets are inherently risky and unpredictable. Always conduct your own 
-            thorough research and consult with a qualified financial advisor before making any investment decisions. 
-            Past performance does not guarantee future results.
+        <div class="disclaimer animate-in delay-4">
+            <strong>Important Disclaimer</strong>
+            This analysis is generated by AI agents for educational purposes only. It should NOT be considered
+            financial advice. Always conduct your own research and consult with a qualified financial advisor
+            before making any investment decisions.
         </div>
-        
-        <div class="timestamp">
-            Generated by Stock Investment Planner on February 08, 2026 at 09:34 PM
+
+        <!-- Footer -->
+        <div class="footer">
+            Generated on February 08, 2026 at 09:34 PM
         </div>
     </div>
 </body>

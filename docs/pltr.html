@@ -4,371 +4,550 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PLTR Stock Analysis - Palantir Technologies Inc.</title>
+    <title>PLTR - Palantir Technologies Inc. | Stock Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
     <style>
+        
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --success: #10b981;
+            --success-light: #34d399;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-dark: #0f172a;
+            --bg-card-dark: #1e293b;
+            --bg-card-dark-hover: #273449;
+            --border-dark: #334155;
+            --bg-light: #f1f5f9;
+            --bg-card-light: #ffffff;
+            --text-dark: #1e293b;
+            --text-light: #f1f5f9;
+            --text-muted: #64748b;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            --shadow-lg: 0 35px 60px -15px rgba(0, 0, 0, 0.3);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            background-attachment: fixed;
             min-height: 100vh;
-            padding: 20px;
-            color: #1f2937;
+            color: var(--text-light);
+            line-height: 1.6;
         }
-        
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
+            padding: 24px;
         }
-        
-        .header {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            margin-bottom: 30px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+
+        /* Glass card effect */
+        .card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 24px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        
-        .stock-title {
-            font-size: 2.5em;
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+
+        /* Navigation */
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            margin-bottom: 24px;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
             font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
         }
-        
-        .stock-symbol {
-            font-size: 1.2em;
-            color: #6b7280;
-            margin-bottom: 20px;
-        }
-        
-        .metrics {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
-        }
-        
-        .metric {
-            background: #f9fafb;
-            padding: 20px;
+
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
             border-radius: 12px;
-            border-left: 4px solid #667eea;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
         }
-        
+
+        .nav-link:hover {
+            color: var(--text-light);
+            background: rgba(99, 102, 241, 0.2);
+            border-color: var(--primary);
+        }
+
+        /* Typography */
+        h1, h2, h3 {
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        h1 { font-size: 2.5rem; margin-bottom: 8px; }
+        h2 { font-size: 1.5rem; margin-bottom: 16px; color: var(--text-light); }
+        h3 { font-size: 1.125rem; color: var(--text-muted); }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-success { background: rgba(16, 185, 129, 0.2); color: var(--success-light); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-warning { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .badge-danger { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .badge-primary { background: rgba(99, 102, 241, 0.2); color: var(--primary-light); border: 1px solid rgba(99, 102, 241, 0.3); }
+
+        .badge-bullish, .badge-undervalued { background: rgba(16, 185, 129, 0.2); color: var(--success-light); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-bearish, .badge-overvalued { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .badge-neutral, .badge-fair { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+
+        /* Recommendation badge - large */
+        .rec-badge-large {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 48px;
+            border-radius: 16px;
+            font-size: 1.75rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            box-shadow: 0 10px 40px -10px currentColor;
+        }
+
+        .rec-buy { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+        .rec-sell { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+        .rec-hold { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+
+        /* Metrics grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+        }
+
+        .metric-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-dark);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .metric-card:hover {
+            background: rgba(15, 23, 42, 0.8);
+            border-color: var(--primary);
+        }
+
         .metric-label {
-            font-size: 0.9em;
-            color: #6b7280;
+            font-size: 0.85rem;
+            color: var(--text-muted);
             margin-bottom: 8px;
+            font-weight: 500;
         }
-        
+
         .metric-value {
-            font-size: 1.8em;
+            font-size: 1.75rem;
             font-weight: 700;
-            color: #1f2937;
+            color: var(--text-light);
         }
-        
-        .recommendation {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            margin-bottom: 30px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            text-align: center;
+
+        .metric-value.positive { color: var(--success); }
+        .metric-value.negative { color: var(--danger); }
+        .metric-value.primary { color: var(--primary-light); }
+
+        .metric-sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 4px;
         }
-        
-        .rec-badge {
-            display: inline-block;
-            background: #f59e0b;
-            color: white;
-            padding: 15px 40px;
-            border-radius: 50px;
-            font-size: 2em;
-            font-weight: 700;
-            margin: 20px 0;
+
+        /* Collapsible sections */
+        .collapsible {
+            cursor: pointer;
         }
-        
-        .confidence {
-            font-size: 1.2em;
-            color: #6b7280;
-            margin-top: 10px;
-        }
-        
-        .agent-section {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            margin-bottom: 30px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-        
-        .agent-title {
-            font-size: 1.8em;
-            font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 20px;
+
+        .collapsible-header {
             display: flex;
             align-items: center;
-            gap: 15px;
+            justify-content: space-between;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-dark);
         }
-        
-        .agent-icon {
-            font-size: 1.2em;
+
+        .collapsible-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.25rem;
+            font-weight: 600;
         }
-        
-        .agent-content {
-            white-space: pre-wrap;
+
+        .collapsible-icon {
+            font-size: 1.5rem;
+        }
+
+        .collapsible-toggle {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 8px;
+            color: var(--primary-light);
+            transition: all 0.2s ease;
+        }
+
+        .collapsible:hover .collapsible-toggle {
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .collapsible.open .collapsible-content {
+            max-height: 5000px;
+            transition: max-height 0.5s ease-in;
+        }
+
+        .collapsible.open .collapsible-toggle {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-body {
+            padding: 24px 0;
+            color: var(--text-muted);
             line-height: 1.8;
-            color: #374151;
-            font-size: 1.05em;
-        }
-        
-        .timestamp {
-            text-align: center;
-            color: white;
-            margin-top: 30px;
-            font-size: 0.9em;
-            opacity: 0.8;
-        }
-        
-        .disclaimer {
-            background: #fef3c7;
-            border-left: 4px solid #f59e0b;
-            padding: 20px;
-            border-radius: 12px;
-            margin-top: 30px;
-            color: #92400e;
         }
 
-        .executive-summary {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            margin-bottom: 30px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        .collapsible-body h4 {
+            color: var(--primary-light);
+            margin: 24px 0 12px 0;
+            font-size: 1rem;
+            font-weight: 600;
         }
 
-        .executive-summary h2 {
-            font-size: 1.8em;
-            color: #1f2937;
-            margin-bottom: 25px;
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 10px;
+        .collapsible-body p {
+            margin: 8px 0;
         }
 
+        .collapsible-body ul, .collapsible-body ol {
+            margin: 12px 0 12px 24px;
+        }
+
+        .collapsible-body li {
+            margin: 6px 0;
+        }
+
+        /* Summary cards */
         .summary-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
-            margin-bottom: 25px;
         }
 
-        .summary-item {
-            background: #f9fafb;
-            padding: 20px;
-            border-radius: 12px;
-            border-left: 4px solid #667eea;
+        .summary-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-dark);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.2s ease;
+        }
+
+        .summary-card:hover {
+            border-color: var(--primary);
+            background: rgba(15, 23, 42, 0.8);
         }
 
         .summary-header {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
         }
 
         .summary-icon {
-            font-size: 1.3em;
+            font-size: 1.5rem;
         }
 
         .summary-title {
+            flex: 1;
             font-weight: 600;
-            color: #1f2937;
-            flex-grow: 1;
-        }
-
-        .summary-badge {
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 600;
+            color: var(--text-light);
         }
 
         .summary-text {
-            color: #4b5563;
+            color: var(--text-muted);
+            font-size: 0.9rem;
             line-height: 1.6;
-            font-size: 0.95em;
         }
 
-        .summary-conclusion {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-            line-height: 1.7;
+        /* Conclusion box */
+        .conclusion-box {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 24px;
         }
 
-        .summary-conclusion strong {
+        .conclusion-box strong {
+            color: var(--primary-light);
+            font-size: 1rem;
+        }
+
+        /* Disclaimer */
+        .disclaimer {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 16px;
+            padding: 20px 24px;
+            color: #fbbf24;
+            font-size: 0.9rem;
+        }
+
+        .disclaimer strong {
             display: block;
             margin-bottom: 8px;
-            font-size: 1.1em;
         }
 
-        .agent-content h4 {
-            color: #667eea;
-            margin: 20px 0 10px 0;
-            font-size: 1.1em;
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 32px 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
         }
 
-        .agent-content p {
-            margin: 8px 0;
-            line-height: 1.7;
+        /* Chart container */
+        .chart-container {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 16px;
+            padding: 16px;
+            margin-top: 24px;
         }
 
-        .agent-content ol, .agent-content ul {
-            margin: 10px 0 10px 25px;
-            line-height: 1.8;
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .agent-content li {
-            margin: 5px 0;
+        .animate-in {
+            animation: fadeIn 0.5s ease-out forwards;
         }
 
-        .forecast-chart {
-            width: 100%;
-            min-height: 400px;
-            margin-top: 20px;
+        .delay-1 { animation-delay: 0.1s; opacity: 0; }
+        .delay-2 { animation-delay: 0.2s; opacity: 0; }
+        .delay-3 { animation-delay: 0.3s; opacity: 0; }
+        .delay-4 { animation-delay: 0.4s; opacity: 0; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container { padding: 16px; }
+            h1 { font-size: 1.75rem; }
+            .card { padding: 24px; border-radius: 20px; }
+            .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+            .metric-value { font-size: 1.5rem; }
+            .rec-badge-large { padding: 12px 32px; font-size: 1.25rem; }
         }
 
-        .forecast-chart .plotly-graph-div {
-            width: 100% !important;
+        /* Plotly chart styling */
+        .js-plotly-plot .plotly .modebar {
+            background: transparent !important;
+        }
+        .js-plotly-plot .plotly .modebar-btn path {
+            fill: var(--text-muted) !important;
         }
         
-        @media (max-width: 768px) {
-            .stock-title {
-                font-size: 2em;
-            }
-            .metrics {
-                grid-template-columns: 1fr;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <div class="stock-title">Palantir Technologies Inc.</div>
-            <div class="stock-symbol">PLTR</div>
-            
-            <div class="metrics">
-                <div class="metric">
+        <!-- Navigation -->
+        <nav class="nav animate-in">
+            <a href="index.html" class="nav-brand">Stock Planner</a>
+            <a href="index.html" class="nav-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Back to Dashboard
+            </a>
+        </nav>
+
+        <!-- Header Card -->
+        <div class="card animate-in delay-1">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 24px;">
+                <div>
+                    <h1>Palantir Technologies Inc.</h1>
+                    <h3>PLTR</h3>
+                </div>
+                <div class="rec-badge-large rec-hold">HOLD</div>
+            </div>
+
+            <div class="metrics-grid" style="margin-top: 32px;">
+                <div class="metric-card">
                     <div class="metric-label">Current Price</div>
                     <div class="metric-value">$135.90</div>
                 </div>
-                <div class="metric">
+                <div class="metric-card">
                     <div class="metric-label">Day Change</div>
-                    <div class="metric-value" style="color: #10b981;">
-                        ▲ $5.89 (4.53%)
-                    </div>
+                    <div class="metric-value positive">+$5.89</div>
+                    <div class="metric-sub">+4.53%</div>
                 </div>
-                <div class="metric">
+                <div class="metric-card">
                     <div class="metric-label">Market Cap</div>
                     <div class="metric-value">$323.91B</div>
                 </div>
-                <div class="metric">
-                    <div class="metric-label">Analysis Date</div>
-                    <div class="metric-value" style="font-size: 1.2em;">February 08, 2026 at 09:41 PM</div>
+                <div class="metric-card">
+                    <div class="metric-label">Confidence</div>
+                    <div class="metric-value primary">Medium</div>
                 </div>
             </div>
         </div>
-        
-        <!-- Recommendation -->
-        <div class="recommendation">
-            <h2>Investment Recommendation</h2>
-            <div class="rec-badge">HOLD</div>
-            <div class="confidence">Confidence: Medium</div>
-        </div>
 
         <!-- Executive Summary -->
-        
-        <div class="executive-summary">
+        <div class="card animate-in delay-2">
             <h2>Executive Summary</h2>
             <div class="summary-grid">
-                <div class="summary-item news">
+                <div class="summary-card">
                     <div class="summary-header">
                         <span class="summary-icon">📰</span>
                         <span class="summary-title">News Sentiment</span>
-                        <span class="summary-badge" style="background: #10b981;">Neutral to Slightly Bullish</span>
+                        <span class="badge badge-bullish">Neutral to Slightly Bullish</span>
                     </div>
                     <p class="summary-text">The news landscape for PLTR is characterized by a strong, persistent case for its growth potential and long-term value, supported by institutional interest. However, this is balanced by significant ne</p>
                 </div>
-                <div class="summary-item stats">
+                <div class="summary-card">
                     <div class="summary-header">
                         <span class="summary-icon">📊</span>
                         <span class="summary-title">Technical Analysis</span>
-                        <span class="summary-badge" style="background: #f59e0b;">Neutral</span>
+                        <span class="badge badge-neutral">Neutral</span>
                     </div>
                     <p class="summary-text">Key takeaways from the data include: - A strong upward trend (slope: 0.4123) despite high volatility (std dev: 3.96%), suggesting a stock that has appreciated significantly but with considerable risk.</p>
                 </div>
-                <div class="summary-item financial">
+                <div class="summary-card">
                     <div class="summary-header">
                         <span class="summary-icon">💰</span>
                         <span class="summary-title">Fundamental Analysis</span>
-                        <span class="summary-badge" style="background: #f59e0b;">Fair</span>
+                        <span class="badge badge-fair">Fair</span>
                     </div>
                     <p class="summary-text">Case FOR: Invest in PLTR if you believe in the company's ability to execute its complex sales cycles, deliver on its ambitious AI vision, expand the Foundry business significantly, and continue drivin</p>
                 </div>
             </div>
-            <div class="summary-conclusion">
-                <strong>Conclusion:</strong> PLTR presents a high-risk, high-reward medium-term holding opportunity. It benefits from strong institutional interest, a powerful AI platform, and high volatility. However, the extremely high valuation and significant execution risks make it unsuitable for most conservative investors. A medium-confidence HOLD recommendation is provided for those who can tolerate substantial volatility and have strong conviction in the company's long-term AI and platform strategy.
+            <div class="conclusion-box">
+                <strong>Conclusion</strong>
+                <p style="margin-top: 8px; color: var(--text-muted);">PLTR presents a high-risk, high-reward medium-term holding opportunity. It benefits from strong institutional interest, a powerful AI platform, and high volatility. However, the extremely high valuation and significant execution risks make it unsuitable for most conservative investors. A medium-conf</p>
             </div>
         </div>
-        
 
         <!-- Price Forecast -->
-        <div class="agent-section">
-            <div class="agent-title">
-                <span class="agent-icon">🔮</span>
-                Price Forecast (10-Day)
-            </div>
-            <div class="forecast-metrics" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
-                <div class="metric" style="border-left-color: #10b981;">
-                    <div class="metric-label">Next Day Prediction</div>
-                    <div class="metric-value" style="color: #10b981;">$130.72</div>
-                    <div style="font-size: 0.9em; color: #6b7280;">-3.81%</div>
+        <div class="card animate-in delay-3">
+            <h2>Price Forecast (10-Day)</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Next Day</div>
+                    <div class="metric-value primary">$130.72</div>
+                    <div class="metric-sub">-3.81%</div>
                 </div>
-                <div class="metric" style="border-left-color: #667eea;">
-                    <div class="metric-label">10-Day Prediction</div>
-                    <div class="metric-value" style="color: #667eea;">$129.59</div>
-                    <div style="font-size: 0.9em; color: #6b7280;">-4.65%</div>
+                <div class="metric-card">
+                    <div class="metric-label">10-Day Target</div>
+                    <div class="metric-value primary">$129.59</div>
+                    <div class="metric-sub">-4.65%</div>
                 </div>
-                <div class="metric">
+                <div class="metric-card">
                     <div class="metric-label">Forecast Confidence</div>
-                    <div class="metric-value" style="font-size: 1.4em;">Medium</div>
-                    <div style="font-size: 0.9em; color: #6b7280;">Models: ARIMA(5,1,0), Holt-Winters (Additive Trend), Prophet</div>
+                    <div class="metric-value">Medium</div>
+                    <div class="metric-sub">Models: ARIMA(5,1,0), Holt-Winters (Additive Trend), Prophet</div>
                 </div>
             </div>
-            <div class="forecast-chart">
+            <div class="chart-container">
                 <div>                        <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
         <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.3.1.min.js" integrity="sha256-4rD3fugVb/nVJYUv5Ky3v+fYXoouHaBSP20WIJuEiWg=" crossorigin="anonymous"></script>                <div id="7d0e6bf5-9220-4f3a-819a-136ff95e66c2" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("7d0e6bf5-9220-4f3a-819a-136ff95e66c2")) {                    Plotly.newPlot(                        "7d0e6bf5-9220-4f3a-819a-136ff95e66c2",                        [{"line":{"color":"#667eea","width":2},"mode":"lines","name":"Historical","x":["2025-02-10T00:00:00","2025-02-11T00:00:00","2025-02-12T00:00:00","2025-02-13T00:00:00","2025-02-14T00:00:00","2025-02-18T00:00:00","2025-02-19T00:00:00","2025-02-20T00:00:00","2025-02-21T00:00:00","2025-02-24T00:00:00","2025-02-25T00:00:00","2025-02-26T00:00:00","2025-02-27T00:00:00","2025-02-28T00:00:00","2025-03-03T00:00:00","2025-03-04T00:00:00","2025-03-05T00:00:00","2025-03-06T00:00:00","2025-03-07T00:00:00","2025-03-10T00:00:00","2025-03-11T00:00:00","2025-03-12T00:00:00","2025-03-13T00:00:00","2025-03-14T00:00:00","2025-03-17T00:00:00","2025-03-18T00:00:00","2025-03-19T00:00:00","2025-03-20T00:00:00","2025-03-21T00:00:00","2025-03-24T00:00:00","2025-03-25T00:00:00","2025-03-26T00:00:00","2025-03-27T00:00:00","2025-03-28T00:00:00","2025-03-31T00:00:00","2025-04-01T00:00:00","2025-04-02T00:00:00","2025-04-03T00:00:00","2025-04-04T00:00:00","2025-04-07T00:00:00","2025-04-08T00:00:00","2025-04-09T00:00:00","2025-04-10T00:00:00","2025-04-11T00:00:00","2025-04-14T00:00:00","2025-04-15T00:00:00","2025-04-16T00:00:00","2025-04-17T00:00:00","2025-04-21T00:00:00","2025-04-22T00:00:00","2025-04-23T00:00:00","2025-04-24T00:00:00","2025-04-25T00:00:00","2025-04-28T00:00:00","2025-04-29T00:00:00","2025-04-30T00:00:00","2025-05-01T00:00:00","2025-05-02T00:00:00","2025-05-05T00:00:00","2025-05-06T00:00:00","2025-05-07T00:00:00","2025-05-08T00:00:00","2025-05-09T00:00:00","2025-05-12T00:00:00","2025-05-13T00:00:00","2025-05-14T00:00:00","2025-05-15T00:00:00","2025-05-16T00:00:00","2025-05-19T00:00:00","2025-05-20T00:00:00","2025-05-21T00:00:00","2025-05-22T00:00:00","2025-05-23T00:00:00","2025-05-27T00:00:00","2025-05-28T00:00:00","2025-05-29T00:00:00","2025-05-30T00:00:00","2025-06-02T00:00:00","2025-06-03T00:00:00","2025-06-04T00:00:00","2025-06-05T00:00:00","2025-06-06T00:00:00","2025-06-09T00:00:00","2025-06-10T00:00:00","2025-06-11T00:00:00","2025-06-12T00:00:00","2025-06-13T00:00:00","2025-06-16T00:00:00","2025-06-17T00:00:00","2025-06-18T00:00:00","2025-06-20T00:00:00","2025-06-23T00:00:00","2025-06-24T00:00:00","2025-06-25T00:00:00","2025-06-26T00:00:00","2025-06-27T00:00:00","2025-06-30T00:00:00","2025-07-01T00:00:00","2025-07-02T00:00:00","2025-07-03T00:00:00","2025-07-07T00:00:00","2025-07-08T00:00:00","2025-07-09T00:00:00","2025-07-10T00:00:00","2025-07-11T00:00:00","2025-07-14T00:00:00","2025-07-15T00:00:00","2025-07-16T00:00:00","2025-07-17T00:00:00","2025-07-18T00:00:00","2025-07-21T00:00:00","2025-07-22T00:00:00","2025-07-23T00:00:00","2025-07-24T00:00:00","2025-07-25T00:00:00","2025-07-28T00:00:00","2025-07-29T00:00:00","2025-07-30T00:00:00","2025-07-31T00:00:00","2025-08-01T00:00:00","2025-08-04T00:00:00","2025-08-05T00:00:00","2025-08-06T00:00:00","2025-08-07T00:00:00","2025-08-08T00:00:00","2025-08-11T00:00:00","2025-08-12T00:00:00","2025-08-13T00:00:00","2025-08-14T00:00:00","2025-08-15T00:00:00","2025-08-18T00:00:00","2025-08-19T00:00:00","2025-08-20T00:00:00","2025-08-21T00:00:00","2025-08-22T00:00:00","2025-08-25T00:00:00","2025-08-26T00:00:00","2025-08-27T00:00:00","2025-08-28T00:00:00","2025-08-29T00:00:00","2025-09-02T00:00:00","2025-09-03T00:00:00","2025-09-04T00:00:00","2025-09-05T00:00:00","2025-09-08T00:00:00","2025-09-09T00:00:00","2025-09-10T00:00:00","2025-09-11T00:00:00","2025-09-12T00:00:00","2025-09-15T00:00:00","2025-09-16T00:00:00","2025-09-17T00:00:00","2025-09-18T00:00:00","2025-09-19T00:00:00","2025-09-22T00:00:00","2025-09-23T00:00:00","2025-09-24T00:00:00","2025-09-25T00:00:00","2025-09-26T00:00:00","2025-09-29T00:00:00","2025-09-30T00:00:00","2025-10-01T00:00:00","2025-10-02T00:00:00","2025-10-03T00:00:00","2025-10-06T00:00:00","2025-10-07T00:00:00","2025-10-08T00:00:00","2025-10-09T00:00:00","2025-10-10T00:00:00","2025-10-13T00:00:00","2025-10-14T00:00:00","2025-10-15T00:00:00","2025-10-16T00:00:00","2025-10-17T00:00:00","2025-10-20T00:00:00","2025-10-21T00:00:00","2025-10-22T00:00:00","2025-10-23T00:00:00","2025-10-24T00:00:00","2025-10-27T00:00:00","2025-10-28T00:00:00","2025-10-29T00:00:00","2025-10-30T00:00:00","2025-10-31T00:00:00","2025-11-03T00:00:00","2025-11-04T00:00:00","2025-11-05T00:00:00","2025-11-06T00:00:00","2025-11-07T00:00:00","2025-11-10T00:00:00","2025-11-11T00:00:00","2025-11-12T00:00:00","2025-11-13T00:00:00","2025-11-14T00:00:00","2025-11-17T00:00:00","2025-11-18T00:00:00","2025-11-19T00:00:00","2025-11-20T00:00:00","2025-11-21T00:00:00","2025-11-24T00:00:00","2025-11-25T00:00:00","2025-11-26T00:00:00","2025-11-28T00:00:00","2025-12-01T00:00:00","2025-12-02T00:00:00","2025-12-03T00:00:00","2025-12-04T00:00:00","2025-12-05T00:00:00","2025-12-08T00:00:00","2025-12-09T00:00:00","2025-12-10T00:00:00","2025-12-11T00:00:00","2025-12-12T00:00:00","2025-12-15T00:00:00","2025-12-16T00:00:00","2025-12-17T00:00:00","2025-12-18T00:00:00","2025-12-19T00:00:00","2025-12-22T00:00:00","2025-12-23T00:00:00","2025-12-24T00:00:00","2025-12-26T00:00:00","2025-12-29T00:00:00","2025-12-30T00:00:00","2025-12-31T00:00:00","2026-01-02T00:00:00","2026-01-05T00:00:00","2026-01-06T00:00:00","2026-01-07T00:00:00","2026-01-08T00:00:00","2026-01-09T00:00:00","2026-01-12T00:00:00","2026-01-13T00:00:00","2026-01-14T00:00:00","2026-01-15T00:00:00","2026-01-16T00:00:00","2026-01-20T00:00:00","2026-01-21T00:00:00","2026-01-22T00:00:00","2026-01-23T00:00:00","2026-01-26T00:00:00","2026-01-27T00:00:00","2026-01-28T00:00:00","2026-01-29T00:00:00","2026-01-30T00:00:00","2026-02-02T00:00:00","2026-02-03T00:00:00","2026-02-04T00:00:00","2026-02-05T00:00:00","2026-02-06T00:00:00"],"y":[116.6500015258789,112.62000274658203,117.38999938964844,117.91000366210938,119.16000366210938,124.62000274658203,112.05999755859375,106.2699966430664,101.3499984741211,90.68000030517578,87.83999633789062,89.30999755859375,84.7699966430664,84.91999816894531,83.41999816894531,84.4000015258789,90.12999725341797,80.45999908447266,84.91000366210938,76.37999725341797,78.05000305175781,83.6500015258789,79.62000274658203,86.23999786376953,87.3499984741211,83.88999938964844,86.0999984741211,87.38999938964844,90.95999908447266,96.75,96.5,92.27999877929688,90.08999633789062,85.8499984741211,84.4000015258789,84.68000030517578,87.44999694824219,83.5999984741211,74.01000213623047,77.83999633789062,77.31999969482422,92.01000213623047,88.58999633789062,88.55000305175781,92.62000274658203,98.4000015258789,92.70999908447266,93.77999877929688,90.80000305175781,93.98999786376953,100.81999969482422,107.77999877929688,112.77999877929688,114.6500015258789,116.08000183105469,118.44000244140625,116.19999694824219,124.27999877929688,123.7699966430664,108.86000061035156,110.4800033569336,119.1500015258789,117.30000305175781,118.45999908447266,128.10000610351562,130.17999267578125,128.1199951171875,129.52000427246094,126.33000183105469,125.58999633789062,120.58000183105469,122.29000091552734,123.30999755859375,123.38999938964844,123.76000213623047,122.31999969482422,131.77999877929688,132.0399932861328,133.1699981689453,130.00999450683594,119.91000366210938,127.72000122070312,132.05999755859375,132.80999755859375,136.38999938964844,135.19000244140625,137.39999389648438,141.41000366210938,138.1999969482422,139.9600067138672,137.3000030517578,139.9199981689453,143.22999572753906,142.89999389648438,144.25,130.74000549316406,136.32000732421875,130.67999267578125,132.1199951171875,134.36000061035156,139.1199951171875,139.7100067138672,143.1300048828125,142.5,142.10000610351562,149.14999389648438,148.5800018310547,150.91000366210938,153.99000549316406,153.52000427246094,151.7899932861328,149.07000732421875,154.6300048828125,154.86000061035156,158.8000030517578,157.8800048828125,156.24000549316406,158.61000061035156,158.35000610351562,154.27000427246094,160.66000366210938,173.27000427246094,179.5399932861328,182.1999969482422,186.9600067138672,182.67999267578125,186.97000122070312,184.3699951171875,181.02000427246094,177.1699981689453,174.02999877929688,157.75,156.00999450683594,156.17999267578125,158.74000549316406,157.1699981689453,160.8699951171875,156.72000122070312,158.1199951171875,156.7100067138672,157.08999633789062,154.89999389648438,156.13999938964844,153.11000061035156,156.10000610351562,162.36000061035156,166.74000549316406,164.36000061035156,171.42999267578125,171.2100067138672,170.25999450683594,168.3300018310547,176.97000122070312,182.38999938964844,179.3300018310547,182.5500030517578,179.55999755859375,179.1199951171875,177.57000732421875,178.86000061035156,182.4199981689453,184.9499969482422,187.0500030517578,173.07000732421875,179.52999877929688,182.1699981689453,183.55999755859375,185.47000122070312,175.44000244140625,177.2100067138672,179.74000549316406,179.6199951171875,178.1199951171875,178.14999389648438,181.58999633789062,181.50999450683594,175.49000549316406,180.47999572753906,184.6300048828125,189.17999267578125,189.60000610351562,198.80999755859375,194.5500030517578,200.47000122070312,207.17999267578125,190.74000549316406,187.89999389648438,175.0500030517578,177.92999267578125,193.61000061035156,190.9600067138672,184.1699981689453,172.13999938964844,174.00999450683594,171.25,167.3300018310547,165.4199981689453,155.7449951171875,154.85000610351562,162.25,163.5500030517578,165.77000427246094,168.4499969482422,167.49000549316406,170.69000244140625,176.0800018310547,177.9199981689453,181.75999450683594,181.49000549316406,181.83999633789062,187.91000366210938,187.5399932861328,183.57000732421875,183.25,187.75,177.2899932861328,185.69000244140625,193.3800048828125,193.97999572753906,194.1300048828125,194.1699981689453,188.7100067138672,184.17999267578125,180.83999633789062,177.75,167.86000061035156,174.0399932861328,179.7100067138672,181.67999267578125,176.86000061035156,177.49000549316406,179.41000366210938,178.9600067138672,178.39999389648438,177.07000732421875,170.9600067138672,168.52999877929688,165.3300018310547,165.89999389648438,169.60000610351562,167.47000122070312,165.6999969482422,157.35000610351562,151.86000061035156,146.58999633789062,147.75999450683594,157.8800048828125,139.5399932861328,130.00999450683594,135.89999389648438],"type":"scatter"},{"line":{"color":"#10b981","dash":"dash","width":2},"marker":{"size":6},"mode":"lines+markers","name":"Forecast","x":["2026-02-07T00:00:00","2026-02-08T00:00:00","2026-02-09T00:00:00","2026-02-10T00:00:00","2026-02-11T00:00:00","2026-02-12T00:00:00","2026-02-13T00:00:00","2026-02-14T00:00:00","2026-02-15T00:00:00","2026-02-16T00:00:00"],"y":[130.71921345798566,130.76727637223297,134.72159027768663,133.5733449211937,133.16156025959364,131.99239080506126,131.48314068898503,126.10832721030621,125.34839291405399,129.58633908614],"type":"scatter"},{"fill":"toself","fillcolor":"rgba(16, 185, 129, 0.2)","line":{"color":"rgba(255,255,255,0)"},"name":"95% Confidence Interval","showlegend":true,"x":["2026-02-07T00:00:00","2026-02-08T00:00:00","2026-02-09T00:00:00","2026-02-10T00:00:00","2026-02-11T00:00:00","2026-02-12T00:00:00","2026-02-13T00:00:00","2026-02-14T00:00:00","2026-02-15T00:00:00","2026-02-16T00:00:00","2026-02-16T00:00:00","2026-02-15T00:00:00","2026-02-14T00:00:00","2026-02-13T00:00:00","2026-02-12T00:00:00","2026-02-11T00:00:00","2026-02-10T00:00:00","2026-02-09T00:00:00","2026-02-08T00:00:00","2026-02-07T00:00:00"],"y":[139.9950657209893,141.8206173501983,146.88876228961448,146.97395439070306,147.36951765371987,147.05579191879156,147.21351576328,142.59059803481037,142.48597094202162,147.36870436225144,111.60289105083727,108.20128736234886,109.44053899898769,115.61370541028819,117.20954319959455,118.97360219062557,120.26814712588114,122.64609153380655,119.88433598627424,121.4788333336426],"type":"scatter"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"shapes":[{"line":{"color":"gray","dash":"dash","width":1},"type":"line","x0":"2026-02-06T00:00:00","x1":"2026-02-06T00:00:00","y0":0,"y1":1,"yref":"paper"}],"legend":{"yanchor":"top","y":0.99,"xanchor":"left","x":0.01},"margin":{"l":60,"r":30,"t":60,"b":60},"title":{"text":"PLTR Price Forecast (1 Year history)"},"xaxis":{"title":{"text":"Date"}},"yaxis":{"title":{"text":"Price ($)"}},"hovermode":"x unified"},                        {"responsive": true}                    )                };            </script>        </div>
             </div>
         </div>
 
-        <!-- Investment Synthesis -->
-        <div class="agent-section">
-            <div class="agent-title">
-                <span class="agent-icon">🎯</span>
-                Investment Synthesis
-            </div>
-            <div class="agent-content"><p>Okay, here is the synthesized investment analysis for PLTR based on the three expert opinions:</p>
+        <!-- Detailed Analysis Sections (Collapsible) -->
+        <div class="card animate-in delay-4">
+            <h2>Detailed Analysis</h2>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">🎯</span>
+                        Investment Synthesis
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body"><p>Okay, here is the synthesized investment analysis for PLTR based on the three expert opinions:</p>
 
 <p><strong>RECOMMENDATION:</strong> HOLD</p>
 <p><strong>CONFIDENCE LEVEL:</strong> Medium</p>
@@ -409,15 +588,23 @@
 
 <p><strong>DISCLAIMER:</strong></p>
 <p>This analysis is for educational purposes only and should not be considered financial advice. Always conduct your own research and consult with a qualified financial advisor before making investment decisions.</p></div>
-        </div>
-
-        <!-- News Analysis -->
-        <div class="agent-section">
-            <div class="agent-title">
-                <span class="agent-icon">🗞️</span>
-                News Analysis
+                </div>
             </div>
-            <div class="agent-content"><p>Okay, here is the analysis of the provided news about Palantir Technologies (PLTR):</p>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">📰</span>
+                        News Analysis
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body"><p>Okay, here is the analysis of the provided news about Palantir Technologies (PLTR):</p>
 
 <p>SENTIMENT: <strong>Neutral to Slightly Bullish</strong></p>
 
@@ -447,15 +634,23 @@
 
 <h4>SUMMARY:</h4>
 <p>The news landscape for PLTR is characterized by a strong, persistent case for its growth potential and long-term value, supported by institutional interest. However, this is balanced by significant near-term volatility, recent earnings-driven pullbacks, and potential technical headwinds, reflecting a stock that offers upside but carries substantial risk and requires careful consideration of short-term market dynamics.</p></div>
-        </div>
-
-        <!-- Statistical Analysis -->
-        <div class="agent-section">
-            <div class="agent-title">
-                <span class="agent-icon">📈</span>
-                Statistical Analysis
+                </div>
             </div>
-            <div class="agent-content"><p><strong>TREND ANALYSIS:</strong></p>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">📈</span>
+                        Statistical Analysis
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body"><p><strong>TREND ANALYSIS:</strong></p>
 <p>The data indicates a clear upward trend, confirmed by the positive slope of 0.4123 in the linear regression analysis over the relevant period (likely the last 250 days). The current price of $135.90 is below the 7-day moving average of $144.22 and the 30-day moving average of $167.92, suggesting a short-term consolidation or pullback within an otherwise bullish trajectory. This could indicate temporary weakness or a correction, but the overall trend remains supportive of continued upward movement. However, the upward trend is not without risk, as the high volatility may lead to further downward pressure in the short term. The trend slope of 0.4123 implies a steady but moderate increase, which should be interpreted with caution given the data's limitations and the potential for trend reversals.</p>
 
 <p><strong>VOLATILITY ASSESSMENT:</strong></p>
@@ -478,15 +673,23 @@
 
 <p><strong>RISK ASSESSMENT:</strong></p>
 <p>The stock carries high risk due to its elevated volatility (std dev of returns: 3.96%) and the potential for sharp drawdowns, as evidenced by the min daily return of -12.05%. While the upward trend offers upside potential, it amplifies the risk of sudden reversals, especially given the current price below moving averages, which could trigger further declines if the trend weakens. The high volatility also increases sensitivity to market-wide events, such as economic data or sector-specific news, which could exacerbate price swings. This stock is unsuitable for risk-averse investors and should be monitored closely with stop-loss strategies. Overall, the risk profile is elevated, and any investment should be accompanied by a thorough understanding of the potential for significant losses.</p></div>
-        </div>
-
-        <!-- Financial Analysis -->
-        <div class="agent-section">
-            <div class="agent-title">
-                <span class="agent-icon">💼</span>
-                Financial Analysis
+                </div>
             </div>
-            <div class="agent-content"><p>Okay, let's break down Palant'tir Technologies (PLTR) using the fundamental analysis framework.</p>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">💼</span>
+                        Financial Analysis
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body"><p>Okay, let's break down Palant'tir Technologies (PLTR) using the fundamental analysis framework.</p>
 
 <p><strong>PLTR Fundamental Analysis</strong></p>
 
@@ -554,19 +757,21 @@
 </ul>
 
 <p><strong>Disclaimer:</strong> This analysis is based on the limited data provided and general knowledge. A comprehensive investment decision requires access to detailed financial statements (balance sheet, income statement, cash flow statement), management guidance, and a thorough comparison with industry peers.</p></div>
+                </div>
+            </div>
         </div>
-        
+
         <!-- Disclaimer -->
-        <div class="disclaimer">
-            <strong>⚠️ Important Disclaimer:</strong><br>
-            This analysis is generated by AI agents for educational purposes only. It should NOT be considered 
-            financial advice. Stock markets are inherently risky and unpredictable. Always conduct your own 
-            thorough research and consult with a qualified financial advisor before making any investment decisions. 
-            Past performance does not guarantee future results.
+        <div class="disclaimer animate-in delay-4">
+            <strong>Important Disclaimer</strong>
+            This analysis is generated by AI agents for educational purposes only. It should NOT be considered
+            financial advice. Always conduct your own research and consult with a qualified financial advisor
+            before making any investment decisions.
         </div>
-        
-        <div class="timestamp">
-            Generated by Stock Investment Planner on February 08, 2026 at 09:41 PM
+
+        <!-- Footer -->
+        <div class="footer">
+            Generated on February 08, 2026 at 09:41 PM
         </div>
     </div>
 </body>
