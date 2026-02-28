@@ -282,6 +282,8 @@ class ForecasterAgent:
 
         # Prepare historical data for visualization (different timeframes)
         hist_1y = {"prices": prices, "dates": dates}
+        hist_3m = {"prices": prices[-90:] if len(prices) >= 90 else prices,
+                   "dates": dates[-90:] if len(dates) >= 90 else dates}
         hist_1m = {"prices": prices[-30:] if len(prices) >= 30 else prices,
                    "dates": dates[-30:] if len(dates) >= 30 else dates}
         hist_10d = {"prices": prices[-10:] if len(prices) >= 10 else prices,
@@ -311,6 +313,7 @@ class ForecasterAgent:
             },
             "historical_data": {
                 "1y": hist_1y,
+                "3m": hist_3m,
                 "1m": hist_1m,
                 "10d": hist_10d
             }

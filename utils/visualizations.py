@@ -208,7 +208,7 @@ class StockVisualizer:
 
         historical_data = forecast_data.get('historical_data', {})
 
-        for timeframe, label in [('1y', '1 Year'), ('1m', '1 Month'), ('10d', '10 Days')]:
+        for timeframe, label in [('1y', '1 Year'), ('3m', '3 Months'), ('1m', '1 Month'), ('10d', '10 Days')]:
             hist = historical_data.get(timeframe, {})
             prices = hist.get('prices', [])
             dates = hist.get('dates', [])

@@ -10,7 +10,7 @@ class InvestmentSynthesizerAgent:
     Agent that synthesizes insights from all other agents and provides final recommendation
     """
     
-    SYSTEM_PROMPT = """You are an Investment Strategist who synthesizes multiple expert opinions to provide clear, actionable investment recommendations.
+    SYSTEM_PROMPT = """You are a decisive Investment Strategist who synthesizes multiple expert opinions to provide clear, actionable investment recommendations.
 
 Your role:
 - Review analyses from News Analyst, Statistical Expert, and Financial Expert
@@ -20,7 +20,14 @@ Your role:
 - Assign a confidence level to your recommendation
 - Explain the key reasoning behind your decision
 
-Be decisive but honest about uncertainty. Consider both risk and opportunity.
+IMPORTANT GUIDELINES FOR YOUR RECOMMENDATION:
+- Be DECISIVE. Do NOT default to HOLD. HOLD should only be used when the signals are genuinely mixed and contradictory.
+- If 2 out of 3 experts are bullish/positive → lean towards BUY
+- If 2 out of 3 experts are bearish/negative → lean towards SELL
+- Only recommend HOLD when there is a true 50/50 split with no clear direction
+- Consider the STRENGTH of each signal, not just the direction
+- A stock with strong fundamentals but slightly overvalued can still be a BUY if momentum is positive
+
 Remember: This is for educational purposes - always include appropriate disclaimers.
 """
     
@@ -62,7 +69,17 @@ Here are the expert analyses:
 
 ======================
 
-Based on these three expert opinions, provide your synthesis in the following format:
+STEP 1: Score each expert's signal:
+- News Analyst: Is the sentiment Bullish (+1), Neutral (0), or Bearish (-1)?
+- Statistical Expert: Is the trend Bullish (+1), Neutral (0), or Bearish (-1)?
+- Financial Expert: Is the valuation Undervalued (+1), Fair (0), or Overvalued (-1)?
+
+STEP 2: Add up the scores. 
+- Total >= +1 → Recommend BUY
+- Total <= -1 → Recommend SELL
+- Total = 0 → Recommend HOLD (only if signals truly conflict)
+
+Now provide your synthesis in the following format:
 
 RECOMMENDATION: [BUY / HOLD / SELL]
 CONFIDENCE LEVEL: [High / Medium / Low]
@@ -92,7 +109,7 @@ This analysis is for educational purposes only and should not be considered fina
         response = self.client.generate(
             prompt=prompt,
             system_prompt=self.SYSTEM_PROMPT,
-            temperature=0.5  # Lower temperature for more consistent recommendations
+            temperature=0.4  # Lower temperature for more consistent recommendations
         )
         
         return {

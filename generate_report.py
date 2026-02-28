@@ -137,14 +137,14 @@ class HTMLReportGenerator:
                 for j in range(i+1, min(i+4, len(lines))):
                     if lines[j].strip() and not any(x in lines[j].upper() for x in ['SENTIMENT:', 'KEY ', 'MAJOR ', 'IMPACT ']):
                         summary_lines.append(lines[j].strip())
-                summary = self._clean_text(' '.join(summary_lines))[:200]
+                summary = self._clean_text(' '.join(summary_lines))[:350]
                 break
 
         if not summary:
             # Try to get first meaningful paragraph
             for line in lines:
                 if len(line.strip()) > 50 and not any(x in line.upper() for x in ['SENTIMENT:', 'KEY ', '**']):
-                    summary = self._clean_text(line.strip())[:200]
+                    summary = self._clean_text(line.strip())[:350]
                     break
 
         return sentiment, summary
@@ -170,7 +170,7 @@ class HTMLReportGenerator:
                 for j in range(i+1, min(i+4, len(lines))):
                     if lines[j].strip():
                         summary_lines.append(lines[j].strip())
-                summary = self._clean_text(' '.join(summary_lines))[:200]
+                summary = self._clean_text(' '.join(summary_lines))[:350]
                 break
 
         return trend, summary
@@ -196,7 +196,7 @@ class HTMLReportGenerator:
                 for j in range(i+1, min(i+4, len(lines))):
                     if lines[j].strip():
                         summary_lines.append(lines[j].strip())
-                summary = self._clean_text(' '.join(summary_lines))[:200]
+                summary = self._clean_text(' '.join(summary_lines))[:350]
                 break
 
         return valuation, summary
@@ -771,6 +771,51 @@ class HTMLReportGenerator:
             border-radius: 16px;
             padding: 16px;
             margin-top: 24px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .chart-container .js-plotly-plot {
+            min-width: 600px;
+        }
+
+        /* Timeframe tabs */
+        .timeframe-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .timeframe-tab {
+            padding: 8px 18px;
+            border-radius: 8px;
+            border: 1px solid var(--border-dark);
+            background: rgba(30, 41, 59, 0.6);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .timeframe-tab:hover {
+            border-color: var(--primary);
+            color: var(--text-light);
+        }
+
+        .timeframe-tab.active {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: var(--primary);
+            color: var(--primary-light);
+        }
+
+        .chart-panel {
+            display: none;
+        }
+
+        .chart-panel.active {
+            display: block;
         }
 
         /* Animations */
@@ -792,10 +837,12 @@ class HTMLReportGenerator:
         @media (max-width: 768px) {
             .container { padding: 16px; }
             h1 { font-size: 1.75rem; }
-            .card { padding: 24px; border-radius: 20px; }
+            .card { padding: 20px; border-radius: 16px; }
             .metrics-grid { grid-template-columns: repeat(2, 1fr); }
             .metric-value { font-size: 1.5rem; }
             .rec-badge-large { padding: 12px 32px; font-size: 1.25rem; }
+            .summary-grid { grid-template-columns: 1fr; }
+            .timeframe-tabs { flex-wrap: wrap; }
         }
 
         /* Plotly chart styling */
@@ -977,8 +1024,36 @@ class HTMLReportGenerator:
                 </div>
             </div>
             <div class="chart-container">
-                {forecast_charts.get('1y', '<p style="text-align: center; color: var(--text-muted); padding: 40px;">Chart not available</p>')}
+                <div class="timeframe-tabs">
+                    <button class="timeframe-tab" onclick="switchTab('1y', this)">1Y</button>
+                    <button class="timeframe-tab active" onclick="switchTab('3m', this)">3M</button>
+                    <button class="timeframe-tab" onclick="switchTab('1m', this)">1M</button>
+                    <button class="timeframe-tab" onclick="switchTab('10d', this)">10D</button>
+                </div>
+                <div class="chart-panel" id="chart-1y">
+                    {forecast_charts.get('1y', '<p style="text-align: center; color: var(--text-muted); padding: 40px;">Chart not available</p>')}
+                </div>
+                <div class="chart-panel active" id="chart-3m">
+                    {forecast_charts.get('3m', forecast_charts.get('1m', '<p style="text-align: center; color: var(--text-muted); padding: 40px;">Chart not available</p>'))}
+                </div>
+                <div class="chart-panel" id="chart-1m">
+                    {forecast_charts.get('1m', '<p style="text-align: center; color: var(--text-muted); padding: 40px;">Chart not available</p>')}
+                </div>
+                <div class="chart-panel" id="chart-10d">
+                    {forecast_charts.get('10d', '<p style="text-align: center; color: var(--text-muted); padding: 40px;">Chart not available</p>')}
+                </div>
             </div>
+            <script>
+            function switchTab(tf, btn) {{
+                document.querySelectorAll('.chart-panel').forEach(p => p.classList.remove('active'));
+                document.querySelectorAll('.timeframe-tab').forEach(t => t.classList.remove('active'));
+                document.getElementById('chart-' + tf).classList.add('active');
+                btn.classList.add('active');
+                // Trigger Plotly resize for the active chart
+                var el = document.getElementById('chart-' + tf).querySelector('.js-plotly-plot');
+                if (el && window.Plotly) {{ window.Plotly.Plots.resize(el); }}
+            }}
+            </script>
         </div>
 
         <!-- Detailed Analysis Sections (Collapsible) -->
@@ -1314,8 +1389,10 @@ class HTMLReportGenerator:
             -webkit-backdrop-filter: blur(24px);
             border: 1px solid rgba(99, 102, 241, 0.12);
             border-radius: 20px;
-            overflow: hidden;
+            overflow-x: auto;
+            overflow-y: hidden;
             box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.3);
+            -webkit-overflow-scrolling: touch;
         }}
 
         .stock-table {{
@@ -1531,11 +1608,8 @@ class HTMLReportGenerator:
 
         /* Responsive */
         @media (max-width: 1024px) {{
-            .stock-table .col-mcap,
-            .stock-table .col-sentiment,
-            .stock-table .col-technical,
-            .stock-table .col-fundamental {{
-                display: none;
+            .stock-table {{
+                min-width: 900px;
             }}
         }}
 
@@ -1544,18 +1618,12 @@ class HTMLReportGenerator:
             .stats-row {{ grid-template-columns: repeat(2, 1fr); }}
             .controls {{ flex-direction: column; align-items: stretch; }}
             .search-box {{ max-width: none; }}
-            .stock-table .col-sparkline,
-            .stock-table .col-prediction {{
-                display: none;
+            .stock-table {{
+                min-width: 800px;
             }}
             .stock-table td, .stock-table thead th {{
                 padding: 10px 10px;
-            }}
-        }}
-
-        @media (max-width: 480px) {{
-            .stock-table .col-action {{
-                display: none;
+                font-size: 0.8rem;
             }}
         }}
     </style>
