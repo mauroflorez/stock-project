@@ -1248,6 +1248,10 @@ class HTMLReportGenerator:
         {self.get_common_css()}
 
         /* === INDEX PAGE STYLES === */
+        .container {{
+            max-width: 1600px;
+        }}
+
         .hero {{
             text-align: center;
             padding: 40px 32px 32px;
@@ -1742,10 +1746,9 @@ class HTMLReportGenerator:
                         <td class="col-technical"><span class="mini-badge {_mini_class(stat_badge_class)}">{report['stat_trend']}</span></td>
                         <td class="col-fundamental"><span class="mini-badge {_mini_class(fin_badge_class)}">{report['fin_outlook']}</span></td>
                         <td class="col-rec" data-value="{rec_class}"><span class="rec-pill {rec_class}">{report['recommendation']}</span></td>
-                        <td class="col-action">
-                            <a href="{report['file']}" class="view-link">
-                                Details
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <td class="col-action" style="text-align:center;">
+                            <a href="{report['file']}" class="view-link" title="View Details">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M5 12h14M12 5l7 7-7 7"/>
                                 </svg>
                             </a>
