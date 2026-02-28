@@ -1398,6 +1398,7 @@ class HTMLReportGenerator:
         .stock-table {{
             width: 100%;
             border-collapse: collapse;
+            min-width: 1200px;
         }}
 
         .stock-table thead th {{
