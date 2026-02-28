@@ -21,9 +21,13 @@ from agents.statistical_expert import StatisticalExpertAgent
 from agents.financial_expert import FinancialExpertAgent
 from agents.investment_synthesizer import InvestmentSynthesizerAgent
 from agents.forecaster import ForecasterAgent
+from agents.momentum_analyst import MomentumAnalystAgent
+from agents.sector_analyst import SectorAnalystAgent
+from agents.quorum_scorer import QuorumScorer
 from utils.data_fetcher import DataFetcher
 from utils.ollama_client import OllamaClient
 from utils.visualizations import StockVisualizer
+from utils.prediction_tracker import PredictionTracker
 from config import STOCK_SYMBOLS, STOCK_NAMES, OUTPUT_DIR
 
 import json
@@ -40,7 +44,11 @@ class StockAnalysisOrchestrator:
         self.stats_agent = StatisticalExpertAgent()
         self.financial_agent = FinancialExpertAgent()
         self.forecaster_agent = ForecasterAgent()
+        self.momentum_agent = MomentumAnalystAgent()
+        self.sector_agent = SectorAnalystAgent()
         self.synthesizer_agent = InvestmentSynthesizerAgent()
+        self.quorum_scorer = QuorumScorer()
+        self.prediction_tracker = PredictionTracker()
         self.visualizer = StockVisualizer()
         
     def check_ollama(self) -> bool:
@@ -63,11 +71,11 @@ class StockAnalysisOrchestrator:
         print(f"{'='*80}\n")
         
         # Step 1: Fetch data
-        print("📊 Step 1/6: Fetching stock price data...")
+        print("📊 Step 1/8: Fetching stock price data...")
         stock_data = self.data_fetcher.get_stock_prices(symbol)
         stock_formatted = self.data_fetcher.format_price_data_for_agent(stock_data)
 
-        print("📰 Step 2/6: Fetching news data...")
+        print("📰 Step 2/8: Fetching news data...")
         news_data = self.data_fetcher.get_news(
             symbol,
             STOCK_NAMES.get(symbol, symbol)
@@ -77,13 +85,13 @@ class StockAnalysisOrchestrator:
         # Step 2: Run agents
         print("\n🤖 Running AI Agents...\n")
 
-        # News Analysis
-        print("🗞️  Step 3/6: News Analysis...")
+        # News Analysis (LLM)
+        print("🗞️  Step 3/8: News Analysis...")
         news_result = self.news_agent.analyze(news_formatted, symbol)
         print("✅ News analysis complete\n")
 
-        # Statistical Analysis
-        print("📈 Step 4/6: Statistical Analysis...")
+        # Statistical Analysis (LLM + Python indicators)
+        print("📈 Step 4/8: Statistical Analysis...")
         stats_result = self.stats_agent.analyze(
             stock_formatted,
             stock_data.get('historical_close', []),
@@ -92,7 +100,7 @@ class StockAnalysisOrchestrator:
         print("✅ Statistical analysis complete\n")
 
         # Forecasting
-        print("🔮 Step 5/6: Time Series Forecasting...")
+        print("🔮 Step 5/8: Time Series Forecasting...")
         forecast_result = self.forecaster_agent.analyze(
             prices=stock_data.get('historical_close', []),
             dates=stock_data.get('historical_dates', []),
@@ -105,17 +113,84 @@ class StockAnalysisOrchestrator:
         forecast_result['charts'] = forecast_charts
         print("✅ Forecasting complete\n")
 
-        # Financial Analysis
-        print("💼 Step 6/6: Financial Analysis...")
+        # Financial Analysis (LLM + Python scoring)
+        print("💼 Step 6/8: Financial Analysis...")
         financial_result = self.financial_agent.analyze(stock_formatted, symbol, raw_stock_data=stock_data)
         print("✅ Financial analysis complete\n")
 
-        # Synthesis (includes forecast summary in context)
+        # Momentum Analysis (Python only - no LLM)
+        print("🚀 Step 7/8: Momentum Analysis...")
+        momentum_result = self.momentum_agent.analyze(
+            stock_data.get('historical_close', []),
+            stock_data.get('historical_volume', []),
+            symbol
+        )
+        print(f"   Signal: {momentum_result['momentum_signal']} (score: {momentum_result['momentum_score']})")
+        print("✅ Momentum analysis complete\n")
+
+        # Sector Analysis (Python only - no LLM)
+        print("🏢 Step 8/8: Sector Analysis...")
+        sector_result = self.sector_agent.analyze(
+            stock_data.get('historical_close', []),
+            stock_data.get('sector', 'Unknown'),
+            symbol
+        )
+        print(f"   Signal: {sector_result['sector_signal']} (score: {sector_result['sector_score']})")
+        print("✅ Sector analysis complete\n")
+
+        # === Quorum Scoring ===
+        # Determine forecast direction
+        forecast_dir = "flat"
+        try:
+            next_day_ret = forecast_result['summary'].get('next_day_expected_return', '0%')
+            ret_val = float(next_day_ret.replace('%', '').replace('+', ''))
+            if ret_val > 0.5:
+                forecast_dir = "up"
+            elif ret_val < -0.5:
+                forecast_dir = "down"
+        except (ValueError, TypeError):
+            pass
+        
+        # Get deterministic signals
+        tech_signal = stats_result.get('statistics', {}).get('technical_signal', 'NEUTRAL')
+        tech_score = stats_result.get('statistics', {}).get('technical_score', 0.0)
+        fund_signal = financial_result.get('fundamental_signal', {}).get('signal', 'FAIR')
+        fund_score = financial_result.get('fundamental_signal', {}).get('score', 0.0)
+        
+        # Extract news sentiment from LLM output
+        from generate_report import HTMLReportGenerator
+        report_gen = HTMLReportGenerator()
+        news_sentiment, _ = report_gen.extract_news_sentiment(news_result['analysis'])
+        
+        quorum_result = self.quorum_scorer.compute(
+            news_signal=news_sentiment,
+            technical_signal=tech_signal,
+            technical_score=tech_score,
+            fundamental_signal=fund_signal,
+            fundamental_score=fund_score,
+            momentum_signal=momentum_result['momentum_signal'],
+            momentum_score=momentum_result['momentum_score'],
+            sector_signal=sector_result['sector_signal'],
+            sector_score=sector_result['sector_score'],
+            forecast_direction=forecast_dir
+        )
+        
+        print(f"🎯 Quorum Verdict: {quorum_result['recommendation']} "
+              f"({quorum_result['strength']}, confidence: {quorum_result['confidence']:.1%})")
+        print(f"   {quorum_result['consensus']}\n")
+
+        # Synthesis (includes forecast + quorum context)
         forecast_summary = f"""
 FORECAST SUMMARY:
 - Next Day Prediction: ${forecast_result['summary']['next_day_prediction']:.2f} ({forecast_result['summary']['next_day_expected_return']})
 - 10-Day Prediction: ${forecast_result['summary']['day_10_prediction']:.2f} ({forecast_result['summary']['day_10_expected_return']})
 - Confidence: {forecast_result['summary']['confidence']}
+
+QUORUM SCORING RESULT:
+- Recommendation: {quorum_result['recommendation']} ({quorum_result['strength']})
+- Confidence: {quorum_result['confidence']:.1%}
+- Momentum: {momentum_result['momentum_signal']}
+- Sector: {sector_result['sector_signal']}
 """
         synthesis_result = self.synthesizer_agent.synthesize(
             news_result['analysis'],
@@ -137,8 +212,11 @@ FORECAST SUMMARY:
                 "statistical_expert": stats_result,
                 "forecaster": forecast_result,
                 "financial_expert": financial_result,
+                "momentum_analyst": momentum_result,
+                "sector_analyst": sector_result,
                 "investment_synthesizer": synthesis_result
-            }
+            },
+            "quorum": quorum_result
         }
         
         return results
@@ -180,6 +258,14 @@ FORECAST SUMMARY:
                 # Save individual stock results
                 self.save_results(results)
                 
+                # Record prediction for future evaluation
+                quorum = results.get('quorum', {})
+                current_price = results.get('stock_data', {}).get('current_price', 0)
+                if quorum and current_price:
+                    self.prediction_tracker.record_prediction(
+                        symbol, quorum, current_price, results.get('agents', {})
+                    )
+                
             except Exception as e:
                 print(f"❌ Error analyzing {symbol}: {str(e)}")
                 import traceback
@@ -189,6 +275,9 @@ FORECAST SUMMARY:
         print("✅ Analysis complete!")
         print(f"📊 Analyzed {len(all_results)} stock(s)")
         print(f"{'='*80}\n")
+        
+        # Print prediction accuracy report
+        self.prediction_tracker.print_report()
         
         return all_results
 

@@ -1010,16 +1010,34 @@ class HTMLReportGenerator:
         # Get synthesis summary
         synthesis_summary = self._extract_synthesis_summary(synthesis, recommendation, confidence)
 
-        # Compute numeric confidence score based on expert signals
-        conf_score = self.compute_confidence_score(news_sentiment, stat_trend, fin_outlook, recommendation)
-        # Override recommendation if score strongly disagrees with LLM
-        if conf_score >= 0.67 and 'BUY' not in recommendation.upper():
-            recommendation = 'BUY'
-            rec_class = 'rec-buy'
-        elif conf_score <= 0.33 and 'SELL' not in recommendation.upper():
-            recommendation = 'SELL'
-            rec_class = 'rec-sell'
+        # === Use Quorum Score if available, else fallback ===
+        quorum = data.get('quorum', None)
+        if quorum:
+            conf_score = quorum['confidence']
+            recommendation = quorum['recommendation']
+            rec_class = f"rec-{recommendation.lower()}"
+            quorum_strength = quorum.get('strength', '')
+            quorum_consensus = quorum.get('consensus', '')
+        else:
+            conf_score = self.compute_confidence_score(news_sentiment, stat_trend, fin_outlook, recommendation)
+            if conf_score >= 0.67 and 'BUY' not in recommendation.upper():
+                recommendation = 'BUY'
+                rec_class = 'rec-buy'
+            elif conf_score <= 0.33 and 'SELL' not in recommendation.upper():
+                recommendation = 'SELL'
+                rec_class = 'rec-sell'
+            quorum_strength = ''
+            quorum_consensus = ''
         conf_color = f'hsl({conf_score * 120}, 80%, 50%)'  # red=0, yellow=60, green=120
+
+        # Extract momentum & sector data if available
+        momentum_data = data['agents'].get('momentum_analyst', {})
+        sector_data = data['agents'].get('sector_analyst', {})
+        momentum_signal = momentum_data.get('momentum_signal', 'N/A')
+        momentum_score = momentum_data.get('momentum_score', 0)
+        sector_signal = sector_data.get('sector_signal', 'N/A')
+        sector_score = sector_data.get('sector_score', 0)
+        sector_name = sector_data.get('sector', stock_data.get('sector', 'Unknown'))
 
         html = f"""
 <!DOCTYPE html>
@@ -1112,9 +1130,25 @@ class HTMLReportGenerator:
                     </div>
                     <p class="summary-text">{fin_summary if fin_summary else "Financial metrics and valuation assessed."}</p>
                 </div>
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <span class="summary-icon">🚀</span>
+                        <span class="summary-title">Momentum</span>
+                        <span class="badge {self._get_badge_class(momentum_signal)}">{momentum_signal}</span>
+                    </div>
+                    <p class="summary-text">{'; '.join(momentum_data.get('momentum_reasons', [])[:2]) if momentum_data.get('momentum_reasons') else 'Momentum indicators evaluated.'}</p>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <span class="summary-icon">🏢</span>
+                        <span class="summary-title">Sector ({sector_name})</span>
+                        <span class="badge {self._get_badge_class(sector_signal)}">{sector_signal}</span>
+                    </div>
+                    <p class="summary-text">{'; '.join(sector_data.get('sector_reasons', [])[:2]) if sector_data.get('sector_reasons') else 'Sector performance evaluated.'}</p>
+                </div>
             </div>
             <div class="conclusion-box">
-                <strong>Conclusion</strong>
+                <strong>Conclusion</strong>{f' <span class="badge" style="margin-left: 8px; font-size: 0.75rem;">{quorum_consensus}</span>' if quorum_consensus else ''}
                 <p style="margin-top: 8px; color: var(--text-muted);">{synthesis_summary}</p>
             </div>
         </div>
@@ -1310,12 +1344,17 @@ class HTMLReportGenerator:
                 fin_outlook, _ = self.extract_financial_outlook(financial_analysis)
                 recommendation, confidence = self.extract_recommendation(synthesis)
 
-                # Compute confidence score and override recommendation if needed
-                conf_score = self.compute_confidence_score(news_sentiment, stat_trend, fin_outlook, recommendation)
-                if conf_score >= 0.67 and 'BUY' not in recommendation.upper():
-                    recommendation = 'BUY'
-                elif conf_score <= 0.33 and 'SELL' not in recommendation.upper():
-                    recommendation = 'SELL'
+                # Use quorum if available, else fallback
+                quorum = data.get('quorum', None)
+                if quorum:
+                    conf_score = quorum['confidence']
+                    recommendation = quorum['recommendation']
+                else:
+                    conf_score = self.compute_confidence_score(news_sentiment, stat_trend, fin_outlook, recommendation)
+                    if conf_score >= 0.67 and 'BUY' not in recommendation.upper():
+                        recommendation = 'BUY'
+                    elif conf_score <= 0.33 and 'SELL' not in recommendation.upper():
+                        recommendation = 'SELL'
 
                 # Market cap formatting
                 market_cap = stock_data.get('market_cap', 0)
