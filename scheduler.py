@@ -15,39 +15,50 @@ import pytz
 
 
 def run_analysis_job():
-    """Run the analysis and log output"""
+    """Run the analysis and report generation, then log output"""
     
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     print(f"\n{'='*70}")
     print(f"Scheduled Run Started: {timestamp}")
     print(f"{'='*70}\n")
     
+    project_dir = os.path.dirname(os.path.abspath(__file__))
+    
     try:
-        # Run the analysis script
+        # Step 1: Run the main analysis
+        print("Step 1/2: Running stock analysis (main.py)...")
         result = subprocess.run(
-            [sys.executable, "run_analysis.py"],
-            cwd=os.path.dirname(os.path.abspath(__file__)),
+            [sys.executable, "main.py"],
+            cwd=project_dir,
             capture_output=True,
             text=True
         )
         
         print(result.stdout)
         
-        if result.returncode == 0:
-            print(f"\n✓ Analysis completed successfully at {timestamp}")
-            
-            # Optionally run git deployment
-            if os.path.exists("deploy_to_github.sh"):
-                print("\nDeploying to GitHub...")
-                deploy_result = subprocess.run(
-                    ["bash", "deploy_to_github.sh"],
-                    capture_output=True,
-                    text=True
-                )
-                print(deploy_result.stdout)
-        else:
+        if result.returncode != 0:
             print(f"\n✗ Analysis failed at {timestamp}")
             print(result.stderr)
+            return
+        
+        print(f"\n✓ Analysis completed successfully")
+        
+        # Step 2: Generate HTML reports
+        print("\nStep 2/2: Generating HTML reports (generate_report.py)...")
+        result2 = subprocess.run(
+            [sys.executable, "generate_report.py"],
+            cwd=project_dir,
+            capture_output=True,
+            text=True
+        )
+        
+        print(result2.stdout)
+        
+        if result2.returncode == 0:
+            print(f"\n✓ Reports generated successfully at {timestamp}")
+        else:
+            print(f"\n✗ Report generation failed at {timestamp}")
+            print(result2.stderr)
             
     except Exception as e:
         print(f"\n✗ Error running scheduled job: {str(e)}")
@@ -88,3 +99,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stock Investment Planner - AI-Powered Analysis</title>
+    <meta name="description" content="AI-powered multi-agent stock analysis dashboard with forecasting for 8 stocks">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -423,185 +424,323 @@
         }
         
 
-        /* Index-specific styles */
+        /* === INDEX PAGE STYLES === */
         .hero {
             text-align: center;
-            padding: 48px 32px;
+            padding: 40px 32px 32px;
         }
 
         .hero h1 {
-            font-size: 3rem;
+            font-size: 2.75rem;
             background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
 
         .hero-subtitle {
             color: var(--text-muted);
-            font-size: 1.125rem;
+            font-size: 1.05rem;
+        }
+
+        .hero-date {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 8px;
+            opacity: 0.7;
         }
 
         /* Stats row */
         .stats-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(4, 1fr);
             gap: 16px;
-            margin-bottom: 32px;
+            margin-bottom: 24px;
         }
 
         .stat-card {
             background: rgba(30, 41, 59, 0.6);
             border: 1px solid var(--border-dark);
             border-radius: 16px;
-            padding: 24px;
+            padding: 20px;
             text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .stat-card:hover {
+            border-color: var(--primary);
+            background: rgba(30, 41, 59, 0.8);
         }
 
         .stat-value {
-            font-size: 2.5rem;
+            font-size: 2.25rem;
             font-weight: 800;
         }
 
         .stat-label {
             color: var(--text-muted);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             margin-top: 4px;
         }
 
-        /* Stock grid */
-        .stock-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-            gap: 20px;
-        }
-
-        .stock-card {
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border-dark);
-            border-radius: 20px;
-            padding: 24px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-
-        .stock-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--primary);
-            box-shadow: 0 20px 40px -15px rgba(99, 102, 241, 0.3);
-        }
-
-        .stock-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 20px;
-        }
-
-        .stock-info h3 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-light);
-            margin-bottom: 4px;
-        }
-
-        .stock-info .company {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        .stock-price {
-            text-align: right;
-        }
-
-        .stock-price .current {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-light);
-        }
-
-        .stock-price .change {
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-
-        .stock-price .change.positive { color: var(--success); }
-        .stock-price .change.negative { color: var(--danger); }
-
-        .stock-chart {
-            background: rgba(15, 23, 42, 0.5);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .stock-metrics {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .stock-metric {
-            background: rgba(15, 23, 42, 0.5);
-            border-radius: 10px;
-            padding: 12px;
-        }
-
-        .stock-metric .label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .stock-metric .value {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-light);
-            margin-top: 4px;
-        }
-
-        .stock-badges {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-
-        .stock-recommendation {
+        /* Controls bar */
+        .controls {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-top: 16px;
-            border-top: 1px solid var(--border-dark);
+            gap: 16px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
+        .search-box {
+            position: relative;
+            flex: 1;
+            max-width: 320px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 16px 12px 44px;
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid var(--border-dark);
+            border-radius: 12px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .search-box input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            padding: 10px 18px;
+            border-radius: 10px;
+            border: 1px solid var(--border-dark);
+            background: rgba(30, 41, 59, 0.6);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--primary);
+            color: var(--text-light);
+        }
+
+        .filter-btn.active {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: var(--primary);
+            color: var(--primary-light);
+        }
+
+        /* Data table */
+        .table-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(99, 102, 241, 0.12);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.3);
+        }
+
+        .stock-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .stock-table thead th {
+            padding: 16px 16px;
+            text-align: left;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            background: rgba(15, 23, 42, 0.5);
+            border-bottom: 1px solid rgba(51, 65, 85, 0.4);
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+            transition: color 0.2s ease;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .stock-table thead th:hover {
+            color: var(--primary-light);
+        }
+
+        .stock-table thead th .sort-icon {
+            display: inline-block;
+            margin-left: 4px;
+            opacity: 0.3;
+            transition: opacity 0.2s ease;
+        }
+
+        .stock-table thead th.sorted .sort-icon {
+            opacity: 1;
+            color: var(--primary-light);
+        }
+
+        .stock-table tbody tr {
+            border-bottom: 1px solid rgba(51, 65, 85, 0.25);
+            transition: all 0.15s ease;
+            cursor: pointer;
+        }
+
+        .stock-table tbody tr:hover {
+            background: rgba(99, 102, 241, 0.08);
+        }
+
+        .stock-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .stock-table td {
+            padding: 14px 16px;
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+
+        /* Cell styles */
+        .cell-stock {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 180px;
+        }
+
+        .stock-symbol {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--text-light);
+        }
+
+        .stock-company {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 160px;
+        }
+
+        .cell-price {
+            font-weight: 600;
+            color: var(--text-light);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .cell-change {
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .cell-change.positive { color: var(--success); }
+        .cell-change.negative { color: var(--danger); }
+
+        .cell-sparkline {
+            line-height: 0;
+        }
+
+        .cell-prediction {
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Prediction arrow indicator */
+        .pred-arrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .pred-arrow .arrow {
+            display: inline-block;
+            font-size: 0.65rem;
+            line-height: 1;
+        }
+
+        .pred-arrow.up .arrow { color: var(--success); }
+        .pred-arrow.down .arrow { color: var(--danger); }
+
+        .cell-mcap {
+            color: var(--text-muted);
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Mini badges for table */
+        .mini-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            white-space: nowrap;
+        }
+
+        .mini-badge.bullish { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+        .mini-badge.bearish { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+        .mini-badge.neutral { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+
         .rec-pill {
-            padding: 8px 20px;
+            display: inline-block;
+            padding: 6px 16px;
             border-radius: 9999px;
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
+            letter-spacing: 0.03em;
         }
 
         .rec-pill.buy { background: linear-gradient(135deg, #10b981, #059669); color: white; }
         .rec-pill.sell { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
         .rec-pill.hold { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
 
-        .view-arrow {
+        .view-link {
             color: var(--primary-light);
-            font-weight: 600;
-            display: flex;
+            font-weight: 500;
+            font-size: 0.85rem;
+            text-decoration: none;
+            display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }
+
+        .stock-table tbody tr:hover .view-link {
+            opacity: 1;
         }
 
         /* Legend */
@@ -610,8 +749,8 @@
             justify-content: center;
             gap: 24px;
             flex-wrap: wrap;
-            margin-top: 32px;
-            padding: 20px;
+            margin-top: 24px;
+            padding: 16px;
             background: rgba(30, 41, 59, 0.4);
             border-radius: 12px;
         }
@@ -621,19 +760,55 @@
             align-items: center;
             gap: 8px;
             color: var(--text-muted);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .legend-dot {
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
+        }
+
+        /* No results */
+        .no-results {
+            text-align: center;
+            padding: 48px;
+            color: var(--text-muted);
+            display: none;
+        }
+
+        .no-results.visible {
+            display: block;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .stock-table .col-mcap,
+            .stock-table .col-sentiment,
+            .stock-table .col-technical,
+            .stock-table .col-fundamental {
+                display: none;
+            }
         }
 
         @media (max-width: 768px) {
             .hero h1 { font-size: 2rem; }
-            .stock-grid { grid-template-columns: 1fr; }
             .stats-row { grid-template-columns: repeat(2, 1fr); }
+            .controls { flex-direction: column; align-items: stretch; }
+            .search-box { max-width: none; }
+            .stock-table .col-sparkline,
+            .stock-table .col-prediction {
+                display: none;
+            }
+            .stock-table td, .stock-table thead th {
+                padding: 10px 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stock-table .col-action {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -643,6 +818,7 @@
         <div class="card hero animate-in">
             <h1>Stock Investment Planner</h1>
             <p class="hero-subtitle">AI-Powered Multi-Agent Stock Analysis</p>
+            <p class="hero-date">Last updated: 2026-02-28</p>
         </div>
 
         <!-- Stats Summary -->
@@ -665,441 +841,399 @@
             </div>
         </div>
 
-        <!-- Stock Grid -->
-        <div class="stock-grid animate-in delay-2">
+        <!-- Controls -->
+        <div class="controls animate-in delay-2">
+            <div class="search-box">
+                <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                </svg>
+                <input type="text" id="searchInput" placeholder="Search stocks..." oninput="filterTable()">
+            </div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all" onclick="setFilter('all', this)">All (8)</button>
+                <button class="filter-btn" data-filter="buy" onclick="setFilter('buy', this)">Buy (0)</button>
+                <button class="filter-btn" data-filter="hold" onclick="setFilter('hold', this)">Hold (8)</button>
+                <button class="filter-btn" data-filter="sell" onclick="setFilter('sell', this)">Sell (0)</button>
+            </div>
+        </div>
 
-            <a href="googl.html" class="stock-card">
-                <div class="stock-header">
-                    <div class="stock-info">
-                        <h3>GOOGL</h3>
-                        <div class="company">Alphabet Inc.</div>
-                    </div>
-                    <div class="stock-price">
-                        <div class="current">$314.98</div>
-                        <div class="change positive">+4.01%</div>
-                    </div>
-                </div>
+        <!-- Stock Table -->
+        <div class="table-card animate-in delay-2">
+            <table class="stock-table" id="stockTable">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable(0, 'text')" class="col-stock">Stock <span class="sort-icon">▲▼</span></th>
+                        <th onclick="sortTable(1, 'number')" class="col-price">Price <span class="sort-icon">▲▼</span></th>
+                        <th onclick="sortTable(2, 'number')" class="col-change">Change <span class="sort-icon">▲▼</span></th>
+                        <th class="col-sparkline">20D Trend</th>
+                        <th onclick="sortTable(4, 'number')" class="col-prediction">10D Target <span class="sort-icon">▲▼</span></th>
+                        <th onclick="sortTable(5, 'number')" class="col-mcap">Mkt Cap <span class="sort-icon">▲▼</span></th>
+                        <th class="col-sentiment">News</th>
+                        <th class="col-technical">Technical</th>
+                        <th class="col-fundamental">Fundamental</th>
+                        <th onclick="sortTable(9, 'rec')" class="col-rec">Signal <span class="sort-icon">▲▼</span></th>
+                        <th class="col-action"></th>
+                    </tr>
+                </thead>
+                <tbody id="stockTableBody">
 
-                <div class="stock-chart">
-                    <svg width="100" height="40" viewBox="0 0 100 40" style="vertical-align: middle;">
+                    <tr data-rec="hold" data-symbol="GOOGL" data-company="Alphabet Inc." onclick="window.location='googl.html'">
+                        <td class="col-stock">
+                            <div class="cell-stock">
+                                <div>
+                                    <div class="stock-symbol">GOOGL</div>
+                                    <div class="stock-company">Alphabet Inc.</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="col-price cell-price" data-value="311.76">$311.76</td>
+                        <td class="col-change cell-change positive" data-value="1.42">+1.42%</td>
+                        <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
             <defs>
-                <linearGradient id="grad_1023" x1="0%" y1="0%" x2="0%" y2="100%">
+                <linearGradient id="grad_5490" x1="0%" y1="0%" x2="0%" y2="100%">
                     <stop offset="0%" style="stop-color:#ef4444;stop-opacity:0.3"/>
                     <stop offset="100%" style="stop-color:#ef4444;stop-opacity:0"/>
                 </linearGradient>
             </defs>
-            <path d="M4.0,16.1 L8.8,12.0 L13.7,11.0 L18.5,9.9 L23.4,8.2 L28.2,8.4 L33.1,4.0 L37.9,7.1 L42.7,12.2 L47.6,13.6 L52.4,20.0 L57.3,18.9 L62.1,23.3 L66.9,29.1 L71.8,30.6 L76.6,33.2 L81.5,36.0 L86.3,35.0 L91.2,35.4 L96.0,26.0 L96.0,36 L4,36 Z" fill="url(#grad_1023)"/>
-            <path d="M4.0,16.1 L8.8,12.0 L13.7,11.0 L18.5,9.9 L23.4,8.2 L28.2,8.4 L33.1,4.0 L37.9,7.1 L42.7,12.2 L47.6,13.6 L52.4,20.0 L57.3,18.9 L62.1,23.3 L66.9,29.1 L71.8,30.6 L76.6,33.2 L81.5,36.0 L86.3,35.0 L91.2,35.4 L96.0,26.0" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="96.0" cy="26.0" r="3" fill="#ef4444"/>
-        </svg>
-                </div>
+            <path d="M4.0,7.8 L9.9,4.0 L15.8,6.7 L21.7,11.2 L27.6,12.4 L33.5,18.0 L39.4,17.0 L45.3,20.9 L51.2,26.0 L57.1,27.3 L62.9,29.5 L68.8,32.0 L74.7,31.1 L80.6,31.4 L86.5,23.3 L92.4,25.6 L98.3,26.0 L104.2,24.7 L110.1,28.4 L116.0,25.5 L116.0,32 L4,32 Z" fill="url(#grad_5490)"/>
+            <path d="M4.0,7.8 L9.9,4.0 L15.8,6.7 L21.7,11.2 L27.6,12.4 L33.5,18.0 L39.4,17.0 L45.3,20.9 L51.2,26.0 L57.1,27.3 L62.9,29.5 L68.8,32.0 L74.7,31.1 L80.6,31.4 L86.5,23.3 L92.4,25.6 L98.3,26.0 L104.2,24.7 L110.1,28.4 L116.0,25.5" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="116.0" cy="25.5" r="3" fill="#ef4444"/>
+        </svg></td>
+                        <td class="col-prediction" data-value="-0.12">
+                            <div class="cell-prediction">$311.38</div>
+                            <div class="pred-arrow down">
+                                <span class="arrow">▼</span>
+                                <span class="cell-change negative" style="font-size: 0.8rem;">-0.1%</span>
+                            </div>
+                        </td>
+                        <td class="col-mcap cell-mcap" data-value="3771360870400">$3.77T</td>
+                        <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
+                        <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
+                        <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
+                        <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
+                        <td class="col-action">
+                            <a href="googl.html" class="view-link">
+                                Details
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
 
-                <div class="stock-metrics">
-                    <div class="stock-metric">
-                        <div class="label">10-Day Target</div>
-                        <div class="value">$307.62</div>
-                    </div>
-                    <div class="stock-metric">
-                        <div class="label">Expected Change</div>
-                        <div class="value" style="color: var(--danger);">-2.3%</div>
-                    </div>
-                </div>
-
-                <div class="stock-badges">
-                    <span class="badge badge-bullish">Slightly Bullish</span>
-                    <span class="badge badge-bullish">Bullish</span>
-                    <span class="badge badge-fair">Fair</span>
-                </div>
-
-                <div class="stock-recommendation">
-                    <span class="rec-pill hold">HOLD</span>
-                    <span class="view-arrow">
-                        View Details
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </span>
-                </div>
-            </a>
-
-            <a href="msft.html" class="stock-card">
-                <div class="stock-header">
-                    <div class="stock-info">
-                        <h3>MSFT</h3>
-                        <div class="company">Microsoft Corporation</div>
-                    </div>
-                    <div class="stock-price">
-                        <div class="current">$397.23</div>
-                        <div class="change negative">-0.31%</div>
-                    </div>
-                </div>
-
-                <div class="stock-chart">
-                    <svg width="100" height="40" viewBox="0 0 100 40" style="vertical-align: middle;">
+                    <tr data-rec="hold" data-symbol="MSFT" data-company="Microsoft Corporation" onclick="window.location='msft.html'">
+                        <td class="col-stock">
+                            <div class="cell-stock">
+                                <div>
+                                    <div class="stock-symbol">MSFT</div>
+                                    <div class="stock-company">Microsoft Corporation</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="col-price cell-price" data-value="392.74">$392.74</td>
+                        <td class="col-change cell-change negative" data-value="-2.24">-2.24%</td>
+                        <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
             <defs>
-                <linearGradient id="grad_3174" x1="0%" y1="0%" x2="0%" y2="100%">
+                <linearGradient id="grad_4969" x1="0%" y1="0%" x2="0%" y2="100%">
                     <stop offset="0%" style="stop-color:#ef4444;stop-opacity:0.3"/>
                     <stop offset="100%" style="stop-color:#ef4444;stop-opacity:0"/>
                 </linearGradient>
             </defs>
-            <path d="M4.0,9.7 L8.8,8.1 L13.7,4.4 L18.5,4.0 L23.4,21.5 L28.2,22.7 L33.1,25.2 L37.9,29.6 L42.7,28.5 L47.6,36.0 L52.4,33.3 L57.3,28.7 L62.1,28.9 L66.9,32.1 L71.8,33.0 L76.6,33.2 L81.5,34.8 L86.3,33.8 L91.2,33.9 L96.0,34.4 L96.0,36 L4,36 Z" fill="url(#grad_3174)"/>
-            <path d="M4.0,9.7 L8.8,8.1 L13.7,4.4 L18.5,4.0 L23.4,21.5 L28.2,22.7 L33.1,25.2 L37.9,29.6 L42.7,28.5 L47.6,36.0 L52.4,33.3 L57.3,28.7 L62.1,28.9 L66.9,32.1 L71.8,33.0 L76.6,33.2 L81.5,34.8 L86.3,33.8 L91.2,33.9 L96.0,34.4" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="96.0" cy="34.4" r="3" fill="#ef4444"/>
-        </svg>
-                </div>
+            <path d="M4.0,4.0 L9.9,8.3 L15.8,15.9 L21.7,14.0 L27.6,26.8 L33.5,22.2 L39.4,14.4 L45.3,14.6 L51.2,20.1 L57.1,21.7 L62.9,22.0 L68.8,24.8 L74.7,23.1 L80.6,23.3 L86.5,24.0 L92.4,32.0 L98.3,29.2 L104.2,21.9 L110.1,21.2 L116.0,26.8 L116.0,32 L4,32 Z" fill="url(#grad_4969)"/>
+            <path d="M4.0,4.0 L9.9,8.3 L15.8,15.9 L21.7,14.0 L27.6,26.8 L33.5,22.2 L39.4,14.4 L45.3,14.6 L51.2,20.1 L57.1,21.7 L62.9,22.0 L68.8,24.8 L74.7,23.1 L80.6,23.3 L86.5,24.0 L92.4,32.0 L98.3,29.2 L104.2,21.9 L110.1,21.2 L116.0,26.8" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="116.0" cy="26.8" r="3" fill="#ef4444"/>
+        </svg></td>
+                        <td class="col-prediction" data-value="-0.39">
+                            <div class="cell-prediction">$391.22</div>
+                            <div class="pred-arrow down">
+                                <span class="arrow">▼</span>
+                                <span class="cell-change negative" style="font-size: 0.8rem;">-0.4%</span>
+                            </div>
+                        </td>
+                        <td class="col-mcap cell-mcap" data-value="2918992052224">$2.92T</td>
+                        <td class="col-sentiment"><span class="mini-badge neutral">Neutral</span></td>
+                        <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
+                        <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
+                        <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
+                        <td class="col-action">
+                            <a href="msft.html" class="view-link">
+                                Details
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
 
-                <div class="stock-metrics">
-                    <div class="stock-metric">
-                        <div class="label">10-Day Target</div>
-                        <div class="value">$392.08</div>
-                    </div>
-                    <div class="stock-metric">
-                        <div class="label">Expected Change</div>
-                        <div class="value" style="color: var(--danger);">-1.3%</div>
-                    </div>
-                </div>
-
-                <div class="stock-badges">
-                    <span class="badge badge-bullish">Mixed (Bullish leaning)</span>
-                    <span class="badge badge-neutral">Neutral</span>
-                    <span class="badge badge-fair">Fair</span>
-                </div>
-
-                <div class="stock-recommendation">
-                    <span class="rec-pill hold">HOLD</span>
-                    <span class="view-arrow">
-                        View Details
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </span>
-                </div>
-            </a>
-
-            <a href="aapl.html" class="stock-card">
-                <div class="stock-header">
-                    <div class="stock-info">
-                        <h3>AAPL</h3>
-                        <div class="company">Apple Inc.</div>
-                    </div>
-                    <div class="stock-price">
-                        <div class="current">$264.58</div>
-                        <div class="change positive">+1.54%</div>
-                    </div>
-                </div>
-
-                <div class="stock-chart">
-                    <svg width="100" height="40" viewBox="0 0 100 40" style="vertical-align: middle;">
+                    <tr data-rec="hold" data-symbol="AAPL" data-company="Apple Inc." onclick="window.location='aapl.html'">
+                        <td class="col-stock">
+                            <div class="cell-stock">
+                                <div>
+                                    <div class="stock-symbol">AAPL</div>
+                                    <div class="stock-company">Apple Inc.</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="col-price cell-price" data-value="264.18">$264.18</td>
+                        <td class="col-change cell-change negative" data-value="-3.21">-3.21%</td>
+                        <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
             <defs>
-                <linearGradient id="grad_7997" x1="0%" y1="0%" x2="0%" y2="100%">
+                <linearGradient id="grad_6738" x1="0%" y1="0%" x2="0%" y2="100%">
                     <stop offset="0%" style="stop-color:#10b981;stop-opacity:0.3"/>
                     <stop offset="100%" style="stop-color:#10b981;stop-opacity:0"/>
                 </linearGradient>
             </defs>
-            <path d="M4.0,36.0 L8.8,28.2 L13.7,25.1 L18.5,27.1 L23.4,25.1 L28.2,23.8 L33.1,12.6 L37.9,13.2 L42.7,5.7 L47.6,6.4 L52.4,4.0 L57.3,7.5 L62.1,8.5 L66.9,6.5 L71.8,21.2 L76.6,27.5 L81.5,18.9 L86.3,18.4 L91.2,22.4 L96.0,18.1 L96.0,36 L4,36 Z" fill="url(#grad_7997)"/>
-            <path d="M4.0,36.0 L8.8,28.2 L13.7,25.1 L18.5,27.1 L23.4,25.1 L28.2,23.8 L33.1,12.6 L37.9,13.2 L42.7,5.7 L47.6,6.4 L52.4,4.0 L57.3,7.5 L62.1,8.5 L66.9,6.5 L71.8,21.2 L76.6,27.5 L81.5,18.9 L86.3,18.4 L91.2,22.4 L96.0,18.1" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="96.0" cy="18.1" r="3" fill="#10b981"/>
-        </svg>
-                </div>
+            <path d="M4.0,27.6 L9.9,14.3 L15.8,14.9 L21.7,6.1 L27.6,6.8 L33.5,4.0 L39.4,8.1 L45.3,9.3 L51.2,7.0 L57.1,24.5 L62.9,32.0 L68.8,21.7 L74.7,21.1 L80.6,25.9 L86.5,20.8 L92.4,18.8 L98.3,11.3 L104.2,8.6 L110.1,10.2 L116.0,21.3 L116.0,32 L4,32 Z" fill="url(#grad_6738)"/>
+            <path d="M4.0,27.6 L9.9,14.3 L15.8,14.9 L21.7,6.1 L27.6,6.8 L33.5,4.0 L39.4,8.1 L45.3,9.3 L51.2,7.0 L57.1,24.5 L62.9,32.0 L68.8,21.7 L74.7,21.1 L80.6,25.9 L86.5,20.8 L92.4,18.8 L98.3,11.3 L104.2,8.6 L110.1,10.2 L116.0,21.3" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="116.0" cy="21.3" r="3" fill="#10b981"/>
+        </svg></td>
+                        <td class="col-prediction" data-value="-2.28">
+                            <div class="cell-prediction">$258.14</div>
+                            <div class="pred-arrow down">
+                                <span class="arrow">▼</span>
+                                <span class="cell-change negative" style="font-size: 0.8rem;">-2.3%</span>
+                            </div>
+                        </td>
+                        <td class="col-mcap cell-mcap" data-value="3882897899520">$3.88T</td>
+                        <td class="col-sentiment"><span class="mini-badge neutral">Neutral</span></td>
+                        <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
+                        <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
+                        <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
+                        <td class="col-action">
+                            <a href="aapl.html" class="view-link">
+                                Details
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
 
-                <div class="stock-metrics">
-                    <div class="stock-metric">
-                        <div class="label">10-Day Target</div>
-                        <div class="value">$254.30</div>
-                    </div>
-                    <div class="stock-metric">
-                        <div class="label">Expected Change</div>
-                        <div class="value" style="color: var(--danger);">-3.9%</div>
-                    </div>
-                </div>
-
-                <div class="stock-badges">
-                    <span class="badge badge-neutral">Neutral</span>
-                    <span class="badge badge-neutral">Neutral</span>
-                    <span class="badge badge-fair">Fair</span>
-                </div>
-
-                <div class="stock-recommendation">
-                    <span class="rec-pill hold">HOLD</span>
-                    <span class="view-arrow">
-                        View Details
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </span>
-                </div>
-            </a>
-
-            <a href="amzn.html" class="stock-card">
-                <div class="stock-header">
-                    <div class="stock-info">
-                        <h3>AMZN</h3>
-                        <div class="company">Amazon.com Inc.</div>
-                    </div>
-                    <div class="stock-price">
-                        <div class="current">$210.11</div>
-                        <div class="change positive">+2.56%</div>
-                    </div>
-                </div>
-
-                <div class="stock-chart">
-                    <svg width="100" height="40" viewBox="0 0 100 40" style="vertical-align: middle;">
+                    <tr data-rec="hold" data-symbol="AMZN" data-company="Amazon.com Inc." onclick="window.location='amzn.html'">
+                        <td class="col-stock">
+                            <div class="cell-stock">
+                                <div>
+                                    <div class="stock-symbol">AMZN</div>
+                                    <div class="stock-company">Amazon.com Inc.</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="col-price cell-price" data-value="210.00">$210.00</td>
+                        <td class="col-change cell-change positive" data-value="1.00">+1.00%</td>
+                        <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
             <defs>
-                <linearGradient id="grad_8301" x1="0%" y1="0%" x2="0%" y2="100%">
+                <linearGradient id="grad_4611" x1="0%" y1="0%" x2="0%" y2="100%">
                     <stop offset="0%" style="stop-color:#ef4444;stop-opacity:0.3"/>
                     <stop offset="100%" style="stop-color:#ef4444;stop-opacity:0"/>
                 </linearGradient>
             </defs>
-            <path d="M4.0,7.8 L8.8,8.4 L13.7,4.0 L18.5,5.2 L23.4,6.1 L28.2,7.8 L33.1,5.2 L37.9,8.2 L42.7,12.2 L47.6,19.3 L52.4,28.0 L57.3,29.1 L62.1,30.3 L66.9,32.3 L71.8,35.4 L76.6,36.0 L81.5,34.4 L86.3,31.8 L91.2,31.8 L96.0,28.1 L96.0,36 L4,36 Z" fill="url(#grad_8301)"/>
-            <path d="M4.0,7.8 L8.8,8.4 L13.7,4.0 L18.5,5.2 L23.4,6.1 L28.2,7.8 L33.1,5.2 L37.9,8.2 L42.7,12.2 L47.6,19.3 L52.4,28.0 L57.3,29.1 L62.1,30.3 L66.9,32.3 L71.8,35.4 L76.6,36.0 L81.5,34.4 L86.3,31.8 L91.2,31.8 L96.0,28.1" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="96.0" cy="28.1" r="3" fill="#ef4444"/>
-        </svg>
-                </div>
+            <path d="M4.0,6.3 L9.9,4.0 L15.8,6.8 L21.7,10.3 L27.6,16.8 L33.5,24.7 L39.4,25.7 L45.3,26.8 L51.2,28.6 L57.1,31.5 L62.9,32.0 L68.8,30.5 L74.7,28.2 L80.6,28.2 L86.5,24.8 L92.4,27.9 L98.3,25.8 L104.2,24.5 L110.1,26.2 L116.0,24.9 L116.0,32 L4,32 Z" fill="url(#grad_4611)"/>
+            <path d="M4.0,6.3 L9.9,4.0 L15.8,6.8 L21.7,10.3 L27.6,16.8 L33.5,24.7 L39.4,25.7 L45.3,26.8 L51.2,28.6 L57.1,31.5 L62.9,32.0 L68.8,30.5 L74.7,28.2 L80.6,28.2 L86.5,24.8 L92.4,27.9 L98.3,25.8 L104.2,24.5 L110.1,26.2 L116.0,24.9" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="116.0" cy="24.9" r="3" fill="#ef4444"/>
+        </svg></td>
+                        <td class="col-prediction" data-value="-0.99">
+                            <div class="cell-prediction">$207.92</div>
+                            <div class="pred-arrow down">
+                                <span class="arrow">▼</span>
+                                <span class="cell-change negative" style="font-size: 0.8rem;">-1.0%</span>
+                            </div>
+                        </td>
+                        <td class="col-mcap cell-mcap" data-value="2254333280256">$2.25T</td>
+                        <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
+                        <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
+                        <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
+                        <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
+                        <td class="col-action">
+                            <a href="amzn.html" class="view-link">
+                                Details
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
 
-                <div class="stock-metrics">
-                    <div class="stock-metric">
-                        <div class="label">10-Day Target</div>
-                        <div class="value">$203.08</div>
-                    </div>
-                    <div class="stock-metric">
-                        <div class="label">Expected Change</div>
-                        <div class="value" style="color: var(--danger);">-3.3%</div>
-                    </div>
-                </div>
-
-                <div class="stock-badges">
-                    <span class="badge badge-neutral">Neutral</span>
-                    <span class="badge badge-bearish">Bearish</span>
-                    <span class="badge badge-fair">Fair</span>
-                </div>
-
-                <div class="stock-recommendation">
-                    <span class="rec-pill hold">HOLD</span>
-                    <span class="view-arrow">
-                        View Details
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </span>
-                </div>
-            </a>
-
-            <a href="nvda.html" class="stock-card">
-                <div class="stock-header">
-                    <div class="stock-info">
-                        <h3>NVDA</h3>
-                        <div class="company">NVIDIA Corporation</div>
-                    </div>
-                    <div class="stock-price">
-                        <div class="current">$189.82</div>
-                        <div class="change positive">+1.02%</div>
-                    </div>
-                </div>
-
-                <div class="stock-chart">
-                    <svg width="100" height="40" viewBox="0 0 100 40" style="vertical-align: middle;">
+                    <tr data-rec="hold" data-symbol="NVDA" data-company="NVIDIA Corporation" onclick="window.location='nvda.html'">
+                        <td class="col-stock">
+                            <div class="cell-stock">
+                                <div>
+                                    <div class="stock-symbol">NVDA</div>
+                                    <div class="stock-company">NVIDIA Corporation</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="col-price cell-price" data-value="189.82">$189.82</td>
+                        <td class="col-change cell-change positive" data-value="1.02">+1.02%</td>
+                        <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
             <defs>
                 <linearGradient id="grad_4121" x1="0%" y1="0%" x2="0%" y2="100%">
                     <stop offset="0%" style="stop-color:#10b981;stop-opacity:0.3"/>
                     <stop offset="100%" style="stop-color:#10b981;stop-opacity:0"/>
                 </linearGradient>
             </defs>
-            <path d="M4.0,11.5 L8.8,13.4 L13.7,10.2 L18.5,5.5 L23.4,4.0 L28.2,6.1 L33.1,14.7 L37.9,22.9 L42.7,32.4 L47.6,36.0 L52.4,15.0 L57.3,7.8 L62.1,10.2 L66.9,7.8 L71.8,12.6 L76.6,19.0 L81.5,15.7 L86.3,11.0 L91.2,11.2 L96.0,8.2 L96.0,36 L4,36 Z" fill="url(#grad_4121)"/>
-            <path d="M4.0,11.5 L8.8,13.4 L13.7,10.2 L18.5,5.5 L23.4,4.0 L28.2,6.1 L33.1,14.7 L37.9,22.9 L42.7,32.4 L47.6,36.0 L52.4,15.0 L57.3,7.8 L62.1,10.2 L66.9,7.8 L71.8,12.6 L76.6,19.0 L81.5,15.7 L86.3,11.0 L91.2,11.2 L96.0,8.2" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="96.0" cy="8.2" r="3" fill="#10b981"/>
-        </svg>
-                </div>
+            <path d="M4.0,10.6 L9.9,12.2 L15.8,9.4 L21.7,5.3 L27.6,4.0 L33.5,5.9 L39.4,13.4 L45.3,20.5 L51.2,28.9 L57.1,32.0 L62.9,13.6 L68.8,7.4 L74.7,9.4 L80.6,7.3 L86.5,11.6 L92.4,17.2 L98.3,14.2 L104.2,10.1 L110.1,10.3 L116.0,7.7 L116.0,32 L4,32 Z" fill="url(#grad_4121)"/>
+            <path d="M4.0,10.6 L9.9,12.2 L15.8,9.4 L21.7,5.3 L27.6,4.0 L33.5,5.9 L39.4,13.4 L45.3,20.5 L51.2,28.9 L57.1,32.0 L62.9,13.6 L68.8,7.4 L74.7,9.4 L80.6,7.3 L86.5,11.6 L92.4,17.2 L98.3,14.2 L104.2,10.1 L110.1,10.3 L116.0,7.7" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="116.0" cy="7.7" r="3" fill="#10b981"/>
+        </svg></td>
+                        <td class="col-prediction" data-value="-2.01">
+                            <div class="cell-prediction">$186.01</div>
+                            <div class="pred-arrow down">
+                                <span class="arrow">▼</span>
+                                <span class="cell-change negative" style="font-size: 0.8rem;">-2.0%</span>
+                            </div>
+                        </td>
+                        <td class="col-mcap cell-mcap" data-value="4621547864064">$4.62T</td>
+                        <td class="col-sentiment"><span class="mini-badge bearish">Mixed/Bearish Tilted</span></td>
+                        <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
+                        <td class="col-fundamental"><span class="mini-badge bearish">Overvalued</span></td>
+                        <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
+                        <td class="col-action">
+                            <a href="nvda.html" class="view-link">
+                                Details
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
 
-                <div class="stock-metrics">
-                    <div class="stock-metric">
-                        <div class="label">10-Day Target</div>
-                        <div class="value">$186.01</div>
-                    </div>
-                    <div class="stock-metric">
-                        <div class="label">Expected Change</div>
-                        <div class="value" style="color: var(--danger);">-2.0%</div>
-                    </div>
-                </div>
-
-                <div class="stock-badges">
-                    <span class="badge badge-bearish">Mixed/Bearish Tilted</span>
-                    <span class="badge badge-neutral">Neutral</span>
-                    <span class="badge badge-overvalued">Overvalued</span>
-                </div>
-
-                <div class="stock-recommendation">
-                    <span class="rec-pill hold">HOLD</span>
-                    <span class="view-arrow">
-                        View Details
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </span>
-                </div>
-            </a>
-
-            <a href="meta.html" class="stock-card">
-                <div class="stock-header">
-                    <div class="stock-info">
-                        <h3>META</h3>
-                        <div class="company">Meta Platforms Inc.</div>
-                    </div>
-                    <div class="stock-price">
-                        <div class="current">$655.66</div>
-                        <div class="change positive">+1.69%</div>
-                    </div>
-                </div>
-
-                <div class="stock-chart">
-                    <svg width="100" height="40" viewBox="0 0 100 40" style="vertical-align: middle;">
+                    <tr data-rec="hold" data-symbol="META" data-company="Meta Platforms Inc." onclick="window.location='meta.html'">
+                        <td class="col-stock">
+                            <div class="cell-stock">
+                                <div>
+                                    <div class="stock-symbol">META</div>
+                                    <div class="stock-company">Meta Platforms Inc.</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="col-price cell-price" data-value="655.66">$655.66</td>
+                        <td class="col-change cell-change positive" data-value="1.69">+1.69%</td>
+                        <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
             <defs>
                 <linearGradient id="grad_593" x1="0%" y1="0%" x2="0%" y2="100%">
                     <stop offset="0%" style="stop-color:#ef4444;stop-opacity:0.3"/>
                     <stop offset="100%" style="stop-color:#ef4444;stop-opacity:0"/>
                 </linearGradient>
             </defs>
-            <path d="M4.0,29.7 L8.8,25.3 L13.7,25.1 L18.5,26.5 L23.4,4.0 L28.2,11.0 L33.1,14.3 L37.9,19.1 L42.7,26.4 L47.6,26.0 L52.4,28.8 L57.3,23.7 L62.1,25.8 L66.9,26.5 L71.8,32.6 L76.6,35.8 L81.5,36.0 L86.3,34.7 L91.2,34.2 L96.0,30.7 L96.0,36 L4,36 Z" fill="url(#grad_593)"/>
-            <path d="M4.0,29.7 L8.8,25.3 L13.7,25.1 L18.5,26.5 L23.4,4.0 L28.2,11.0 L33.1,14.3 L37.9,19.1 L42.7,26.4 L47.6,26.0 L52.4,28.8 L57.3,23.7 L62.1,25.8 L66.9,26.5 L71.8,32.6 L76.6,35.8 L81.5,36.0 L86.3,34.7 L91.2,34.2 L96.0,30.7" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="96.0" cy="30.7" r="3" fill="#ef4444"/>
-        </svg>
-                </div>
+            <path d="M4.0,26.5 L9.9,22.6 L15.8,22.5 L21.7,23.7 L27.6,4.0 L33.5,10.2 L39.4,13.0 L45.3,17.2 L51.2,23.6 L57.1,23.3 L62.9,25.7 L68.8,21.3 L74.7,23.1 L80.6,23.7 L86.5,29.0 L92.4,31.9 L98.3,32.0 L104.2,30.9 L110.1,30.4 L116.0,27.4 L116.0,32 L4,32 Z" fill="url(#grad_593)"/>
+            <path d="M4.0,26.5 L9.9,22.6 L15.8,22.5 L21.7,23.7 L27.6,4.0 L33.5,10.2 L39.4,13.0 L45.3,17.2 L51.2,23.6 L57.1,23.3 L62.9,25.7 L68.8,21.3 L74.7,23.1 L80.6,23.7 L86.5,29.0 L92.4,31.9 L98.3,32.0 L104.2,30.9 L110.1,30.4 L116.0,27.4" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="116.0" cy="27.4" r="3" fill="#ef4444"/>
+        </svg></td>
+                        <td class="col-prediction" data-value="-5.22">
+                            <div class="cell-prediction">$621.43</div>
+                            <div class="pred-arrow down">
+                                <span class="arrow">▼</span>
+                                <span class="cell-change negative" style="font-size: 0.8rem;">-5.2%</span>
+                            </div>
+                        </td>
+                        <td class="col-mcap cell-mcap" data-value="1658528202752">$1.66T</td>
+                        <td class="col-sentiment"><span class="mini-badge neutral">Neutral</span></td>
+                        <td class="col-technical"><span class="mini-badge bullish">Bullish</span></td>
+                        <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
+                        <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
+                        <td class="col-action">
+                            <a href="meta.html" class="view-link">
+                                Details
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
 
-                <div class="stock-metrics">
-                    <div class="stock-metric">
-                        <div class="label">10-Day Target</div>
-                        <div class="value">$621.43</div>
-                    </div>
-                    <div class="stock-metric">
-                        <div class="label">Expected Change</div>
-                        <div class="value" style="color: var(--danger);">-5.2%</div>
-                    </div>
-                </div>
-
-                <div class="stock-badges">
-                    <span class="badge badge-neutral">Neutral</span>
-                    <span class="badge badge-bullish">Bullish</span>
-                    <span class="badge badge-fair">Fair</span>
-                </div>
-
-                <div class="stock-recommendation">
-                    <span class="rec-pill hold">HOLD</span>
-                    <span class="view-arrow">
-                        View Details
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </span>
-                </div>
-            </a>
-
-            <a href="tsla.html" class="stock-card">
-                <div class="stock-header">
-                    <div class="stock-info">
-                        <h3>TSLA</h3>
-                        <div class="company">Tesla Inc.</div>
-                    </div>
-                    <div class="stock-price">
-                        <div class="current">$411.82</div>
-                        <div class="change positive">+0.03%</div>
-                    </div>
-                </div>
-
-                <div class="stock-chart">
-                    <svg width="100" height="40" viewBox="0 0 100 40" style="vertical-align: middle;">
+                    <tr data-rec="hold" data-symbol="TSLA" data-company="Tesla Inc." onclick="window.location='tsla.html'">
+                        <td class="col-stock">
+                            <div class="cell-stock">
+                                <div>
+                                    <div class="stock-symbol">TSLA</div>
+                                    <div class="stock-company">Tesla Inc.</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="col-price cell-price" data-value="411.82">$411.82</td>
+                        <td class="col-change cell-change positive" data-value="0.03">+0.03%</td>
+                        <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
             <defs>
                 <linearGradient id="grad_3339" x1="0%" y1="0%" x2="0%" y2="100%">
                     <stop offset="0%" style="stop-color:#ef4444;stop-opacity:0.3"/>
                     <stop offset="100%" style="stop-color:#ef4444;stop-opacity:0"/>
                 </linearGradient>
             </defs>
-            <path d="M4.0,4.0 L8.8,12.6 L13.7,15.2 L18.5,14.9 L23.4,24.1 L28.2,15.5 L33.1,20.8 L37.9,20.7 L42.7,30.6 L47.6,36.0 L52.4,27.4 L57.3,23.6 L62.1,18.7 L66.9,16.8 L71.8,23.7 L76.6,23.5 L81.5,27.7 L86.3,27.3 L91.2,27.1 L96.0,27.0 L96.0,36 L4,36 Z" fill="url(#grad_3339)"/>
-            <path d="M4.0,4.0 L8.8,12.6 L13.7,15.2 L18.5,14.9 L23.4,24.1 L28.2,15.5 L33.1,20.8 L37.9,20.7 L42.7,30.6 L47.6,36.0 L52.4,27.4 L57.3,23.6 L62.1,18.7 L66.9,16.8 L71.8,23.7 L76.6,23.5 L81.5,27.7 L86.3,27.3 L91.2,27.1 L96.0,27.0" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="96.0" cy="27.0" r="3" fill="#ef4444"/>
-        </svg>
-                </div>
+            <path d="M4.0,4.0 L9.9,11.5 L15.8,13.8 L21.7,13.5 L27.6,21.6 L33.5,14.1 L39.4,18.7 L45.3,18.6 L51.2,27.2 L57.1,32.0 L62.9,24.5 L68.8,21.1 L74.7,16.9 L80.6,15.2 L86.5,21.3 L92.4,21.1 L98.3,24.8 L104.2,24.4 L110.1,24.2 L116.0,24.1 L116.0,32 L4,32 Z" fill="url(#grad_3339)"/>
+            <path d="M4.0,4.0 L9.9,11.5 L15.8,13.8 L21.7,13.5 L27.6,21.6 L33.5,14.1 L39.4,18.7 L45.3,18.6 L51.2,27.2 L57.1,32.0 L62.9,24.5 L68.8,21.1 L74.7,16.9 L80.6,15.2 L86.5,21.3 L92.4,21.1 L98.3,24.8 L104.2,24.4 L110.1,24.2 L116.0,24.1" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="116.0" cy="24.1" r="3" fill="#ef4444"/>
+        </svg></td>
+                        <td class="col-prediction" data-value="-3.15">
+                            <div class="cell-prediction">$398.85</div>
+                            <div class="pred-arrow down">
+                                <span class="arrow">▼</span>
+                                <span class="cell-change negative" style="font-size: 0.8rem;">-3.1%</span>
+                            </div>
+                        </td>
+                        <td class="col-mcap cell-mcap" data-value="1545326559232">$1.55T</td>
+                        <td class="col-sentiment"><span class="mini-badge neutral">Neutral</span></td>
+                        <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
+                        <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
+                        <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
+                        <td class="col-action">
+                            <a href="tsla.html" class="view-link">
+                                Details
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
 
-                <div class="stock-metrics">
-                    <div class="stock-metric">
-                        <div class="label">10-Day Target</div>
-                        <div class="value">$398.85</div>
-                    </div>
-                    <div class="stock-metric">
-                        <div class="label">Expected Change</div>
-                        <div class="value" style="color: var(--danger);">-3.1%</div>
-                    </div>
-                </div>
-
-                <div class="stock-badges">
-                    <span class="badge badge-neutral">Neutral</span>
-                    <span class="badge badge-neutral">Neutral</span>
-                    <span class="badge badge-fair">Fair</span>
-                </div>
-
-                <div class="stock-recommendation">
-                    <span class="rec-pill hold">HOLD</span>
-                    <span class="view-arrow">
-                        View Details
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </span>
-                </div>
-            </a>
-
-            <a href="pltr.html" class="stock-card">
-                <div class="stock-header">
-                    <div class="stock-info">
-                        <h3>PLTR</h3>
-                        <div class="company">Palantir Technologies Inc.</div>
-                    </div>
-                    <div class="stock-price">
-                        <div class="current">$135.24</div>
-                        <div class="change positive">+0.26%</div>
-                    </div>
-                </div>
-
-                <div class="stock-chart">
-                    <svg width="100" height="40" viewBox="0 0 100 40" style="vertical-align: middle;">
+                    <tr data-rec="hold" data-symbol="PLTR" data-company="Palantir Technologies Inc." onclick="window.location='pltr.html'">
+                        <td class="col-stock">
+                            <div class="cell-stock">
+                                <div>
+                                    <div class="stock-symbol">PLTR</div>
+                                    <div class="stock-company">Palantir Technologies Inc.</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="col-price cell-price" data-value="135.24">$135.24</td>
+                        <td class="col-change cell-change positive" data-value="0.26">+0.26%</td>
+                        <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
             <defs>
                 <linearGradient id="grad_8257" x1="0%" y1="0%" x2="0%" y2="100%">
                     <stop offset="0%" style="stop-color:#ef4444;stop-opacity:0.3"/>
                     <stop offset="100%" style="stop-color:#ef4444;stop-opacity:0"/>
                 </linearGradient>
             </defs>
-            <path d="M4.0,4.0 L8.8,5.7 L13.7,7.1 L18.5,13.7 L23.4,18.0 L28.2,22.2 L33.1,21.3 L37.9,13.3 L42.7,27.8 L47.6,35.3 L52.4,30.6 L57.3,25.1 L62.1,27.8 L66.9,30.8 L71.8,36.0 L76.6,34.2 L81.5,32.9 L86.3,31.1 L91.2,31.4 L96.0,31.2 L96.0,36 L4,36 Z" fill="url(#grad_8257)"/>
-            <path d="M4.0,4.0 L8.8,5.7 L13.7,7.1 L18.5,13.7 L23.4,18.0 L28.2,22.2 L33.1,21.3 L37.9,13.3 L42.7,27.8 L47.6,35.3 L52.4,30.6 L57.3,25.1 L62.1,27.8 L66.9,30.8 L71.8,36.0 L76.6,34.2 L81.5,32.9 L86.3,31.1 L91.2,31.4 L96.0,31.2" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="96.0" cy="31.2" r="3" fill="#ef4444"/>
-        </svg>
-                </div>
+            <path d="M4.0,4.0 L9.9,5.5 L15.8,6.7 L21.7,12.5 L27.6,16.3 L33.5,19.9 L39.4,19.1 L45.3,12.1 L51.2,24.8 L57.1,31.4 L62.9,27.3 L68.8,22.5 L74.7,24.8 L80.6,27.5 L86.5,32.0 L92.4,30.4 L98.3,29.3 L104.2,27.7 L110.1,28.0 L116.0,27.8 L116.0,32 L4,32 Z" fill="url(#grad_8257)"/>
+            <path d="M4.0,4.0 L9.9,5.5 L15.8,6.7 L21.7,12.5 L27.6,16.3 L33.5,19.9 L39.4,19.1 L45.3,12.1 L51.2,24.8 L57.1,31.4 L62.9,27.3 L68.8,22.5 L74.7,24.8 L80.6,27.5 L86.5,32.0 L92.4,30.4 L98.3,29.3 L104.2,27.7 L110.1,28.0 L116.0,27.8" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="116.0" cy="27.8" r="3" fill="#ef4444"/>
+        </svg></td>
+                        <td class="col-prediction" data-value="-0.55">
+                            <div class="cell-prediction">$134.49</div>
+                            <div class="pred-arrow down">
+                                <span class="arrow">▼</span>
+                                <span class="cell-change negative" style="font-size: 0.8rem;">-0.6%</span>
+                            </div>
+                        </td>
+                        <td class="col-mcap cell-mcap" data-value="322335932416">$322.3B</td>
+                        <td class="col-sentiment"><span class="mini-badge bullish">Neutral to Slightly Bullish</span></td>
+                        <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
+                        <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
+                        <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
+                        <td class="col-action">
+                            <a href="pltr.html" class="view-link">
+                                Details
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
 
-                <div class="stock-metrics">
-                    <div class="stock-metric">
-                        <div class="label">10-Day Target</div>
-                        <div class="value">$134.49</div>
-                    </div>
-                    <div class="stock-metric">
-                        <div class="label">Expected Change</div>
-                        <div class="value" style="color: var(--danger);">-0.6%</div>
-                    </div>
-                </div>
-
-                <div class="stock-badges">
-                    <span class="badge badge-bullish">Neutral to Slightly Bullish</span>
-                    <span class="badge badge-neutral">Neutral</span>
-                    <span class="badge badge-fair">Fair</span>
-                </div>
-
-                <div class="stock-recommendation">
-                    <span class="rec-pill hold">HOLD</span>
-                    <span class="view-arrow">
-                        View Details
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </span>
-                </div>
-            </a>
-
+                </tbody>
+            </table>
+            <div class="no-results" id="noResults">
+                <p>No stocks match your search.</p>
+            </div>
         </div>
 
         <!-- Legend -->
@@ -1118,11 +1252,97 @@
             </div>
         </div>
 
+        <!-- Disclaimer -->
+        <div class="disclaimer animate-in delay-3" style="margin-top: 24px;">
+            <strong>⚠️ Disclaimer</strong>
+            This analysis is generated by AI agents for educational purposes only. Not financial advice.
+            Always consult a qualified financial advisor before making investment decisions.
+        </div>
+
         <!-- Footer -->
         <div class="footer">
             <p>Powered by Ollama AI Agents</p>
-            <p style="margin-top: 8px; opacity: 0.7;">For Educational Purposes Only - Not Financial Advice</p>
+            <p style="margin-top: 8px; opacity: 0.7;">For Educational Purposes Only</p>
         </div>
     </div>
+
+    <script>
+        // --- Search / Filter ---
+        let currentFilter = 'all';
+
+        function filterTable() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.querySelectorAll('#stockTableBody tr');
+            let visible = 0;
+            rows.forEach(row => {
+                const symbol = (row.dataset.symbol || '').toLowerCase();
+                const company = (row.dataset.company || '').toLowerCase();
+                const rec = row.dataset.rec || '';
+                const matchSearch = !query || symbol.includes(query) || company.includes(query);
+                const matchFilter = currentFilter === 'all' || rec === currentFilter;
+                if (matchSearch && matchFilter) {
+                    row.style.display = '';
+                    visible++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            document.getElementById('noResults').classList.toggle('visible', visible === 0);
+        }
+
+        function setFilter(filter, btn) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            filterTable();
+        }
+
+        // --- Sorting ---
+        let sortCol = -1;
+        let sortAsc = true;
+
+        function sortTable(colIndex, type) {
+            const table = document.getElementById('stockTable');
+            const tbody = document.getElementById('stockTableBody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+
+            // Toggle direction
+            if (sortCol === colIndex) {
+                sortAsc = !sortAsc;
+            } else {
+                sortCol = colIndex;
+                sortAsc = true;
+            }
+
+            // Update header classes
+            table.querySelectorAll('thead th').forEach((th, i) => {
+                th.classList.toggle('sorted', i === colIndex);
+            });
+
+            rows.sort((a, b) => {
+                const cellA = a.cells[colIndex];
+                const cellB = b.cells[colIndex];
+
+                let valA, valB;
+                if (type === 'number') {
+                    valA = parseFloat(cellA.dataset.value || cellA.textContent.replace(/[$,%+]/g, '')) || 0;
+                    valB = parseFloat(cellB.dataset.value || cellB.textContent.replace(/[$,%+]/g, '')) || 0;
+                } else if (type === 'rec') {
+                    const order = { buy: 1, hold: 2, sell: 3 };
+                    valA = order[cellA.dataset.value] || 2;
+                    valB = order[cellB.dataset.value] || 2;
+                } else {
+                    valA = cellA.textContent.trim().toLowerCase();
+                    valB = cellB.textContent.trim().toLowerCase();
+                }
+
+                if (valA < valB) return sortAsc ? -1 : 1;
+                if (valA > valB) return sortAsc ? 1 : -1;
+                return 0;
+            });
+
+            rows.forEach(row => tbody.appendChild(row));
+        }
+    </script>
 </body>
 </html>

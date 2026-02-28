@@ -1086,7 +1086,7 @@ class HTMLReportGenerator:
         return f"Based on comprehensive analysis, the recommendation is {recommendation} with {confidence} confidence."
     
     def generate_index(self, symbols: list):
-        """Generate index.html with links to all stock reports - modern dashboard"""
+        """Generate index.html with sortable table layout - modern dashboard"""
 
         reports = []
         for symbol in symbols:
@@ -1100,7 +1100,7 @@ class HTMLReportGenerator:
                 # Get historical prices for sparkline
                 hist_prices = stock_data.get('historical_prices', {})
                 prices = list(hist_prices.values()) if hist_prices else []
-                sparkline = self.generate_sparkline_svg(prices, width=100, height=40)
+                sparkline = self.generate_sparkline_svg(prices, width=120, height=36)
 
                 # Get forecast prediction
                 forecast_data = data['agents'].get('forecaster', {})
@@ -1119,6 +1119,18 @@ class HTMLReportGenerator:
                 fin_outlook, _ = self.extract_financial_outlook(financial_analysis)
                 recommendation, confidence = self.extract_recommendation(synthesis)
 
+                # Market cap formatting
+                market_cap = stock_data.get('market_cap', 0)
+                if market_cap:
+                    if market_cap >= 1e12:
+                        market_cap_str = f"${market_cap/1e12:.2f}T"
+                    elif market_cap >= 1e9:
+                        market_cap_str = f"${market_cap/1e9:.1f}B"
+                    else:
+                        market_cap_str = f"${market_cap/1e6:.0f}M"
+                else:
+                    market_cap_str = "N/A"
+
                 reports.append({
                     'symbol': symbol,
                     'company': data['company_name'],
@@ -1134,7 +1146,9 @@ class HTMLReportGenerator:
                     'stat_trend': stat_trend,
                     'fin_outlook': fin_outlook,
                     'recommendation': recommendation,
-                    'confidence': confidence
+                    'confidence': confidence,
+                    'market_cap': market_cap,
+                    'market_cap_str': market_cap_str
                 })
 
         # Count recommendations for summary
@@ -1142,198 +1156,339 @@ class HTMLReportGenerator:
         sell_count = sum(1 for r in reports if 'SELL' in r['recommendation'].upper())
         hold_count = len(reports) - buy_count - sell_count
 
-        html = f"""
-<!DOCTYPE html>
+        # Get analysis date
+        analysis_date = reports[0]['date'] if reports else datetime.now().strftime("%Y-%m-%d")
+
+        html = f"""\n<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stock Investment Planner - AI-Powered Analysis</title>
+    <meta name="description" content="AI-powered multi-agent stock analysis dashboard with forecasting for {len(reports)} stocks">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         {self.get_common_css()}
 
-        /* Index-specific styles */
+        /* === INDEX PAGE STYLES === */
         .hero {{
             text-align: center;
-            padding: 48px 32px;
+            padding: 40px 32px 32px;
         }}
 
         .hero h1 {{
-            font-size: 3rem;
+            font-size: 2.75rem;
             background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }}
 
         .hero-subtitle {{
             color: var(--text-muted);
-            font-size: 1.125rem;
+            font-size: 1.05rem;
+        }}
+
+        .hero-date {{
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 8px;
+            opacity: 0.7;
         }}
 
         /* Stats row */
         .stats-row {{
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(4, 1fr);
             gap: 16px;
-            margin-bottom: 32px;
+            margin-bottom: 24px;
         }}
 
         .stat-card {{
             background: rgba(30, 41, 59, 0.6);
             border: 1px solid var(--border-dark);
             border-radius: 16px;
-            padding: 24px;
+            padding: 20px;
             text-align: center;
+            transition: all 0.2s ease;
+        }}
+
+        .stat-card:hover {{
+            border-color: var(--primary);
+            background: rgba(30, 41, 59, 0.8);
         }}
 
         .stat-value {{
-            font-size: 2.5rem;
+            font-size: 2.25rem;
             font-weight: 800;
         }}
 
         .stat-label {{
             color: var(--text-muted);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             margin-top: 4px;
         }}
 
-        /* Stock grid */
-        .stock-grid {{
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-            gap: 20px;
-        }}
-
-        .stock-card {{
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border-dark);
-            border-radius: 20px;
-            padding: 24px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }}
-
-        .stock-card:hover {{
-            transform: translateY(-4px);
-            border-color: var(--primary);
-            box-shadow: 0 20px 40px -15px rgba(99, 102, 241, 0.3);
-        }}
-
-        .stock-header {{
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 20px;
-        }}
-
-        .stock-info h3 {{
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-light);
-            margin-bottom: 4px;
-        }}
-
-        .stock-info .company {{
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }}
-
-        .stock-price {{
-            text-align: right;
-        }}
-
-        .stock-price .current {{
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-light);
-        }}
-
-        .stock-price .change {{
-            font-size: 0.9rem;
-            font-weight: 600;
-        }}
-
-        .stock-price .change.positive {{ color: var(--success); }}
-        .stock-price .change.negative {{ color: var(--danger); }}
-
-        .stock-chart {{
-            background: rgba(15, 23, 42, 0.5);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: center;
-        }}
-
-        .stock-metrics {{
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 20px;
-        }}
-
-        .stock-metric {{
-            background: rgba(15, 23, 42, 0.5);
-            border-radius: 10px;
-            padding: 12px;
-        }}
-
-        .stock-metric .label {{
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }}
-
-        .stock-metric .value {{
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-light);
-            margin-top: 4px;
-        }}
-
-        .stock-badges {{
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 16px;
-        }}
-
-        .stock-recommendation {{
+        /* Controls bar */
+        .controls {{
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-top: 16px;
-            border-top: 1px solid var(--border-dark);
+            gap: 16px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
         }}
 
+        .search-box {{
+            position: relative;
+            flex: 1;
+            max-width: 320px;
+        }}
+
+        .search-box input {{
+            width: 100%;
+            padding: 12px 16px 12px 44px;
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid var(--border-dark);
+            border-radius: 12px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.2s ease;
+        }}
+
+        .search-box input::placeholder {{
+            color: var(--text-muted);
+        }}
+
+        .search-box input:focus {{
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }}
+
+        .search-icon {{
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }}
+
+        .filter-buttons {{
+            display: flex;
+            gap: 8px;
+        }}
+
+        .filter-btn {{
+            padding: 10px 18px;
+            border-radius: 10px;
+            border: 1px solid var(--border-dark);
+            background: rgba(30, 41, 59, 0.6);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }}
+
+        .filter-btn:hover {{
+            border-color: var(--primary);
+            color: var(--text-light);
+        }}
+
+        .filter-btn.active {{
+            background: rgba(99, 102, 241, 0.2);
+            border-color: var(--primary);
+            color: var(--primary-light);
+        }}
+
+        /* Data table */
+        .table-card {{
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(99, 102, 241, 0.12);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.3);
+        }}
+
+        .stock-table {{
+            width: 100%;
+            border-collapse: collapse;
+        }}
+
+        .stock-table thead th {{
+            padding: 16px 16px;
+            text-align: left;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            background: rgba(15, 23, 42, 0.5);
+            border-bottom: 1px solid rgba(51, 65, 85, 0.4);
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+            transition: color 0.2s ease;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }}
+
+        .stock-table thead th:hover {{
+            color: var(--primary-light);
+        }}
+
+        .stock-table thead th .sort-icon {{
+            display: inline-block;
+            margin-left: 4px;
+            opacity: 0.3;
+            transition: opacity 0.2s ease;
+        }}
+
+        .stock-table thead th.sorted .sort-icon {{
+            opacity: 1;
+            color: var(--primary-light);
+        }}
+
+        .stock-table tbody tr {{
+            border-bottom: 1px solid rgba(51, 65, 85, 0.25);
+            transition: all 0.15s ease;
+            cursor: pointer;
+        }}
+
+        .stock-table tbody tr:hover {{
+            background: rgba(99, 102, 241, 0.08);
+        }}
+
+        .stock-table tbody tr:last-child {{
+            border-bottom: none;
+        }}
+
+        .stock-table td {{
+            padding: 14px 16px;
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }}
+
+        /* Cell styles */
+        .cell-stock {{
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 180px;
+        }}
+
+        .stock-symbol {{
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--text-light);
+        }}
+
+        .stock-company {{
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 160px;
+        }}
+
+        .cell-price {{
+            font-weight: 600;
+            color: var(--text-light);
+            font-variant-numeric: tabular-nums;
+        }}
+
+        .cell-change {{
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+        }}
+
+        .cell-change.positive {{ color: var(--success); }}
+        .cell-change.negative {{ color: var(--danger); }}
+
+        .cell-sparkline {{
+            line-height: 0;
+        }}
+
+        .cell-prediction {{
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+        }}
+
+        /* Prediction arrow indicator */
+        .pred-arrow {{
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }}
+
+        .pred-arrow .arrow {{
+            display: inline-block;
+            font-size: 0.65rem;
+            line-height: 1;
+        }}
+
+        .pred-arrow.up .arrow {{ color: var(--success); }}
+        .pred-arrow.down .arrow {{ color: var(--danger); }}
+
+        .cell-mcap {{
+            color: var(--text-muted);
+            font-variant-numeric: tabular-nums;
+        }}
+
+        /* Mini badges for table */
+        .mini-badge {{
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            white-space: nowrap;
+        }}
+
+        .mini-badge.bullish {{ background: rgba(16, 185, 129, 0.15); color: #34d399; }}
+        .mini-badge.bearish {{ background: rgba(239, 68, 68, 0.15); color: #f87171; }}
+        .mini-badge.neutral {{ background: rgba(245, 158, 11, 0.15); color: #fbbf24; }}
+
         .rec-pill {{
-            padding: 8px 20px;
+            display: inline-block;
+            padding: 6px 16px;
             border-radius: 9999px;
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
+            letter-spacing: 0.03em;
         }}
 
         .rec-pill.buy {{ background: linear-gradient(135deg, #10b981, #059669); color: white; }}
         .rec-pill.sell {{ background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }}
         .rec-pill.hold {{ background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }}
 
-        .view-arrow {{
+        .view-link {{
             color: var(--primary-light);
-            font-weight: 600;
-            display: flex;
+            font-weight: 500;
+            font-size: 0.85rem;
+            text-decoration: none;
+            display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }}
+
+        .stock-table tbody tr:hover .view-link {{
+            opacity: 1;
         }}
 
         /* Legend */
@@ -1342,8 +1497,8 @@ class HTMLReportGenerator:
             justify-content: center;
             gap: 24px;
             flex-wrap: wrap;
-            margin-top: 32px;
-            padding: 20px;
+            margin-top: 24px;
+            padding: 16px;
             background: rgba(30, 41, 59, 0.4);
             border-radius: 12px;
         }}
@@ -1353,19 +1508,55 @@ class HTMLReportGenerator:
             align-items: center;
             gap: 8px;
             color: var(--text-muted);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }}
 
         .legend-dot {{
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
+        }}
+
+        /* No results */
+        .no-results {{
+            text-align: center;
+            padding: 48px;
+            color: var(--text-muted);
+            display: none;
+        }}
+
+        .no-results.visible {{
+            display: block;
+        }}
+
+        /* Responsive */
+        @media (max-width: 1024px) {{
+            .stock-table .col-mcap,
+            .stock-table .col-sentiment,
+            .stock-table .col-technical,
+            .stock-table .col-fundamental {{
+                display: none;
+            }}
         }}
 
         @media (max-width: 768px) {{
             .hero h1 {{ font-size: 2rem; }}
-            .stock-grid {{ grid-template-columns: 1fr; }}
             .stats-row {{ grid-template-columns: repeat(2, 1fr); }}
+            .controls {{ flex-direction: column; align-items: stretch; }}
+            .search-box {{ max-width: none; }}
+            .stock-table .col-sparkline,
+            .stock-table .col-prediction {{
+                display: none;
+            }}
+            .stock-table td, .stock-table thead th {{
+                padding: 10px 10px;
+            }}
+        }}
+
+        @media (max-width: 480px) {{
+            .stock-table .col-action {{
+                display: none;
+            }}
         }}
     </style>
 </head>
@@ -1375,6 +1566,7 @@ class HTMLReportGenerator:
         <div class="card hero animate-in">
             <h1>Stock Investment Planner</h1>
             <p class="hero-subtitle">AI-Powered Multi-Agent Stock Analysis</p>
+            <p class="hero-date">Last updated: {analysis_date}</p>
         </div>
 
         <!-- Stats Summary -->
@@ -1397,11 +1589,44 @@ class HTMLReportGenerator:
             </div>
         </div>
 
-        <!-- Stock Grid -->
-        <div class="stock-grid animate-in delay-2">
+        <!-- Controls -->
+        <div class="controls animate-in delay-2">
+            <div class="search-box">
+                <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                </svg>
+                <input type="text" id="searchInput" placeholder="Search stocks..." oninput="filterTable()">
+            </div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all" onclick="setFilter('all', this)">All ({len(reports)})</button>
+                <button class="filter-btn" data-filter="buy" onclick="setFilter('buy', this)">Buy ({buy_count})</button>
+                <button class="filter-btn" data-filter="hold" onclick="setFilter('hold', this)">Hold ({hold_count})</button>
+                <button class="filter-btn" data-filter="sell" onclick="setFilter('sell', this)">Sell ({sell_count})</button>
+            </div>
+        </div>
+
+        <!-- Stock Table -->
+        <div class="table-card animate-in delay-2">
+            <table class="stock-table" id="stockTable">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable(0, 'text')" class="col-stock">Stock <span class="sort-icon">▲▼</span></th>
+                        <th onclick="sortTable(1, 'number')" class="col-price">Price <span class="sort-icon">▲▼</span></th>
+                        <th onclick="sortTable(2, 'number')" class="col-change">Change <span class="sort-icon">▲▼</span></th>
+                        <th class="col-sparkline">20D Trend</th>
+                        <th onclick="sortTable(4, 'number')" class="col-prediction">10D Target <span class="sort-icon">▲▼</span></th>
+                        <th onclick="sortTable(5, 'number')" class="col-mcap">Mkt Cap <span class="sort-icon">▲▼</span></th>
+                        <th class="col-sentiment">News</th>
+                        <th class="col-technical">Technical</th>
+                        <th class="col-fundamental">Fundamental</th>
+                        <th onclick="sortTable(9, 'rec')" class="col-rec">Signal <span class="sort-icon">▲▼</span></th>
+                        <th class="col-action"></th>
+                    </tr>
+                </thead>
+                <tbody id="stockTableBody">
 """
 
-        for i, report in enumerate(reports):
+        for report in reports:
             news_badge_class = self._get_badge_class(report['news_sentiment'])
             stat_badge_class = self._get_badge_class(report['stat_trend'])
             fin_badge_class = self._get_valuation_badge_class(report['fin_outlook'])
@@ -1412,56 +1637,59 @@ class HTMLReportGenerator:
             change_class = "positive" if report['day_change'] >= 0 else "negative"
             change_symbol = "+" if report['day_change'] >= 0 else ""
 
-            pred_class = "positive" if report['pred_change'] >= 0 else "negative"
+            pred_change_class = "positive" if report['pred_change'] >= 0 else "negative"
             pred_symbol = "+" if report['pred_change'] >= 0 else ""
 
+            # Mini badge class mapping
+            def _mini_class(badge_class):
+                if 'bullish' in badge_class or 'undervalued' in badge_class:
+                    return 'bullish'
+                elif 'bearish' in badge_class or 'overvalued' in badge_class:
+                    return 'bearish'
+                return 'neutral'
+
             html += f"""
-            <a href="{report['file']}" class="stock-card">
-                <div class="stock-header">
-                    <div class="stock-info">
-                        <h3>{report['symbol']}</h3>
-                        <div class="company">{report['company']}</div>
-                    </div>
-                    <div class="stock-price">
-                        <div class="current">${report['price']:.2f}</div>
-                        <div class="change {change_class}">{change_symbol}{report['day_change_pct']:.2f}%</div>
-                    </div>
-                </div>
-
-                <div class="stock-chart">
-                    {report['sparkline']}
-                </div>
-
-                <div class="stock-metrics">
-                    <div class="stock-metric">
-                        <div class="label">10-Day Target</div>
-                        <div class="value">${report['prediction']:.2f}</div>
-                    </div>
-                    <div class="stock-metric">
-                        <div class="label">Expected Change</div>
-                        <div class="value" style="color: var({'--success' if report['pred_change'] >= 0 else '--danger'});">{pred_symbol}{report['pred_change']:.1f}%</div>
-                    </div>
-                </div>
-
-                <div class="stock-badges">
-                    <span class="badge {news_badge_class}">{report['news_sentiment']}</span>
-                    <span class="badge {stat_badge_class}">{report['stat_trend']}</span>
-                    <span class="badge {fin_badge_class}">{report['fin_outlook']}</span>
-                </div>
-
-                <div class="stock-recommendation">
-                    <span class="rec-pill {rec_class}">{report['recommendation']}</span>
-                    <span class="view-arrow">
-                        View Details
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </span>
-                </div>
-            </a>
+                    <tr data-rec="{rec_class}" data-symbol="{report['symbol']}" data-company="{report['company']}" onclick="window.location='{report['file']}'">
+                        <td class="col-stock">
+                            <div class="cell-stock">
+                                <div>
+                                    <div class="stock-symbol">{report['symbol']}</div>
+                                    <div class="stock-company">{report['company']}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="col-price cell-price" data-value="{report['price']:.2f}">${report['price']:.2f}</td>
+                        <td class="col-change cell-change {change_class}" data-value="{report['day_change_pct']:.2f}">{change_symbol}{report['day_change_pct']:.2f}%</td>
+                        <td class="col-sparkline cell-sparkline">{report['sparkline']}</td>
+                        <td class="col-prediction" data-value="{report['pred_change']:.2f}">
+                            <div class="cell-prediction">${report['prediction']:.2f}</div>
+                            <div class="pred-arrow {'up' if report['pred_change'] >= 0 else 'down'}">
+                                <span class="arrow">{'▲' if report['pred_change'] >= 0 else '▼'}</span>
+                                <span class="cell-change {pred_change_class}" style="font-size: 0.8rem;">{pred_symbol}{report['pred_change']:.1f}%</span>
+                            </div>
+                        </td>
+                        <td class="col-mcap cell-mcap" data-value="{report['market_cap']}">{report['market_cap_str']}</td>
+                        <td class="col-sentiment"><span class="mini-badge {_mini_class(news_badge_class)}">{report['news_sentiment']}</span></td>
+                        <td class="col-technical"><span class="mini-badge {_mini_class(stat_badge_class)}">{report['stat_trend']}</span></td>
+                        <td class="col-fundamental"><span class="mini-badge {_mini_class(fin_badge_class)}">{report['fin_outlook']}</span></td>
+                        <td class="col-rec" data-value="{rec_class}"><span class="rec-pill {rec_class}">{report['recommendation']}</span></td>
+                        <td class="col-action">
+                            <a href="{report['file']}" class="view-link">
+                                Details
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
 """
 
         html += """
+                </tbody>
+            </table>
+            <div class="no-results" id="noResults">
+                <p>No stocks match your search.</p>
+            </div>
         </div>
 
         <!-- Legend -->
@@ -1480,12 +1708,98 @@ class HTMLReportGenerator:
             </div>
         </div>
 
+        <!-- Disclaimer -->
+        <div class="disclaimer animate-in delay-3" style="margin-top: 24px;">
+            <strong>⚠️ Disclaimer</strong>
+            This analysis is generated by AI agents for educational purposes only. Not financial advice.
+            Always consult a qualified financial advisor before making investment decisions.
+        </div>
+
         <!-- Footer -->
         <div class="footer">
             <p>Powered by Ollama AI Agents</p>
-            <p style="margin-top: 8px; opacity: 0.7;">For Educational Purposes Only - Not Financial Advice</p>
+            <p style="margin-top: 8px; opacity: 0.7;">For Educational Purposes Only</p>
         </div>
     </div>
+
+    <script>
+        // --- Search / Filter ---
+        let currentFilter = 'all';
+
+        function filterTable() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.querySelectorAll('#stockTableBody tr');
+            let visible = 0;
+            rows.forEach(row => {
+                const symbol = (row.dataset.symbol || '').toLowerCase();
+                const company = (row.dataset.company || '').toLowerCase();
+                const rec = row.dataset.rec || '';
+                const matchSearch = !query || symbol.includes(query) || company.includes(query);
+                const matchFilter = currentFilter === 'all' || rec === currentFilter;
+                if (matchSearch && matchFilter) {
+                    row.style.display = '';
+                    visible++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            document.getElementById('noResults').classList.toggle('visible', visible === 0);
+        }
+
+        function setFilter(filter, btn) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            filterTable();
+        }
+
+        // --- Sorting ---
+        let sortCol = -1;
+        let sortAsc = true;
+
+        function sortTable(colIndex, type) {
+            const table = document.getElementById('stockTable');
+            const tbody = document.getElementById('stockTableBody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+
+            // Toggle direction
+            if (sortCol === colIndex) {
+                sortAsc = !sortAsc;
+            } else {
+                sortCol = colIndex;
+                sortAsc = true;
+            }
+
+            // Update header classes
+            table.querySelectorAll('thead th').forEach((th, i) => {
+                th.classList.toggle('sorted', i === colIndex);
+            });
+
+            rows.sort((a, b) => {
+                const cellA = a.cells[colIndex];
+                const cellB = b.cells[colIndex];
+
+                let valA, valB;
+                if (type === 'number') {
+                    valA = parseFloat(cellA.dataset.value || cellA.textContent.replace(/[$,%+]/g, '')) || 0;
+                    valB = parseFloat(cellB.dataset.value || cellB.textContent.replace(/[$,%+]/g, '')) || 0;
+                } else if (type === 'rec') {
+                    const order = { buy: 1, hold: 2, sell: 3 };
+                    valA = order[cellA.dataset.value] || 2;
+                    valB = order[cellB.dataset.value] || 2;
+                } else {
+                    valA = cellA.textContent.trim().toLowerCase();
+                    valB = cellB.textContent.trim().toLowerCase();
+                }
+
+                if (valA < valB) return sortAsc ? -1 : 1;
+                if (valA > valB) return sortAsc ? 1 : -1;
+                return 0;
+            });
+
+            rows.forEach(row => tbody.appendChild(row));
+        }
+    </script>
 </body>
 </html>
 """

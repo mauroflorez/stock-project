@@ -32,10 +32,14 @@ python scheduler.py
 
 1. Edit `config.py`:
    ```python
-   STOCKS = ["GOOGL", "MSFT", "AAPL", "NVDA"]  # Add new symbol
+   STOCKS = [
+       "GOOGL", "MSFT", "AAPL", "AMZN", "NVDA", "META", "TSLA", "PLTR",
+       "DUOL", "AVGO", "CRM", "AMD", "NFLX", "COIN", "LLY", "UBER", "PANW", "SHOP",
+       "NEW_SYMBOL",  # Add new symbol here
+   ]
    STOCK_NAMES = {
        # ... existing entries ...
-       "NVDA": "NVIDIA Corporation",  # Add company name
+       "NEW_SYMBOL": "New Company Name",  # Add company name
    }
    ```
 
@@ -88,19 +92,24 @@ main.py (orchestrator)
 ## Configuration
 
 All settings in `config.py`:
-- `STOCKS` - List of ticker symbols to analyze
+- `STOCKS` - List of ticker symbols to analyze (currently 18 stocks)
 - `STOCK_NAMES` - Dictionary mapping symbols to company names
 - `OLLAMA_MODEL` - LLM model name (default: deepseek-r1:8b)
 - `PREDICTION_DAYS` - Forecast horizon (default: 30)
 - `OUTPUT_DIR` - JSON output directory (`reports/`)
+- `RUN_TIME` - Daily automation time (default: 09:00)
 
 ## HTML Report Generator
 
 The `generate_report.py` file creates static HTML reports with:
 
 **Index Page (`docs/index.html`):**
-- Summary table with all stocks
-- Columns: Symbol, Price, Sparkline trend, Prediction, News/Technical/Fundamental badges, Final recommendation
+- Sortable data table with all 18 stocks
+- Columns: Symbol, Price, Change, Sparkline, 10D Target, Mkt Cap, News/Technical/Fundamental badges, Signal
+- Search bar for filtering by ticker or company name
+- Filter buttons (All/Buy/Hold/Sell)
+- Click column headers to sort
+- Responsive: hides columns on smaller screens
 - Color-coded badges (green=bullish, orange=neutral, red=bearish)
 
 **Individual Stock Pages (`docs/{symbol}.html`):**
@@ -126,6 +135,18 @@ git push
 ```
 
 GitHub Pages serves from the `/docs` folder.
+
+## Daily Automation (Windows)
+
+Use the `run_daily.bat` batch file with Windows Task Scheduler:
+
+1. Open Task Scheduler → Create Basic Task
+2. Set trigger: Daily at your preferred time (e.g., 9:00 AM)
+3. Action: Start a program → Browse to `run_daily.bat`
+4. Set "Start in" to the project directory
+5. Enable "Run whether user is logged on or not"
+
+Alternatively, use `python scheduler.py` to run a long-lived process.
 
 ## Lessons Learned
 

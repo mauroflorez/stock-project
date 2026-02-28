@@ -7,7 +7,10 @@ OLLAMA_MODEL = "deepseek-r1:8b"  # Change to "llama3.1:8b" if preferred
 OLLAMA_BASE_URL = "http://localhost:11434"
 
 # Stock Configuration
-STOCKS = ["GOOGL", "MSFT", "AAPL", "AMZN", "NVDA", "META", "TSLA", "PLTR"]
+STOCKS = [
+    "GOOGL", "MSFT", "AAPL", "AMZN", "NVDA", "META", "TSLA", "PLTR",
+    "DUOL", "AVGO", "CRM", "AMD", "NFLX", "COIN", "LLY", "UBER", "PANW", "SHOP"
+]
 STOCK_SYMBOLS = STOCKS  # Alias for compatibility
 STOCK_NAMES = {
     "GOOGL": "Alphabet Inc.",
@@ -17,7 +20,17 @@ STOCK_NAMES = {
     "NVDA": "NVIDIA Corporation",
     "META": "Meta Platforms Inc.",
     "TSLA": "Tesla Inc.",
-    "PLTR": "Palantir Technologies Inc."
+    "PLTR": "Palantir Technologies Inc.",
+    "DUOL": "Duolingo Inc.",
+    "AVGO": "Broadcom Inc.",
+    "CRM": "Salesforce Inc.",
+    "AMD": "Advanced Micro Devices Inc.",
+    "NFLX": "Netflix Inc.",
+    "COIN": "Coinbase Global Inc.",
+    "LLY": "Eli Lilly and Company",
+    "UBER": "Uber Technologies Inc.",
+    "PANW": "Palo Alto Networks Inc.",
+    "SHOP": "Shopify Inc."
 }
 
 # Analysis Settings
@@ -34,7 +47,7 @@ ALPHA_VANTAGE_API_KEY = None  # Not needed - using yfinance
 NEWS_API_KEY = None  # Not needed - using Google News RSS
 
 # Cost Protection (not needed for local, but good practice)
-MAX_OLLAMA_TOKENS = 4000  # Max tokens per request
+MAX_OLLAMA_TOKENS = 10000  # Max tokens per request
 MAX_TOKENS = MAX_OLLAMA_TOKENS  # Alias for compatibility
 TEMPERATURE = 0.7  # Creativity level (0.0-1.0)
 
