@@ -123,15 +123,23 @@ class HTMLReportGenerator:
         text = re.sub(r'DISCLAIMER:.*$', '', text, flags=re.IGNORECASE)
         return text.strip()
 
-    def _truncate_to_sentence(self, text: str, max_chars: int = 350) -> str:
+    def _truncate_to_sentence(self, text: str, max_chars: int = 500) -> str:
         """Truncate text to the last complete sentence within max_chars"""
         if len(text) <= max_chars:
             return text
         truncated = text[:max_chars]
-        # Find the last sentence-ending punctuation
-        last_period = max(truncated.rfind('. '), truncated.rfind('! '), truncated.rfind('? '))
-        if last_period > max_chars * 0.7:  # Only cut at sentence if we keep a reasonable amount
-            return truncated[:last_period + 1]
+        # Find the last sentence-ending punctuation (before space or at end)
+        last_period = max(
+            truncated.rfind('. '),
+            truncated.rfind('! '),
+            truncated.rfind('? '),
+            truncated.rfind('.\n'),
+        )
+        # Also check if truncated ends right at a period
+        if truncated.rstrip().endswith('.'):
+            last_period = max(last_period, len(truncated.rstrip()) - 1)
+        if last_period > max_chars * 0.4:  # Keep at least 40% of content
+            return truncated[:last_period + 1].rstrip()
         return truncated.rstrip() + '...'
 
     def extract_news_sentiment(self, analysis: str) -> Tuple[str, str]:
