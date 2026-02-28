@@ -388,12 +388,6 @@
             border-radius: 16px;
             padding: 16px;
             margin-top: 24px;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .chart-container .js-plotly-plot {
-            min-width: 600px;
         }
 
         /* Timeframe tabs */
@@ -492,7 +486,7 @@
                     <h1>Netflix Inc.</h1>
                     <h3>NFLX</h3>
                 </div>
-                <div class="rec-badge-large rec-hold">HOLD</div>
+                <div class="rec-badge-large rec-buy">BUY</div>
             </div>
 
             <div class="metrics-grid" style="margin-top: 32px;">
@@ -510,8 +504,12 @@
                     <div class="metric-value">$408.24B</div>
                 </div>
                 <div class="metric-card">
-                    <div class="metric-label">Confidence</div>
-                    <div class="metric-value primary">Medium</div>
+                    <div class="metric-label">Confidence Score</div>
+                    <div class="metric-value" style="color: hsl(80.4, 80%, 50%);">0.67</div>
+                    <div style="margin-top: 8px; background: rgba(255,255,255,0.1); border-radius: 6px; height: 8px; overflow: hidden;">
+                        <div style="width: 67%; height: 100%; background: hsl(80.4, 80%, 50%); border-radius: 6px; transition: width 0.6s ease;"></div>
+                    </div>
+                    <div class="metric-sub">Strong Buy</div>
                 </div>
             </div>
         </div>
@@ -534,7 +532,7 @@
                         <span class="summary-title">Technical Analysis</span>
                         <span class="badge badge-neutral">Neutral</span>
                     </div>
-                    <p class="summary-text">The average daily return is only 0.02%, indicating very low returns over the recent period. 2. The maximum daily return was 13.77%, while the minimum daily return was -10.07%. This highlights significant volatility in past price movements.</p>
+                    <p class="summary-text">1. The average daily return is only 0.02%, indicating very low returns over the recent period. 2. The maximum daily return was 13.77%, while the minimum daily return was -10.07%. This highlights significant volatility in past price movements.</p>
                 </div>
                 <div class="summary-card">
                     <div class="summary-header">
@@ -547,7 +545,7 @@
             </div>
             <div class="conclusion-box">
                 <strong>Conclusion</strong>
-                <p style="margin-top: 8px; color: var(--text-muted);">Based on the synthesis of expert opinions, I recommend buying Netflix (NFLX) for long-term investors with a medium-high confidence level. The stock's strong growth prospects, driven by its expanding subscriber base and continuous content offerings, outweigh concerns about overvaluation and regulator</p>
+                <p style="margin-top: 8px; color: var(--text-muted);">Based on the synthesis of expert opinions, I recommend buying Netflix (NFLX) for long-term investors with a medium-high confidence level. The stock's strong growth prospects, driven by its expanding subscriber base and continuous content offerings, outweigh concerns about overvaluation and regulatory challenges.</p>
             </div>
         </div>
 

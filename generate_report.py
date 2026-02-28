@@ -111,16 +111,28 @@ class HTMLReportGenerator:
 
     def _clean_text(self, text: str) -> str:
         """Remove markdown formatting from text"""
-        # Remove ** bold markers
-        text = re.sub(r'\*\*', '', text)
-        # Remove list markers at start of text
-        text = re.sub(r'^\s*[\*\-]\s+', '', text)
-        text = re.sub(r'^\s*\d+\.\s+', '', text)
-        # Remove remaining isolated asterisks
-        text = re.sub(r'\s\*\s', ' ', text)
-        # Remove disclaimer mentions
+        text = re.sub(r'\*\*(.+?)\*\*', r'\1', text)
+        text = re.sub(r'\*(.+?)\*', r'\1', text)
+        text = re.sub(r'__(.+?)__', r'\1', text)
+        text = re.sub(r'_(.+?)_', r'\1', text)
+        text = re.sub(r'#+\s*', '', text)
+        text = re.sub(r'\[(.+?)\]\(.+?\)', r'\1', text)
+        text = re.sub(r'^[\-\*]\s+', '', text)
+        text = re.sub(r'\*+', '', text)  # Remove any remaining stray asterisks
+        text = re.sub(r'\s+', ' ', text)
         text = re.sub(r'DISCLAIMER:.*$', '', text, flags=re.IGNORECASE)
         return text.strip()
+
+    def _truncate_to_sentence(self, text: str, max_chars: int = 350) -> str:
+        """Truncate text to the last complete sentence within max_chars"""
+        if len(text) <= max_chars:
+            return text
+        truncated = text[:max_chars]
+        # Find the last sentence-ending punctuation
+        last_period = max(truncated.rfind('. '), truncated.rfind('! '), truncated.rfind('? '))
+        if last_period > max_chars * 0.7:  # Only cut at sentence if we keep a reasonable amount
+            return truncated[:last_period + 1]
+        return truncated.rstrip() + '...'
 
     def extract_news_sentiment(self, analysis: str) -> Tuple[str, str]:
         """Extract sentiment and brief summary from news analysis"""
@@ -137,14 +149,14 @@ class HTMLReportGenerator:
                 for j in range(i+1, min(i+4, len(lines))):
                     if lines[j].strip() and not any(x in lines[j].upper() for x in ['SENTIMENT:', 'KEY ', 'MAJOR ', 'IMPACT ']):
                         summary_lines.append(lines[j].strip())
-                summary = self._clean_text(' '.join(summary_lines))[:350]
+                summary = self._truncate_to_sentence(self._clean_text(' '.join(summary_lines)))
                 break
 
         if not summary:
             # Try to get first meaningful paragraph
             for line in lines:
                 if len(line.strip()) > 50 and not any(x in line.upper() for x in ['SENTIMENT:', 'KEY ', '**']):
-                    summary = self._clean_text(line.strip())[:350]
+                    summary = self._truncate_to_sentence(self._clean_text(line.strip()))
                     break
 
         return sentiment, summary
@@ -170,7 +182,7 @@ class HTMLReportGenerator:
                 for j in range(i+1, min(i+4, len(lines))):
                     if lines[j].strip():
                         summary_lines.append(lines[j].strip())
-                summary = self._clean_text(' '.join(summary_lines))[:350]
+                summary = self._truncate_to_sentence(self._clean_text(' '.join(summary_lines)))
                 break
 
         return trend, summary
@@ -196,7 +208,7 @@ class HTMLReportGenerator:
                 for j in range(i+1, min(i+4, len(lines))):
                     if lines[j].strip():
                         summary_lines.append(lines[j].strip())
-                summary = self._clean_text(' '.join(summary_lines))[:350]
+                summary = self._truncate_to_sentence(self._clean_text(' '.join(summary_lines)))
                 break
 
         return valuation, summary
@@ -380,6 +392,39 @@ class HTMLReportGenerator:
                 confidence = line.split(":")[-1].strip()
         
         return recommendation, confidence
+
+    def compute_confidence_score(self, news_sentiment: str, stat_trend: str, fin_outlook: str, recommendation: str) -> float:
+        """
+        Compute a numeric confidence score from 0.0 to 1.0.
+        1.0 = Strong BUY, 0.5 = HOLD, 0.0 = Strong SELL
+        Based on the three expert signals, independent of LLM bias.
+        """
+        score = 0.0
+        
+        # News signal: -1 to +1
+        ns = news_sentiment.lower()
+        if 'bullish' in ns or 'positive' in ns:
+            score += 1.0
+        elif 'bearish' in ns or 'negative' in ns:
+            score -= 1.0
+        
+        # Technical signal: -1 to +1
+        st = stat_trend.lower()
+        if 'bullish' in st or 'upward' in st:
+            score += 1.0
+        elif 'bearish' in st or 'downward' in st:
+            score -= 1.0
+        
+        # Fundamental signal: -1 to +1
+        fo = fin_outlook.lower()
+        if 'undervalued' in fo:
+            score += 1.0
+        elif 'overvalued' in fo:
+            score -= 1.0
+        
+        # Map from [-3, +3] to [0, 1]
+        confidence = (score + 3.0) / 6.0
+        return round(confidence, 2)
     
     def get_recommendation_color(self, recommendation: str) -> str:
         """Get color for recommendation badge"""
@@ -771,12 +816,6 @@ class HTMLReportGenerator:
             border-radius: 16px;
             padding: 16px;
             margin-top: 24px;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .chart-container .js-plotly-plot {
-            min-width: 600px;
         }
 
         /* Timeframe tabs */
@@ -909,6 +948,17 @@ class HTMLReportGenerator:
         # Get synthesis summary
         synthesis_summary = self._extract_synthesis_summary(synthesis, recommendation, confidence)
 
+        # Compute numeric confidence score based on expert signals
+        conf_score = self.compute_confidence_score(news_sentiment, stat_trend, fin_outlook, recommendation)
+        # Override recommendation if score strongly disagrees with LLM
+        if conf_score >= 0.67 and 'BUY' not in recommendation.upper():
+            recommendation = 'BUY'
+            rec_class = 'rec-buy'
+        elif conf_score <= 0.33 and 'SELL' not in recommendation.upper():
+            recommendation = 'SELL'
+            rec_class = 'rec-sell'
+        conf_color = f'hsl({conf_score * 120}, 80%, 50%)'  # red=0, yellow=60, green=120
+
         html = f"""
 <!DOCTYPE html>
 <html lang="en">
@@ -962,8 +1012,12 @@ class HTMLReportGenerator:
                     <div class="metric-value">{market_cap_str}</div>
                 </div>
                 <div class="metric-card">
-                    <div class="metric-label">Confidence</div>
-                    <div class="metric-value primary">{confidence}</div>
+                    <div class="metric-label">Confidence Score</div>
+                    <div class="metric-value" style="color: {conf_color};">{conf_score:.2f}</div>
+                    <div style="margin-top: 8px; background: rgba(255,255,255,0.1); border-radius: 6px; height: 8px; overflow: hidden;">
+                        <div style="width: {conf_score*100:.0f}%; height: 100%; background: {conf_color}; border-radius: 6px; transition: width 0.6s ease;"></div>
+                    </div>
+                    <div class="metric-sub">{"Strong Buy" if conf_score >= 0.67 else "Hold" if conf_score > 0.33 else "Strong Sell"}</div>
                 </div>
             </div>
         </div>
@@ -1153,10 +1207,10 @@ class HTMLReportGenerator:
         for i, line in enumerate(lines):
             if 'SUMMARY:' in line.upper():
                 summary_lines = []
-                for j in range(i+1, min(i+4, len(lines))):
-                    if lines[j].strip():
+                for j in range(i+1, min(i+6, len(lines))):
+                    if lines[j].strip() and not any(k in lines[j].upper() for k in ['DISCLAIMER:', 'INVESTMENT STRATEGY:']):
                         summary_lines.append(lines[j].strip())
-                return self._clean_text(' '.join(summary_lines))[:300]
+                return self._truncate_to_sentence(self._clean_text(' '.join(summary_lines)))
 
         return f"Based on comprehensive analysis, the recommendation is {recommendation} with {confidence} confidence."
     
@@ -1194,6 +1248,13 @@ class HTMLReportGenerator:
                 fin_outlook, _ = self.extract_financial_outlook(financial_analysis)
                 recommendation, confidence = self.extract_recommendation(synthesis)
 
+                # Compute confidence score and override recommendation if needed
+                conf_score = self.compute_confidence_score(news_sentiment, stat_trend, fin_outlook, recommendation)
+                if conf_score >= 0.67 and 'BUY' not in recommendation.upper():
+                    recommendation = 'BUY'
+                elif conf_score <= 0.33 and 'SELL' not in recommendation.upper():
+                    recommendation = 'SELL'
+
                 # Market cap formatting
                 market_cap = stock_data.get('market_cap', 0)
                 if market_cap:
@@ -1222,6 +1283,7 @@ class HTMLReportGenerator:
                     'fin_outlook': fin_outlook,
                     'recommendation': recommendation,
                     'confidence': confidence,
+                    'conf_score': conf_score,
                     'market_cap': market_cap,
                     'market_cap_str': market_cap_str
                 })

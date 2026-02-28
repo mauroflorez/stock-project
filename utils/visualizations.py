@@ -110,16 +110,18 @@ class StockVisualizer:
             yaxis_title='Price ($)',
             template='plotly_white',
             hovermode='x unified',
+            autosize=True,
+            height=400,
             legend=dict(
                 yanchor="top",
                 y=0.99,
                 xanchor="left",
                 x=0.01
             ),
-            margin=dict(l=60, r=30, t=60, b=60)
+            margin=dict(l=50, r=20, t=50, b=50)
         )
 
-        return fig.to_html(full_html=False, include_plotlyjs='cdn')
+        return fig.to_html(full_html=False, include_plotlyjs='cdn', config={'responsive': True})
 
     def create_forecast_plot_matplotlib(
         self,

@@ -388,12 +388,6 @@
             border-radius: 16px;
             padding: 16px;
             margin-top: 24px;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .chart-container .js-plotly-plot {
-            min-width: 600px;
         }
 
         /* Timeframe tabs */
@@ -492,7 +486,7 @@
                     <h1>Broadcom Inc.</h1>
                     <h3>AVGO</h3>
                 </div>
-                <div class="rec-badge-large rec-hold">HOLD</div>
+                <div class="rec-badge-large rec-buy">BUY</div>
             </div>
 
             <div class="metrics-grid" style="margin-top: 32px;">
@@ -510,8 +504,12 @@
                     <div class="metric-value">$1.52T</div>
                 </div>
                 <div class="metric-card">
-                    <div class="metric-label">Confidence</div>
-                    <div class="metric-value primary">Medium</div>
+                    <div class="metric-label">Confidence Score</div>
+                    <div class="metric-value" style="color: hsl(80.4, 80%, 50%);">0.67</div>
+                    <div style="margin-top: 8px; background: rgba(255,255,255,0.1); border-radius: 6px; height: 8px; overflow: hidden;">
+                        <div style="width: 67%; height: 100%; background: hsl(80.4, 80%, 50%); border-radius: 6px; transition: width 0.6s ease;"></div>
+                    </div>
+                    <div class="metric-sub">Strong Buy</div>
                 </div>
             </div>
         </div>
@@ -534,7 +532,7 @@
                         <span class="summary-title">Technical Analysis</span>
                         <span class="badge badge-neutral">Neutral</span>
                     </div>
-                    <p class="summary-text">The average daily return is 0.24%, indicating a slow but steady increase in the stock price over time. 2. The maximum daily return is 18.66%, while the minimum daily return is -11.43%. This suggests that there may be some volatility in the market, but it's not excessively high.</p>
+                    <p class="summary-text">1. The average daily return is 0.24%, indicating a slow but steady increase in the stock price over time. 2. The maximum daily return is 18.66%, while the minimum daily return is -11.43%. This suggests that there may be some volatility in the market, but it's not excessively high.</p>
                 </div>
                 <div class="summary-card">
                     <div class="summary-header">
@@ -542,7 +540,7 @@
                         <span class="summary-title">Fundamental Analysis</span>
                         <span class="badge badge-fair">Fair</span>
                     </div>
-                    <p class="summary-text">Broadcom (AVGO) is a strong fundamental play with a dominant market position in the semiconductor industry. While it appears slightly overvalued based on its high P/E ratio, the company's innovative products, research & development capabilities, and strategic acquisitions justify its premium valuation. Investors should consider Broadcom as a long-t</p>
+                    <p class="summary-text">Broadcom (AVGO) is a strong fundamental play with a dominant market position in the semiconductor industry. While it appears slightly overvalued based on its high P/E ratio, the company's innovative products, research & development capabilities, and strategic acquisitions justify its premium valuation.</p>
                 </div>
             </div>
             <div class="conclusion-box">
