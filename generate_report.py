@@ -173,52 +173,106 @@ class HTMLReportGenerator:
         """Extract trend direction and brief summary from statistical analysis"""
         trend = "Neutral"
         summary = ""
-
+        
+        # Clean the full text for signal scanning
+        full_text = self._clean_text(analysis).lower()
+        
         lines = analysis.split('\n')
+        
+        # Pass 1: Look for explicit SIGNAL: line (if agent uses structured output)
+        for line in lines:
+            stripped = line.strip().upper()
+            if stripped.startswith('SIGNAL:'):
+                content = line.split(':')[-1].strip().lower()
+                if 'bullish' in content:
+                    trend = "Bullish"
+                elif 'bearish' in content:
+                    trend = "Bearish"
+                break
+        
+        # Pass 2: If still Neutral, scan body text for trend keywords
+        if trend == "Neutral":
+            bullish_keywords = ['upward', 'bullish', 'positive momentum', 'golden cross', 
+                               'oversold', 'uptrend', 'buying pressure', 'breakout']
+            bearish_keywords = ['downward', 'bearish', 'negative momentum', 'death cross',
+                               'overbought', 'downtrend', 'selling pressure', 'breakdown']
+            
+            # Count keyword hits in full text
+            bull_hits = sum(1 for kw in bullish_keywords if kw in full_text)
+            bear_hits = sum(1 for kw in bearish_keywords if kw in full_text)
+            
+            if bull_hits > bear_hits:
+                trend = "Bullish"
+            elif bear_hits > bull_hits:
+                trend = "Bearish"
+        
+        # Extract summary from STATISTICAL INSIGHTS or SUMMARY section
         for i, line in enumerate(lines):
             upper_line = line.upper()
-            if 'TREND' in upper_line and ':' in line:
-                content = line.split(':')[-1].strip().lower()
-                if 'upward' in content or 'bullish' in content or 'positive' in content:
-                    trend = "Bullish"
-                elif 'downward' in content or 'bearish' in content or 'negative' in content:
-                    trend = "Bearish"
-                else:
-                    trend = "Neutral"
-            elif 'STATISTICAL INSIGHTS:' in upper_line or 'SUMMARY:' in upper_line:
+            if 'STATISTICAL INSIGHTS:' in upper_line or 'SUMMARY:' in upper_line:
                 summary_lines = []
                 for j in range(i+1, min(i+4, len(lines))):
                     if lines[j].strip():
                         summary_lines.append(lines[j].strip())
                 summary = self._truncate_to_sentence(self._clean_text(' '.join(summary_lines)))
                 break
-
+        
         return trend, summary
 
     def extract_financial_outlook(self, analysis: str) -> Tuple[str, str]:
         """Extract valuation assessment and brief summary from financial analysis"""
         valuation = "Fair"
         summary = ""
-
+        
+        # Clean the full text for signal scanning
+        full_text = self._clean_text(analysis).lower()
+        
         lines = analysis.split('\n')
+        
+        # Pass 1: Look for explicit SIGNAL: line
+        for line in lines:
+            stripped = line.strip().upper()
+            if stripped.startswith('SIGNAL:'):
+                content = line.split(':')[-1].strip().lower()
+                if 'undervalued' in content:
+                    valuation = "Undervalued"
+                elif 'overvalued' in content:
+                    valuation = "Overvalued"
+                break
+        
+        # Pass 2: If still Fair, scan body text for valuation keywords
+        if valuation == "Fair":
+            undervalued_kw = ['undervalued', 'attractive valuation', 'trading below', 
+                             'discount', 'cheap relative', 'buying opportunity', 'strong buy']
+            overvalued_kw = ['overvalued', 'expensive', 'trading above', 'premium valuation',
+                            'stretched valuation', 'priced for perfection', 'rich valuation']
+            
+            under_hits = sum(1 for kw in undervalued_kw if kw in full_text)
+            over_hits = sum(1 for kw in overvalued_kw if kw in full_text)
+            
+            # Also check P/E context: "P/E ratio ... above" suggests overvalued
+            if 'p/e' in full_text or 'pe ratio' in full_text:
+                if 'above' in full_text and ('industry' in full_text or 'average' in full_text or 'sector' in full_text):
+                    over_hits += 1
+                if 'below' in full_text and ('industry' in full_text or 'average' in full_text or 'sector' in full_text):
+                    under_hits += 1
+            
+            if under_hits > over_hits:
+                valuation = "Undervalued"
+            elif over_hits > under_hits:
+                valuation = "Overvalued"
+        
+        # Extract summary from INVESTMENT THESIS or SUMMARY section
         for i, line in enumerate(lines):
             upper_line = line.upper()
-            if 'VALUATION' in upper_line and ':' in line:
-                content = line.split(':')[-1].strip().lower()
-                if 'undervalued' in content or 'attractive' in content:
-                    valuation = "Undervalued"
-                elif 'overvalued' in content or 'expensive' in content:
-                    valuation = "Overvalued"
-                else:
-                    valuation = "Fair"
-            elif 'INVESTMENT THESIS:' in upper_line or 'SUMMARY:' in upper_line:
+            if 'INVESTMENT THESIS:' in upper_line or 'SUMMARY:' in upper_line:
                 summary_lines = []
                 for j in range(i+1, min(i+4, len(lines))):
                     if lines[j].strip():
                         summary_lines.append(lines[j].strip())
                 summary = self._truncate_to_sentence(self._clean_text(' '.join(summary_lines)))
                 break
-
+        
         return valuation, summary
 
     def generate_sparkline_svg(self, prices: List[float], width: int = 100, height: int = 40) -> str:

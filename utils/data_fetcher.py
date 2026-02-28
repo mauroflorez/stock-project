@@ -50,10 +50,23 @@ class DataFetcher:
                 "day_change_percent": ((info.get("currentPrice", hist['Close'].iloc[-1]) - info.get("previousClose", hist['Close'].iloc[-2] if len(hist) > 1 else 0)) / info.get("previousClose", hist['Close'].iloc[-2] if len(hist) > 1 else 1)) * 100,
                 "market_cap": info.get("marketCap"),
                 "pe_ratio": info.get("trailingPE"),
+                "forward_pe": info.get("forwardPE"),
+                "peg_ratio": info.get("pegRatio"),
                 "52_week_high": info.get("fiftyTwoWeekHigh"),
                 "52_week_low": info.get("fiftyTwoWeekLow"),
                 "volume": info.get("volume"),
                 "avg_volume": info.get("averageVolume"),
+                # Fundamental metrics
+                "earnings_growth": info.get("earningsGrowth"),
+                "revenue_growth": info.get("revenueGrowth"),
+                "profit_margins": info.get("profitMargins"),
+                "return_on_equity": info.get("returnOnEquity"),
+                "debt_to_equity": info.get("debtToEquity"),
+                "free_cashflow": info.get("freeCashflow"),
+                "dividend_yield": info.get("dividendYield"),
+                "beta": info.get("beta"),
+                "target_mean_price": info.get("targetMeanPrice"),
+                "recommendation_key": info.get("recommendationKey"),
                 "historical_prices": {str(k): v for k, v in hist['Close'].to_dict().items()},
                 "historical_dates": [str(date.date()) for date in hist.index],
                 "historical_close": hist['Close'].tolist(),
@@ -124,6 +137,22 @@ class DataFetcher:
         if "error" in data:
             return f"Error: {data['error']}"
         
+        # Helper for safe formatting
+        def fmt(val, prefix='', suffix='', fmt_str='.2f'):
+            if val is None:
+                return 'N/A'
+            return f"{prefix}{val:{fmt_str}}{suffix}"
+        
+        def fmt_pct(val):
+            if val is None:
+                return 'N/A'
+            return f"{val*100:.1f}%"
+        
+        def fmt_int(val, prefix='$'):
+            if val is None:
+                return 'N/A'
+            return f"{prefix}{val:,}"
+
         output = f"""
 STOCK PRICE DATA FOR {data['symbol']} - {data['company_name']}
 
@@ -131,14 +160,36 @@ Current Information (as of {data['fetched_at']}):
 - Current Price: ${data['current_price']:.2f}
 - Previous Close: ${data['previous_close']:.2f}
 - Day Change: ${data['day_change']:.2f} ({data['day_change_percent']:.2f}%)
-- Market Cap: ${data['market_cap']:,} if data['market_cap'] else 'N/A'
-- P/E Ratio: {data['pe_ratio']:.2f} if data['pe_ratio'] else 'N/A'
-- 52 Week High: ${data['52_week_high']:.2f}
-- 52 Week Low: ${data['52_week_low']:.2f}
-- Volume: {data['volume']:,}
-- Average Volume: {data['avg_volume']:,}
+- Market Cap: {fmt_int(data['market_cap'])}
 - Sector: {data['sector']}
 - Industry: {data['industry']}
+
+Valuation Metrics:
+- P/E Ratio (Trailing): {fmt(data['pe_ratio'])}
+- P/E Ratio (Forward): {fmt(data.get('forward_pe'))}
+- PEG Ratio: {fmt(data.get('peg_ratio'))}
+- 52 Week High: {fmt(data['52_week_high'], prefix='$')}
+- 52 Week Low: {fmt(data['52_week_low'], prefix='$')}
+
+Growth & Profitability:
+- Earnings Growth: {fmt_pct(data.get('earnings_growth'))}
+- Revenue Growth: {fmt_pct(data.get('revenue_growth'))}
+- Profit Margins: {fmt_pct(data.get('profit_margins'))}
+- Return on Equity (ROE): {fmt_pct(data.get('return_on_equity'))}
+
+Financial Health:
+- Debt-to-Equity: {fmt(data.get('debt_to_equity'))}
+- Free Cash Flow: {fmt_int(data.get('free_cashflow'))}
+- Beta: {fmt(data.get('beta'))}
+- Dividend Yield: {fmt_pct(data.get('dividend_yield'))}
+
+Analyst Data:
+- Target Price (Mean): {fmt(data.get('target_mean_price'), prefix='$')}
+- Recommendation: {data.get('recommendation_key', 'N/A')}
+
+Volume:
+- Volume: {fmt_int(data['volume'], prefix='')}
+- Average Volume: {fmt_int(data['avg_volume'], prefix='')}
 
 Historical Prices (Last {len(data['historical_close'])} days):
 {', '.join([f"${price:.2f}" for price in data['historical_close'][-10:]])}...

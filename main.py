@@ -107,7 +107,7 @@ class StockAnalysisOrchestrator:
 
         # Financial Analysis
         print("💼 Step 6/6: Financial Analysis...")
-        financial_result = self.financial_agent.analyze(stock_formatted, symbol)
+        financial_result = self.financial_agent.analyze(stock_formatted, symbol, raw_stock_data=stock_data)
         print("✅ Financial analysis complete\n")
 
         # Synthesis (includes forecast summary in context)
