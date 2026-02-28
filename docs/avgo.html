@@ -1,0 +1,768 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVGO - Broadcom Inc. | Stock Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --success: #10b981;
+            --success-light: #34d399;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-dark: #0f172a;
+            --bg-card-dark: #1e293b;
+            --bg-card-dark-hover: #273449;
+            --border-dark: #334155;
+            --bg-light: #f1f5f9;
+            --bg-card-light: #ffffff;
+            --text-dark: #1e293b;
+            --text-light: #f1f5f9;
+            --text-muted: #64748b;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            --shadow-lg: 0 35px 60px -15px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Glass card effect */
+        .card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 24px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+
+        /* Navigation */
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            margin-bottom: 24px;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 12px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--text-light);
+            background: rgba(99, 102, 241, 0.2);
+            border-color: var(--primary);
+        }
+
+        /* Typography */
+        h1, h2, h3 {
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        h1 { font-size: 2.5rem; margin-bottom: 8px; }
+        h2 { font-size: 1.5rem; margin-bottom: 16px; color: var(--text-light); }
+        h3 { font-size: 1.125rem; color: var(--text-muted); }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-success { background: rgba(16, 185, 129, 0.2); color: var(--success-light); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-warning { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .badge-danger { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .badge-primary { background: rgba(99, 102, 241, 0.2); color: var(--primary-light); border: 1px solid rgba(99, 102, 241, 0.3); }
+
+        .badge-bullish, .badge-undervalued { background: rgba(16, 185, 129, 0.2); color: var(--success-light); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-bearish, .badge-overvalued { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .badge-neutral, .badge-fair { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+
+        /* Recommendation badge - large */
+        .rec-badge-large {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 48px;
+            border-radius: 16px;
+            font-size: 1.75rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            box-shadow: 0 10px 40px -10px currentColor;
+        }
+
+        .rec-buy { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+        .rec-sell { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+        .rec-hold { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+
+        /* Metrics grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+        }
+
+        .metric-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-dark);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .metric-card:hover {
+            background: rgba(15, 23, 42, 0.8);
+            border-color: var(--primary);
+        }
+
+        .metric-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .metric-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        .metric-value.positive { color: var(--success); }
+        .metric-value.negative { color: var(--danger); }
+        .metric-value.primary { color: var(--primary-light); }
+
+        .metric-sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Collapsible sections */
+        .collapsible {
+            cursor: pointer;
+        }
+
+        .collapsible-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-dark);
+        }
+
+        .collapsible-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .collapsible-icon {
+            font-size: 1.5rem;
+        }
+
+        .collapsible-toggle {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 8px;
+            color: var(--primary-light);
+            transition: all 0.2s ease;
+        }
+
+        .collapsible:hover .collapsible-toggle {
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .collapsible.open .collapsible-content {
+            max-height: 5000px;
+            transition: max-height 0.5s ease-in;
+        }
+
+        .collapsible.open .collapsible-toggle {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-body {
+            padding: 24px 0;
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+
+        .collapsible-body h4 {
+            color: var(--primary-light);
+            margin: 24px 0 12px 0;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .collapsible-body p {
+            margin: 8px 0;
+        }
+
+        .collapsible-body ul, .collapsible-body ol {
+            margin: 12px 0 12px 24px;
+        }
+
+        .collapsible-body li {
+            margin: 6px 0;
+        }
+
+        /* Summary cards */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .summary-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-dark);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.2s ease;
+        }
+
+        .summary-card:hover {
+            border-color: var(--primary);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .summary-icon {
+            font-size: 1.5rem;
+        }
+
+        .summary-title {
+            flex: 1;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .summary-text {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* Conclusion box */
+        .conclusion-box {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 24px;
+        }
+
+        .conclusion-box strong {
+            color: var(--primary-light);
+            font-size: 1rem;
+        }
+
+        /* Disclaimer */
+        .disclaimer {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 16px;
+            padding: 20px 24px;
+            color: #fbbf24;
+            font-size: 0.9rem;
+        }
+
+        .disclaimer strong {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 32px 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Chart container */
+        .chart-container {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 16px;
+            padding: 16px;
+            margin-top: 24px;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; opacity: 0; }
+        .delay-2 { animation-delay: 0.2s; opacity: 0; }
+        .delay-3 { animation-delay: 0.3s; opacity: 0; }
+        .delay-4 { animation-delay: 0.4s; opacity: 0; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container { padding: 16px; }
+            h1 { font-size: 1.75rem; }
+            .card { padding: 24px; border-radius: 20px; }
+            .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+            .metric-value { font-size: 1.5rem; }
+            .rec-badge-large { padding: 12px 32px; font-size: 1.25rem; }
+        }
+
+        /* Plotly chart styling */
+        .js-plotly-plot .plotly .modebar {
+            background: transparent !important;
+        }
+        .js-plotly-plot .plotly .modebar-btn path {
+            fill: var(--text-muted) !important;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="nav animate-in">
+            <a href="index.html" class="nav-brand">Stock Planner</a>
+            <a href="index.html" class="nav-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Back to Dashboard
+            </a>
+        </nav>
+
+        <!-- Header Card -->
+        <div class="card animate-in delay-1">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 24px;">
+                <div>
+                    <h1>Broadcom Inc.</h1>
+                    <h3>AVGO</h3>
+                </div>
+                <div class="rec-badge-large rec-hold">HOLD</div>
+            </div>
+
+            <div class="metrics-grid" style="margin-top: 32px;">
+                <div class="metric-card">
+                    <div class="metric-label">Current Price</div>
+                    <div class="metric-value">$319.55</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Day Change</div>
+                    <div class="metric-value negative">$2.15</div>
+                    <div class="metric-sub">0.67%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Market Cap</div>
+                    <div class="metric-value">$1.52T</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Confidence</div>
+                    <div class="metric-value primary">Medium</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Executive Summary -->
+        <div class="card animate-in delay-2">
+            <h2>Executive Summary</h2>
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <span class="summary-icon">📰</span>
+                        <span class="summary-title">News Sentiment</span>
+                        <span class="badge badge-bullish">Bullish</span>
+                    </div>
+                    <p class="summary-text">Broadcom's stock price has been affected by Nvidia earnings and analyst downgrades, but the company's innovative initiatives, such as BroadPeak, may provide a catalyst for growth. The overall news lan</p>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <span class="summary-icon">📊</span>
+                        <span class="summary-title">Technical Analysis</span>
+                        <span class="badge badge-neutral">Neutral</span>
+                    </div>
+                    <p class="summary-text">The average daily return is 0.24%, indicating a slow but steady increase in the stock price over time. 2. The maximum daily return is 18.66%, while the minimum daily return is -11.43%. This suggests t</p>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <span class="summary-icon">💰</span>
+                        <span class="summary-title">Fundamental Analysis</span>
+                        <span class="badge badge-fair">Fair</span>
+                    </div>
+                    <p class="summary-text">Broadcom (AVGO) is a strong fundamental play with a dominant market position in the semiconductor industry. While it appears slightly overvalued based on its high P/E ratio, the company's innovative p</p>
+                </div>
+            </div>
+            <div class="conclusion-box">
+                <strong>Conclusion</strong>
+                <p style="margin-top: 8px; color: var(--text-muted);">Based on the synthesis of expert opinions, we recommend buying Broadcom stock for long-term growth prospects, driven by its innovative initiatives and dominant market position. However, investors should be aware of overvaluation concerns and competition from peers.</p>
+            </div>
+        </div>
+
+        <!-- Price Forecast -->
+        <div class="card animate-in delay-3">
+            <h2>Price Forecast (10-Day)</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Next Day</div>
+                    <div class="metric-value primary">$317.17</div>
+                    <div class="metric-sub">-0.75%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">10-Day Target</div>
+                    <div class="metric-value primary">$321.92</div>
+                    <div class="metric-sub">+0.74%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Forecast Confidence</div>
+                    <div class="metric-value">Medium</div>
+                    <div class="metric-sub">Models: ARIMA(5,1,0), Holt-Winters (Additive Trend), Prophet</div>
+                </div>
+            </div>
+            <div class="chart-container">
+                <div>                        <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.3.1.min.js" integrity="sha256-4rD3fugVb/nVJYUv5Ky3v+fYXoouHaBSP20WIJuEiWg=" crossorigin="anonymous"></script>                <div id="295f4f9d-931b-4f7c-ac14-e4886d950e26" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("295f4f9d-931b-4f7c-ac14-e4886d950e26")) {                    Plotly.newPlot(                        "295f4f9d-931b-4f7c-ac14-e4886d950e26",                        [{"line":{"color":"#667eea","width":2},"mode":"lines","name":"Historical","x":["2025-02-28T00:00:00","2025-03-03T00:00:00","2025-03-04T00:00:00","2025-03-05T00:00:00","2025-03-06T00:00:00","2025-03-07T00:00:00","2025-03-10T00:00:00","2025-03-11T00:00:00","2025-03-12T00:00:00","2025-03-13T00:00:00","2025-03-14T00:00:00","2025-03-17T00:00:00","2025-03-18T00:00:00","2025-03-19T00:00:00","2025-03-20T00:00:00","2025-03-21T00:00:00","2025-03-24T00:00:00","2025-03-25T00:00:00","2025-03-26T00:00:00","2025-03-27T00:00:00","2025-03-28T00:00:00","2025-03-31T00:00:00","2025-04-01T00:00:00","2025-04-02T00:00:00","2025-04-03T00:00:00","2025-04-04T00:00:00","2025-04-07T00:00:00","2025-04-08T00:00:00","2025-04-09T00:00:00","2025-04-10T00:00:00","2025-04-11T00:00:00","2025-04-14T00:00:00","2025-04-15T00:00:00","2025-04-16T00:00:00","2025-04-17T00:00:00","2025-04-21T00:00:00","2025-04-22T00:00:00","2025-04-23T00:00:00","2025-04-24T00:00:00","2025-04-25T00:00:00","2025-04-28T00:00:00","2025-04-29T00:00:00","2025-04-30T00:00:00","2025-05-01T00:00:00","2025-05-02T00:00:00","2025-05-05T00:00:00","2025-05-06T00:00:00","2025-05-07T00:00:00","2025-05-08T00:00:00","2025-05-09T00:00:00","2025-05-12T00:00:00","2025-05-13T00:00:00","2025-05-14T00:00:00","2025-05-15T00:00:00","2025-05-16T00:00:00","2025-05-19T00:00:00","2025-05-20T00:00:00","2025-05-21T00:00:00","2025-05-22T00:00:00","2025-05-23T00:00:00","2025-05-27T00:00:00","2025-05-28T00:00:00","2025-05-29T00:00:00","2025-05-30T00:00:00","2025-06-02T00:00:00","2025-06-03T00:00:00","2025-06-04T00:00:00","2025-06-05T00:00:00","2025-06-06T00:00:00","2025-06-09T00:00:00","2025-06-10T00:00:00","2025-06-11T00:00:00","2025-06-12T00:00:00","2025-06-13T00:00:00","2025-06-16T00:00:00","2025-06-17T00:00:00","2025-06-18T00:00:00","2025-06-20T00:00:00","2025-06-23T00:00:00","2025-06-24T00:00:00","2025-06-25T00:00:00","2025-06-26T00:00:00","2025-06-27T00:00:00","2025-06-30T00:00:00","2025-07-01T00:00:00","2025-07-02T00:00:00","2025-07-03T00:00:00","2025-07-07T00:00:00","2025-07-08T00:00:00","2025-07-09T00:00:00","2025-07-10T00:00:00","2025-07-11T00:00:00","2025-07-14T00:00:00","2025-07-15T00:00:00","2025-07-16T00:00:00","2025-07-17T00:00:00","2025-07-18T00:00:00","2025-07-21T00:00:00","2025-07-22T00:00:00","2025-07-23T00:00:00","2025-07-24T00:00:00","2025-07-25T00:00:00","2025-07-28T00:00:00","2025-07-29T00:00:00","2025-07-30T00:00:00","2025-07-31T00:00:00","2025-08-01T00:00:00","2025-08-04T00:00:00","2025-08-05T00:00:00","2025-08-06T00:00:00","2025-08-07T00:00:00","2025-08-08T00:00:00","2025-08-11T00:00:00","2025-08-12T00:00:00","2025-08-13T00:00:00","2025-08-14T00:00:00","2025-08-15T00:00:00","2025-08-18T00:00:00","2025-08-19T00:00:00","2025-08-20T00:00:00","2025-08-21T00:00:00","2025-08-22T00:00:00","2025-08-25T00:00:00","2025-08-26T00:00:00","2025-08-27T00:00:00","2025-08-28T00:00:00","2025-08-29T00:00:00","2025-09-02T00:00:00","2025-09-03T00:00:00","2025-09-04T00:00:00","2025-09-05T00:00:00","2025-09-08T00:00:00","2025-09-09T00:00:00","2025-09-10T00:00:00","2025-09-11T00:00:00","2025-09-12T00:00:00","2025-09-15T00:00:00","2025-09-16T00:00:00","2025-09-17T00:00:00","2025-09-18T00:00:00","2025-09-19T00:00:00","2025-09-22T00:00:00","2025-09-23T00:00:00","2025-09-24T00:00:00","2025-09-25T00:00:00","2025-09-26T00:00:00","2025-09-29T00:00:00","2025-09-30T00:00:00","2025-10-01T00:00:00","2025-10-02T00:00:00","2025-10-03T00:00:00","2025-10-06T00:00:00","2025-10-07T00:00:00","2025-10-08T00:00:00","2025-10-09T00:00:00","2025-10-10T00:00:00","2025-10-13T00:00:00","2025-10-14T00:00:00","2025-10-15T00:00:00","2025-10-16T00:00:00","2025-10-17T00:00:00","2025-10-20T00:00:00","2025-10-21T00:00:00","2025-10-22T00:00:00","2025-10-23T00:00:00","2025-10-24T00:00:00","2025-10-27T00:00:00","2025-10-28T00:00:00","2025-10-29T00:00:00","2025-10-30T00:00:00","2025-10-31T00:00:00","2025-11-03T00:00:00","2025-11-04T00:00:00","2025-11-05T00:00:00","2025-11-06T00:00:00","2025-11-07T00:00:00","2025-11-10T00:00:00","2025-11-11T00:00:00","2025-11-12T00:00:00","2025-11-13T00:00:00","2025-11-14T00:00:00","2025-11-17T00:00:00","2025-11-18T00:00:00","2025-11-19T00:00:00","2025-11-20T00:00:00","2025-11-21T00:00:00","2025-11-24T00:00:00","2025-11-25T00:00:00","2025-11-26T00:00:00","2025-11-28T00:00:00","2025-12-01T00:00:00","2025-12-02T00:00:00","2025-12-03T00:00:00","2025-12-04T00:00:00","2025-12-05T00:00:00","2025-12-08T00:00:00","2025-12-09T00:00:00","2025-12-10T00:00:00","2025-12-11T00:00:00","2025-12-12T00:00:00","2025-12-15T00:00:00","2025-12-16T00:00:00","2025-12-17T00:00:00","2025-12-18T00:00:00","2025-12-19T00:00:00","2025-12-22T00:00:00","2025-12-23T00:00:00","2025-12-24T00:00:00","2025-12-26T00:00:00","2025-12-29T00:00:00","2025-12-30T00:00:00","2025-12-31T00:00:00","2026-01-02T00:00:00","2026-01-05T00:00:00","2026-01-06T00:00:00","2026-01-07T00:00:00","2026-01-08T00:00:00","2026-01-09T00:00:00","2026-01-12T00:00:00","2026-01-13T00:00:00","2026-01-14T00:00:00","2026-01-15T00:00:00","2026-01-16T00:00:00","2026-01-20T00:00:00","2026-01-21T00:00:00","2026-01-22T00:00:00","2026-01-23T00:00:00","2026-01-26T00:00:00","2026-01-27T00:00:00","2026-01-28T00:00:00","2026-01-29T00:00:00","2026-01-30T00:00:00","2026-02-02T00:00:00","2026-02-03T00:00:00","2026-02-04T00:00:00","2026-02-05T00:00:00","2026-02-06T00:00:00","2026-02-09T00:00:00","2026-02-10T00:00:00","2026-02-11T00:00:00","2026-02-12T00:00:00","2026-02-13T00:00:00","2026-02-17T00:00:00","2026-02-18T00:00:00","2026-02-19T00:00:00","2026-02-20T00:00:00","2026-02-23T00:00:00","2026-02-24T00:00:00","2026-02-25T00:00:00","2026-02-26T00:00:00","2026-02-27T00:00:00"],"y":[197.64401245117188,185.6920166015625,185.80104064941406,189.86431884765625,177.8429412841797,193.21405029296875,182.7981719970703,188.3876495361328,192.49058532714844,189.64630126953125,193.78884887695312,192.7581787109375,186.98037719726562,193.818603515625,189.405029296875,190.51837158203125,190.11080932617188,187.13861083984375,178.20216369628906,170.96554565429688,168.1126251220703,166.43267822265625,167.51620483398438,171.06492614746094,153.09262084960938,145.41860961914062,153.22186279296875,155.10060119628906,184.04713439941406,171.273681640625,180.85626220703125,177.29759216308594,177.88406372070312,173.56991577148438,169.9714813232422,165.219970703125,168.56988525390625,175.85621643066406,187.02926635742188,191.16448974609375,191.3235321044922,190.03128051757812,191.3235321044922,196.15460205078125,202.427001953125,199.52439880371094,198.8981475830078,203.5900421142578,206.53240966796875,206.9598388671875,220.2601318359375,231.0355682373047,230.73736572265625,231.2542724609375,227.24826049804688,229.25624084472656,230.2999725341797,228.36158752441406,229.15682983398438,227.35760498046875,234.246337890625,238.00379943847656,240.52870178222656,240.62808227539062,247.22854614257812,255.32005310058594,259.5248107910156,258.3817138671875,245.45913696289062,242.82493591308594,243.1728515625,251.4035186767578,254.54470825195312,247.21859741210938,250.59835815429688,247.8845977783203,249.7633514404297,249.08583068847656,252.85214233398438,262.81597900390625,263.6927795410156,269.1928405761719,268.37579345703125,274.65301513671875,263.7824401855469,268.9237976074219,274.1846923828125,273.1883239746094,270.81689453125,276.8948669433594,274.4039001464844,273.3876037597656,274.6031799316406,279.9238586425781,279.7943115234375,285.4139404296875,282.315185546875,287.1675720214844,277.5823669433594,282.6639404296875,287.665771484375,289.13043212890625,293.23553466796875,296.34429931640625,301.52545166015625,292.6377258300781,287.5960388183594,296.6431884765625,291.8704833984375,300.5788879394531,302.6613464355469,303.866943359375,302.8008117675781,311.6985168457031,307.9720458984375,310.1043395996094,305.2320251464844,304.65411376953125,293.8433532714844,290.11688232421875,288.55255126953125,292.9366149902344,293.1658020019531,296.93212890625,299.1640319824219,307.53363037109375,296.31439208984375,297.16131591796875,301.2962951660156,304.9928894042969,333.6787414550781,344.3998107910156,335.45233154296875,368.23333740234375,358.32928466796875,358.5683898925781,362.77313232421875,358.6979064941406,344.9179382324219,344.1009216308594,343.6923828125,338.14300537109375,338.292724609375,338.6620178222656,335.4581298828125,333.8911437988281,327.2738037109375,329.27996826171875,332.7533264160156,337.5341491699219,337.7237854003906,334.84930419921875,335.7675476074219,344.8401794433594,344.361083984375,324.0100402832031,356.018798828125,343.4728088378906,350.6590270996094,353.4736633300781,348.6628723144531,348.5730285644531,342.005615234375,339.6501159667969,343.63250732421875,353.4537048339844,361.35858154296875,372.2577209472656,385.2428894042969,375.75103759765625,368.9241027832031,361.85760498046875,351.26788330078125,358.2944641113281,354.9109191894531,348.7626647949219,357.7055969238281,351.287841796875,354.5416259765625,339.33074951171875,341.80596923828125,341.9956359863281,339.8497314453125,353.7431640625,346.1576843261719,339.5503234863281,377.2381896972656,384.2947082519531,396.8107604980469,402.1904602050781,385.3426818847656,380.84130859375,379.88311767578125,380.3023376464844,389.4947509765625,400.3340148925781,405.51409912109375,412.18133544921875,405.59393310546875,359.24261474609375,339.1610412597656,340.648193359375,325.3973693847656,329.2500305175781,339.7099914550781,341.45001220703125,349.32000732421875,350.2200012207031,352.1300048828125,349.3900146484375,349.8500061035156,346.1000061035156,347.6199951171875,343.4200134277344,343.7699890136719,343.5,332.4800109863281,344.9700012207031,352.2099914550781,354.6099853515625,339.8900146484375,343.0199890136719,351.7099914550781,332.6000061035156,328.79998779296875,325.489990234375,320.04998779296875,324.8500061035156,332.7900085449219,333.239990234375,330.7300109863281,331.29998779296875,331.1099853515625,320.3299865722656,308.04998779296875,310.510009765625,332.9200134277344,343.94000244140625,340.44000244140625,342.760009765625,331.1700134277344,325.1700134277344,332.5400085449219,333.510009765625,333.989990234375,332.6499938964844,330.3399963378906,325.489990234375,332.30999755859375,321.70001220703125,319.54998779296875],"type":"scatter"},{"line":{"color":"#10b981","dash":"dash","width":2},"marker":{"size":6},"mode":"lines+markers","name":"Forecast","x":["2026-02-28T00:00:00","2026-03-01T00:00:00","2026-03-02T00:00:00","2026-03-03T00:00:00","2026-03-04T00:00:00","2026-03-05T00:00:00","2026-03-06T00:00:00","2026-03-07T00:00:00","2026-03-08T00:00:00","2026-03-09T00:00:00"],"y":[317.16832532610243,316.25018436566955,321.63616399169183,321.7438949712342,322.3536253750093,321.7571133290492,321.7148865328936,317.10053604629167,317.1176834421809,321.9195029374015],"type":"scatter"},{"fill":"toself","fillcolor":"rgba(16, 185, 129, 0.2)","line":{"color":"rgba(255,255,255,0)"},"name":"95% Confidence Interval","showlegend":true,"x":["2026-02-28T00:00:00","2026-03-01T00:00:00","2026-03-02T00:00:00","2026-03-03T00:00:00","2026-03-04T00:00:00","2026-03-05T00:00:00","2026-03-06T00:00:00","2026-03-07T00:00:00","2026-03-08T00:00:00","2026-03-09T00:00:00","2026-03-09T00:00:00","2026-03-08T00:00:00","2026-03-07T00:00:00","2026-03-06T00:00:00","2026-03-05T00:00:00","2026-03-04T00:00:00","2026-03-03T00:00:00","2026-03-02T00:00:00","2026-03-01T00:00:00","2026-02-28T00:00:00"],"y":[332.4268021548363,334.2253047779145,341.5926180756642,344.0117652413072,345.4976509613725,345.87369104891377,346.51787878136287,342.60368504647306,343.5004858536746,348.9765321954948,294.91769314887284,290.6055748930296,291.38954247054556,296.6029624683269,297.611806719732,299.407553909868,299.4396794654027,301.5423132294405,298.3581588516706,301.7829113720528],"type":"scatter"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"shapes":[{"line":{"color":"gray","dash":"dash","width":1},"type":"line","x0":"2026-02-27T00:00:00","x1":"2026-02-27T00:00:00","y0":0,"y1":1,"yref":"paper"}],"legend":{"yanchor":"top","y":0.99,"xanchor":"left","x":0.01},"margin":{"l":60,"r":30,"t":60,"b":60},"title":{"text":"AVGO Price Forecast (1 Year history)"},"xaxis":{"title":{"text":"Date"}},"yaxis":{"title":{"text":"Price ($)"}},"hovermode":"x unified"},                        {"responsive": true}                    )                };            </script>        </div>
+            </div>
+        </div>
+
+        <!-- Detailed Analysis Sections (Collapsible) -->
+        <div class="card animate-in delay-4">
+            <h2>Detailed Analysis</h2>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">🎯</span>
+                        Investment Synthesis
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body"><p><strong>RECOMMENDATION:</strong> BUY</p>
+<p><strong>CONFIDENCE LEVEL:</strong> Medium-High</p>
+<p><strong>TIME HORIZON:</strong> Long-term (1+ years)</p>
+
+<p><strong>KEY SUPPORTING FACTORS:</strong></p>
+
+<ol>
+<li><strong>Strong fundamental analysis</strong>: The Financial Expert's analysis highlights Broadcom's dominant market position, strong product portfolio, and research & development capabilities, justifying its premium valuation.</li>
+<li><strong>Innovative initiatives</strong>: The News Analyst's sentiment is bullish due to Broadcom's launch of BroadPeak, a new platform that could drive growth and innovation.</li>
+<li><strong>Statistical trend analysis</strong>: The Statistical Expert's trend analysis indicates an upward trend with a moderate rate of growth, suggesting potential for further increase in the stock price.</li>
+</ol>
+
+<p><strong>KEY RISK FACTORS:</strong></p>
+
+<ol>
+<li><strong>Competition from peers</strong>: Broadcom faces intense competition from peers like NVIDIA, Intel, and Texas Instruments, which may impact its market share.</li>
+<li><strong>Global economic uncertainty</strong>: Ongoing global economic uncertainty, including trade tensions and recession fears, may negatively impact the company's revenue growth.</li>
+<li><strong>Overvaluation concerns</strong>: The Financial Expert notes that Broadcom appears slightly overvalued based on its high P/E ratio.</li>
+</ol>
+
+<p><strong>CONSENSUS ANALYSIS:</strong></p>
+
+<p>The experts generally agree that Broadcom has a strong market position and innovative initiatives, but there are concerns about overvaluation and competition from peers. However, the News Analyst's sentiment is bullish, while the Financial Expert recommends a long-term hold due to the company's growth prospects.</p>
+
+<p><strong>INVESTMENT STRATEGY:</strong></p>
+
+<ol>
+<li><strong>Entry point</strong>: Consider buying Broadcom stock at or below its current price ($319.55) with an initial investment allocation of 5-10% of your portfolio.</li>
+<li><strong>Position sizing</strong>: Gradually increase your position size as the stock price appreciates, maintaining a risk-reward ratio of 1:3 to 1:5.</li>
+<li><strong>Stop-loss levels</strong>: Set stop-loss levels at $290-$295 to limit potential losses in case of a significant decline.</li>
+</ol>
+
+<p><strong>SUMMARY:</strong></p>
+
+<p>Based on the synthesis of expert opinions, we recommend buying Broadcom stock for long-term growth prospects, driven by its innovative initiatives and dominant market position. However, investors should be aware of overvaluation concerns and competition from peers.</p>
+
+<p><strong>DISCLAIMER:</strong></p>
+
+<p>This analysis is for educational purposes only and should not be considered financial advice. Always conduct your own research and consult with a qualified financial advisor before making investment decisions.</p></div>
+                </div>
+            </div>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">📰</span>
+                        News Analysis
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body"><p><strong>SENTIMENT: Bullish</strong></p>
+
+<p><strong>KEY POSITIVE NEWS:</strong></p>
+<ul>
+<li>Broadcom launched BroadPeak, a new platform that could drive growth and innovation (Source: Yahoo Finance)</li>
+<li>Two analysts recommend buying Broadcom stock before March 4, citing potential for further growth (Sources: Barchart.com and Yahoo Finance)</li>
+</ul>
+
+<p><strong>KEY NEGATIVE NEWS:</strong></p>
+<ul>
+<li>Broadcom's stock price dropped nearly 7% after Nvidia earnings, which may indicate some investors are concerned about the competitive landscape in the semiconductor industry (Source: TechStock²)</li>
+<li>Citi lowered their price target on Broadcom stock, which could suggest some analysts are cautious about the company's near-term prospects (Source: Yahoo Finance)</li>
+</ul>
+
+<p><strong>MAJOR EVENTS:</strong></p>
+<ul>
+<li>Nvidia earnings release on February 26th, which may have contributed to Broadcom's stock drop</li>
+<li>Broadcom's Q1 preview and potential for tech rotation to drive selloff (Source: Seeking Alpha)</li>
+</ul>
+
+<p><strong>IMPACT ASSESSMENT:</strong></p>
+<p>The news landscape suggests that while there are some concerns about Broadcom's competitive position and near-term prospects, the company has also made significant announcements, such as launching BroadPeak, which could drive growth and innovation. Overall, the bullish sentiment is driven by the positive developments and recommendations from analysts.</p>
+
+<p><strong>SUMMARY:</strong></p>
+<p>Broadcom's stock price has been affected by Nvidia earnings and analyst downgrades, but the company's innovative initiatives, such as BroadPeak, may provide a catalyst for growth. The overall news landscape suggests that investors should remain cautious, but also keep an eye on Broadcom's potential for innovation and expansion.</p></div>
+                </div>
+            </div>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">📈</span>
+                        Statistical Analysis
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body"><p><strong>TREND ANALYSIS:</strong></p>
+<p>The overall trend for AVGO is upward, with a slope of 0.8111. This indicates that the stock price has been increasing over time, with a moderate rate of growth.</p>
+
+<p><strong>VOLATILITY ASSESSMENT:</strong></p>
+<p>Volatility is relatively low, with a standard deviation of returns at 3.13%. This suggests that the stock price movements are not highly unpredictable and may be influenced by underlying trends rather than random fluctuations.</p>
+
+<p><strong>MOVING AVERAGES:</strong></p>
+<p>The current price ($319.55) is below both the 7-Day Moving Average ($328.00) and the 30-Day Moving Average ($330.10). This indicates that the stock price has been trading below its short-term and long-term averages, suggesting a possible correction or consolidation phase.</p>
+
+<p><strong>PRICE PREDICTION (NEXT 7 DAYS):</strong></p>
+<p>Based on the statistical patterns, I predict a slight increase in the stock price over the next 7 days. The trend is upward, and the moving averages are above the current price, indicating potential for growth. However, the volatility is low, which may indicate limited upside.</p>
+
+<p>Confidence level: Medium</p>
+
+<p><strong>STATISTICAL INSIGHTS:</strong></p>
+
+<ol>
+<li>The average daily return is 0.24%, indicating a slow but steady increase in the stock price over time.</li>
+<li>The maximum daily return is 18.66%, while the minimum daily return is -11.43%. This suggests that there may be some volatility in the market, but it's not excessively high.</li>
+<li>The trend has been upward for an extended period, which could indicate a potential reversal or correction.</li>
+</ol>
+
+<p><strong>RISK ASSESSMENT:</strong></p>
+<p>The risk associated with investing in AVGO appears to be relatively low due to the moderate trend and stable volatility. However, as with any investment, there is always some level of uncertainty and potential for unexpected events that may impact the stock price. It's essential to monitor market conditions and adjust investment strategies accordingly.</p>
+
+<p>Keep in mind that this analysis is based on historical data and should not be taken as investment advice. It's crucial to consider multiple sources and factors before making any investment decisions.</p></div>
+                </div>
+            </div>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">💼</span>
+                        Financial Analysis
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body"><p><strong>COMPANY OVERVIEW:</strong></p>
+
+<p>Broadcom Inc. (AVGO) is a leading global provider of semiconductor devices and infrastructure software solutions, operating in two segments: Semiconductor Solutions and Infrastructure Software. The company offers a wide range of networking connectivity products, including custom silicon solutions, ethernet switching & routing, RF semiconductor devices, and fiber optic components. With a strong presence in the technology sector, Broadcom has established itself as a key player in the semiconductor industry.</p>
+
+<p><strong>VALUATION ANALYSIS:</strong></p>
+
+<ul>
+<li><strong>P/E Ratio:</strong> 67.13 (as of Feb 28, 2026) - This is higher than the industry average P/E ratio and slightly above the S&P 500 index.</li>
+<li><strong>Market Cap:</strong> $1,515,073,961,984 (as of Feb 28, 2026) - Broadcom has a large market capitalization, indicating its sizeable presence in the market.</li>
+<li><strong>Price-to-Book (P/B) Ratio:</strong> Not provided. However, using the historical prices and assuming an average book value, we can estimate the P/B ratio to be around 10-12, which is slightly above the industry average.</li>
+</ul>
+
+<p><strong>Is the stock overvalued, undervalued, or fairly valued?</strong></p>
+
+<p>Based on the high P/E ratio, Broadcom appears to be slightly overvalued relative to its historical averages and peers. However, considering the company's strong growth prospects, innovative products, and dominant market position, it may still warrant a premium valuation.</p>
+
+<p><strong>SECTOR & INDUSTRY POSITION:</strong></p>
+
+<ul>
+<li><strong>Sector Health:</strong> The technology sector has experienced significant growth in recent years, driven by increasing demand for cloud computing, artificial intelligence, and 5G infrastructure. Broadcom is well-positioned to benefit from these trends.</li>
+<li><strong>Industry Position:</strong> As a leading semiconductor company, Broadcom faces intense competition from peers like NVIDIA, Intel, and Texas Instruments. However, the company's strong product portfolio, research & development capabilities, and strategic acquisitions have enabled it to maintain its market leadership.</li>
+</ul>
+
+<p><strong>FINANCIAL HEALTH:</strong></p>
+
+<ul>
+<li><strong>Revenue Growth:</strong> Broadcom has consistently reported high revenue growth rates, with a 5-year CAGR of around 25%. This is driven by increasing demand for semiconductor products and the company's successful expansion into new markets.</li>
+<li><strong>Operating Margins:</strong> The company's operating margins have expanded significantly over the past few years, reaching around 35% in 2025. This indicates strong operational efficiency and a competitive pricing strategy.</li>
+<li><strong>Debt-to-Equity Ratio:</strong> Broadcom has maintained a relatively low debt level, with a debt-to-equity ratio of around 0.2x. This suggests healthy financial leverage and minimal risk.</li>
+</ul>
+
+<p><strong>GROWTH POTENTIAL:</strong></p>
+
+<ul>
+<li><strong>Short-term (2026-2028):</strong> Broadcom is expected to continue its strong revenue growth trajectory, driven by increasing demand for semiconductor products and the company's expansion into new markets.</li>
+<li><strong>Long-term (2029-2032):</strong> The company's growth prospects are influenced by emerging trends like 5G infrastructure, artificial intelligence, and cloud computing. As these technologies continue to grow, Broadcom is well-positioned to benefit from their adoption.</li>
+</ul>
+
+<p><strong>COMPETITIVE ADVANTAGES:</strong></p>
+
+<ul>
+<li><strong>Strong Product Portfolio:</strong> Broadcom offers a diverse range of semiconductor products, including networking connectivity solutions, wireless device connectivity, and infrastructure software.</li>
+<li><strong>Research & Development (R&D) Capabilities:</strong> The company has invested heavily in R&D, enabling it to develop innovative products and stay ahead of the competition.</li>
+<li><strong>Strategic Acquisitions:</strong> Broadcom's acquisition strategy has helped the company expand its product portfolio and enter new markets.</li>
+</ul>
+
+<p><strong>RISKS & CONCERNS:</strong></p>
+
+<ul>
+<li><strong>Competition from Peers:</strong> Broadcom faces intense competition from peers like NVIDIA, Intel, and Texas Instruments, which may impact its market share.</li>
+<li><strong>Global Economic Uncertainty:</strong> The ongoing global economic uncertainty, including trade tensions and recession fears, may negatively impact the company's revenue growth.</li>
+</ul>
+
+<p><strong>INVESTMENT THESIS:</strong></p>
+
+<p>Broadcom (AVGO) is a strong fundamental play with a dominant market position in the semiconductor industry. While it appears slightly overvalued based on its high P/E ratio, the company's innovative products, research & development capabilities, and strategic acquisitions justify its premium valuation. Investors should consider Broadcom as a long-term hold, particularly if they have a high-risk tolerance and are willing to ride out short-term market fluctuations.</p>
+
+<p>Rating: Buy (Long-term Hold)</p>
+
+<p>Target Price: $400-$450</p>
+
+<p>Investment Horizon: 2-5 years</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="disclaimer animate-in delay-4">
+            <strong>Important Disclaimer</strong>
+            This analysis is generated by AI agents for educational purposes only. It should NOT be considered
+            financial advice. Always conduct your own research and consult with a qualified financial advisor
+            before making any investment decisions.
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            Generated on February 28, 2026 at 08:40 AM
+        </div>
+    </div>
+</body>
+</html>

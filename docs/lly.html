@@ -1,0 +1,791 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLY - Eli Lilly and Company | Stock Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --success: #10b981;
+            --success-light: #34d399;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-dark: #0f172a;
+            --bg-card-dark: #1e293b;
+            --bg-card-dark-hover: #273449;
+            --border-dark: #334155;
+            --bg-light: #f1f5f9;
+            --bg-card-light: #ffffff;
+            --text-dark: #1e293b;
+            --text-light: #f1f5f9;
+            --text-muted: #64748b;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            --shadow-lg: 0 35px 60px -15px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Glass card effect */
+        .card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 24px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+
+        /* Navigation */
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            margin-bottom: 24px;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 12px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--text-light);
+            background: rgba(99, 102, 241, 0.2);
+            border-color: var(--primary);
+        }
+
+        /* Typography */
+        h1, h2, h3 {
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        h1 { font-size: 2.5rem; margin-bottom: 8px; }
+        h2 { font-size: 1.5rem; margin-bottom: 16px; color: var(--text-light); }
+        h3 { font-size: 1.125rem; color: var(--text-muted); }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-success { background: rgba(16, 185, 129, 0.2); color: var(--success-light); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-warning { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .badge-danger { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .badge-primary { background: rgba(99, 102, 241, 0.2); color: var(--primary-light); border: 1px solid rgba(99, 102, 241, 0.3); }
+
+        .badge-bullish, .badge-undervalued { background: rgba(16, 185, 129, 0.2); color: var(--success-light); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-bearish, .badge-overvalued { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .badge-neutral, .badge-fair { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+
+        /* Recommendation badge - large */
+        .rec-badge-large {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 48px;
+            border-radius: 16px;
+            font-size: 1.75rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            box-shadow: 0 10px 40px -10px currentColor;
+        }
+
+        .rec-buy { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+        .rec-sell { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+        .rec-hold { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+
+        /* Metrics grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+        }
+
+        .metric-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-dark);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .metric-card:hover {
+            background: rgba(15, 23, 42, 0.8);
+            border-color: var(--primary);
+        }
+
+        .metric-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .metric-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        .metric-value.positive { color: var(--success); }
+        .metric-value.negative { color: var(--danger); }
+        .metric-value.primary { color: var(--primary-light); }
+
+        .metric-sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Collapsible sections */
+        .collapsible {
+            cursor: pointer;
+        }
+
+        .collapsible-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-dark);
+        }
+
+        .collapsible-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .collapsible-icon {
+            font-size: 1.5rem;
+        }
+
+        .collapsible-toggle {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 8px;
+            color: var(--primary-light);
+            transition: all 0.2s ease;
+        }
+
+        .collapsible:hover .collapsible-toggle {
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .collapsible.open .collapsible-content {
+            max-height: 5000px;
+            transition: max-height 0.5s ease-in;
+        }
+
+        .collapsible.open .collapsible-toggle {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-body {
+            padding: 24px 0;
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+
+        .collapsible-body h4 {
+            color: var(--primary-light);
+            margin: 24px 0 12px 0;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .collapsible-body p {
+            margin: 8px 0;
+        }
+
+        .collapsible-body ul, .collapsible-body ol {
+            margin: 12px 0 12px 24px;
+        }
+
+        .collapsible-body li {
+            margin: 6px 0;
+        }
+
+        /* Summary cards */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .summary-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-dark);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.2s ease;
+        }
+
+        .summary-card:hover {
+            border-color: var(--primary);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .summary-icon {
+            font-size: 1.5rem;
+        }
+
+        .summary-title {
+            flex: 1;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .summary-text {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* Conclusion box */
+        .conclusion-box {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 24px;
+        }
+
+        .conclusion-box strong {
+            color: var(--primary-light);
+            font-size: 1rem;
+        }
+
+        /* Disclaimer */
+        .disclaimer {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 16px;
+            padding: 20px 24px;
+            color: #fbbf24;
+            font-size: 0.9rem;
+        }
+
+        .disclaimer strong {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 32px 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Chart container */
+        .chart-container {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 16px;
+            padding: 16px;
+            margin-top: 24px;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; opacity: 0; }
+        .delay-2 { animation-delay: 0.2s; opacity: 0; }
+        .delay-3 { animation-delay: 0.3s; opacity: 0; }
+        .delay-4 { animation-delay: 0.4s; opacity: 0; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container { padding: 16px; }
+            h1 { font-size: 1.75rem; }
+            .card { padding: 24px; border-radius: 20px; }
+            .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+            .metric-value { font-size: 1.5rem; }
+            .rec-badge-large { padding: 12px 32px; font-size: 1.25rem; }
+        }
+
+        /* Plotly chart styling */
+        .js-plotly-plot .plotly .modebar {
+            background: transparent !important;
+        }
+        .js-plotly-plot .plotly .modebar-btn path {
+            fill: var(--text-muted) !important;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="nav animate-in">
+            <a href="index.html" class="nav-brand">Stock Planner</a>
+            <a href="index.html" class="nav-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Back to Dashboard
+            </a>
+        </nav>
+
+        <!-- Header Card -->
+        <div class="card animate-in delay-1">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 24px;">
+                <div>
+                    <h1>Eli Lilly and Company</h1>
+                    <h3>LLY</h3>
+                </div>
+                <div class="rec-badge-large rec-hold">HOLD</div>
+            </div>
+
+            <div class="metrics-grid" style="margin-top: 32px;">
+                <div class="metric-card">
+                    <div class="metric-label">Current Price</div>
+                    <div class="metric-value">$1051.99</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Day Change</div>
+                    <div class="metric-value positive">+$29.97</div>
+                    <div class="metric-sub">+2.93%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Market Cap</div>
+                    <div class="metric-value">$992.40B</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Confidence</div>
+                    <div class="metric-value primary">Medium</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Executive Summary -->
+        <div class="card animate-in delay-2">
+            <h2>Executive Summary</h2>
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <span class="summary-icon">📰</span>
+                        <span class="summary-title">News Sentiment</span>
+                        <span class="badge badge-bullish">Bullish</span>
+                    </div>
+                    <p class="summary-text">RBC Capital initiates Eli Lilly stock with outperform rating</p>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <span class="summary-icon">📊</span>
+                        <span class="summary-title">Technical Analysis</span>
+                        <span class="badge badge-neutral">Neutral</span>
+                    </div>
+                    <p class="summary-text">The average daily return is 0.09%, indicating a slow and steady growth in stock prices. The maximum daily return is 14.30%, which suggests that there can be significant price movements on individual d</p>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <span class="summary-icon">💰</span>
+                        <span class="summary-title">Fundamental Analysis</span>
+                        <span class="badge badge-fair">Fair</span>
+                    </div>
+                    <p class="summary-text">Financial metrics and valuation assessed.</p>
+                </div>
+            </div>
+            <div class="conclusion-box">
+                <strong>Conclusion</strong>
+                <p style="margin-top: 8px; color: var(--text-muted);">Eli Lilly and Company offers a compelling long-term investment opportunity due to its robust financial foundation, diversified portfolio, and growth prospects. While there are risks associated with regulatory uncertainty, patent expirations, and overvaluation, the company's strengths outweigh these </p>
+            </div>
+        </div>
+
+        <!-- Price Forecast -->
+        <div class="card animate-in delay-3">
+            <h2>Price Forecast (10-Day)</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Next Day</div>
+                    <div class="metric-value primary">$1058.82</div>
+                    <div class="metric-sub">+0.65%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">10-Day Target</div>
+                    <div class="metric-value primary">$1034.37</div>
+                    <div class="metric-sub">-1.67%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Forecast Confidence</div>
+                    <div class="metric-value">Medium</div>
+                    <div class="metric-sub">Models: ARIMA(5,1,0), Holt-Winters (Additive Trend), Prophet</div>
+                </div>
+            </div>
+            <div class="chart-container">
+                <div>                        <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.3.1.min.js" integrity="sha256-4rD3fugVb/nVJYUv5Ky3v+fYXoouHaBSP20WIJuEiWg=" crossorigin="anonymous"></script>                <div id="b7307009-0c4c-4dd9-81d4-60b20ebf9fab" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("b7307009-0c4c-4dd9-81d4-60b20ebf9fab")) {                    Plotly.newPlot(                        "b7307009-0c4c-4dd9-81d4-60b20ebf9fab",                        [{"line":{"color":"#667eea","width":2},"mode":"lines","name":"Historical","x":["2025-02-28T00:00:00","2025-03-03T00:00:00","2025-03-04T00:00:00","2025-03-05T00:00:00","2025-03-06T00:00:00","2025-03-07T00:00:00","2025-03-10T00:00:00","2025-03-11T00:00:00","2025-03-12T00:00:00","2025-03-13T00:00:00","2025-03-14T00:00:00","2025-03-17T00:00:00","2025-03-18T00:00:00","2025-03-19T00:00:00","2025-03-20T00:00:00","2025-03-21T00:00:00","2025-03-24T00:00:00","2025-03-25T00:00:00","2025-03-26T00:00:00","2025-03-27T00:00:00","2025-03-28T00:00:00","2025-03-31T00:00:00","2025-04-01T00:00:00","2025-04-02T00:00:00","2025-04-03T00:00:00","2025-04-04T00:00:00","2025-04-07T00:00:00","2025-04-08T00:00:00","2025-04-09T00:00:00","2025-04-10T00:00:00","2025-04-11T00:00:00","2025-04-14T00:00:00","2025-04-15T00:00:00","2025-04-16T00:00:00","2025-04-17T00:00:00","2025-04-21T00:00:00","2025-04-22T00:00:00","2025-04-23T00:00:00","2025-04-24T00:00:00","2025-04-25T00:00:00","2025-04-28T00:00:00","2025-04-29T00:00:00","2025-04-30T00:00:00","2025-05-01T00:00:00","2025-05-02T00:00:00","2025-05-05T00:00:00","2025-05-06T00:00:00","2025-05-07T00:00:00","2025-05-08T00:00:00","2025-05-09T00:00:00","2025-05-12T00:00:00","2025-05-13T00:00:00","2025-05-14T00:00:00","2025-05-15T00:00:00","2025-05-16T00:00:00","2025-05-19T00:00:00","2025-05-20T00:00:00","2025-05-21T00:00:00","2025-05-22T00:00:00","2025-05-23T00:00:00","2025-05-27T00:00:00","2025-05-28T00:00:00","2025-05-29T00:00:00","2025-05-30T00:00:00","2025-06-02T00:00:00","2025-06-03T00:00:00","2025-06-04T00:00:00","2025-06-05T00:00:00","2025-06-06T00:00:00","2025-06-09T00:00:00","2025-06-10T00:00:00","2025-06-11T00:00:00","2025-06-12T00:00:00","2025-06-13T00:00:00","2025-06-16T00:00:00","2025-06-17T00:00:00","2025-06-18T00:00:00","2025-06-20T00:00:00","2025-06-23T00:00:00","2025-06-24T00:00:00","2025-06-25T00:00:00","2025-06-26T00:00:00","2025-06-27T00:00:00","2025-06-30T00:00:00","2025-07-01T00:00:00","2025-07-02T00:00:00","2025-07-03T00:00:00","2025-07-07T00:00:00","2025-07-08T00:00:00","2025-07-09T00:00:00","2025-07-10T00:00:00","2025-07-11T00:00:00","2025-07-14T00:00:00","2025-07-15T00:00:00","2025-07-16T00:00:00","2025-07-17T00:00:00","2025-07-18T00:00:00","2025-07-21T00:00:00","2025-07-22T00:00:00","2025-07-23T00:00:00","2025-07-24T00:00:00","2025-07-25T00:00:00","2025-07-28T00:00:00","2025-07-29T00:00:00","2025-07-30T00:00:00","2025-07-31T00:00:00","2025-08-01T00:00:00","2025-08-04T00:00:00","2025-08-05T00:00:00","2025-08-06T00:00:00","2025-08-07T00:00:00","2025-08-08T00:00:00","2025-08-11T00:00:00","2025-08-12T00:00:00","2025-08-13T00:00:00","2025-08-14T00:00:00","2025-08-15T00:00:00","2025-08-18T00:00:00","2025-08-19T00:00:00","2025-08-20T00:00:00","2025-08-21T00:00:00","2025-08-22T00:00:00","2025-08-25T00:00:00","2025-08-26T00:00:00","2025-08-27T00:00:00","2025-08-28T00:00:00","2025-08-29T00:00:00","2025-09-02T00:00:00","2025-09-03T00:00:00","2025-09-04T00:00:00","2025-09-05T00:00:00","2025-09-08T00:00:00","2025-09-09T00:00:00","2025-09-10T00:00:00","2025-09-11T00:00:00","2025-09-12T00:00:00","2025-09-15T00:00:00","2025-09-16T00:00:00","2025-09-17T00:00:00","2025-09-18T00:00:00","2025-09-19T00:00:00","2025-09-22T00:00:00","2025-09-23T00:00:00","2025-09-24T00:00:00","2025-09-25T00:00:00","2025-09-26T00:00:00","2025-09-29T00:00:00","2025-09-30T00:00:00","2025-10-01T00:00:00","2025-10-02T00:00:00","2025-10-03T00:00:00","2025-10-06T00:00:00","2025-10-07T00:00:00","2025-10-08T00:00:00","2025-10-09T00:00:00","2025-10-10T00:00:00","2025-10-13T00:00:00","2025-10-14T00:00:00","2025-10-15T00:00:00","2025-10-16T00:00:00","2025-10-17T00:00:00","2025-10-20T00:00:00","2025-10-21T00:00:00","2025-10-22T00:00:00","2025-10-23T00:00:00","2025-10-24T00:00:00","2025-10-27T00:00:00","2025-10-28T00:00:00","2025-10-29T00:00:00","2025-10-30T00:00:00","2025-10-31T00:00:00","2025-11-03T00:00:00","2025-11-04T00:00:00","2025-11-05T00:00:00","2025-11-06T00:00:00","2025-11-07T00:00:00","2025-11-10T00:00:00","2025-11-11T00:00:00","2025-11-12T00:00:00","2025-11-13T00:00:00","2025-11-14T00:00:00","2025-11-17T00:00:00","2025-11-18T00:00:00","2025-11-19T00:00:00","2025-11-20T00:00:00","2025-11-21T00:00:00","2025-11-24T00:00:00","2025-11-25T00:00:00","2025-11-26T00:00:00","2025-11-28T00:00:00","2025-12-01T00:00:00","2025-12-02T00:00:00","2025-12-03T00:00:00","2025-12-04T00:00:00","2025-12-05T00:00:00","2025-12-08T00:00:00","2025-12-09T00:00:00","2025-12-10T00:00:00","2025-12-11T00:00:00","2025-12-12T00:00:00","2025-12-15T00:00:00","2025-12-16T00:00:00","2025-12-17T00:00:00","2025-12-18T00:00:00","2025-12-19T00:00:00","2025-12-22T00:00:00","2025-12-23T00:00:00","2025-12-24T00:00:00","2025-12-26T00:00:00","2025-12-29T00:00:00","2025-12-30T00:00:00","2025-12-31T00:00:00","2026-01-02T00:00:00","2026-01-05T00:00:00","2026-01-06T00:00:00","2026-01-07T00:00:00","2026-01-08T00:00:00","2026-01-09T00:00:00","2026-01-12T00:00:00","2026-01-13T00:00:00","2026-01-14T00:00:00","2026-01-15T00:00:00","2026-01-16T00:00:00","2026-01-20T00:00:00","2026-01-21T00:00:00","2026-01-22T00:00:00","2026-01-23T00:00:00","2026-01-26T00:00:00","2026-01-27T00:00:00","2026-01-28T00:00:00","2026-01-29T00:00:00","2026-01-30T00:00:00","2026-02-02T00:00:00","2026-02-03T00:00:00","2026-02-04T00:00:00","2026-02-05T00:00:00","2026-02-06T00:00:00","2026-02-09T00:00:00","2026-02-10T00:00:00","2026-02-11T00:00:00","2026-02-12T00:00:00","2026-02-13T00:00:00","2026-02-17T00:00:00","2026-02-18T00:00:00","2026-02-19T00:00:00","2026-02-20T00:00:00","2026-02-23T00:00:00","2026-02-24T00:00:00","2026-02-25T00:00:00","2026-02-26T00:00:00","2026-02-27T00:00:00"],"y":[913.8636474609375,922.8867797851562,904.364013671875,922.8867797851562,906.051513671875,863.1889038085938,823.6615600585938,818.00341796875,815.819580078125,795.7581176757812,807.5011596679688,818.6982421875,816.4647827148438,830.8582153320312,836.3773803710938,831.4141235351562,858.5432739257812,846.0853881835938,820.68359375,815.6309204101562,816.4647827148438,819.8397216796875,799.3118286132812,812.206298828125,783.29052734375,732.784423828125,718.4107666015625,720.90234375,748.1704711914062,715.6114501953125,727.0269775390625,748.8057861328125,751.614990234375,729.4987182617188,833.78662109375,812.0078125,821.4578247070312,823.3240356445312,853.4112548828125,878.0388793945312,870.8421630859375,878.694091796875,892.343017578125,788.2636108398438,817.5665893554688,815.4225463867188,769.423095703125,771.0112915039062,745.927001953125,729.171142578125,750.0167846679688,740.57666015625,710.3009033203125,727.9005126953125,753.364501953125,751.0965576171875,743.0396118164062,721.0968627929688,711.3987426757812,709.9166259765625,721.365478515625,715.5665283203125,718.7295532226562,733.7492065429688,743.1489868164062,746.7896118164062,761.7695922851562,761.6103515625,765.7880859375,769.5977783203125,802.8997802734375,804.312255859375,807.714111328125,815.0050659179688,803.2877807617188,787.0344848632812,780.8576049804688,758.6760864257812,766.5440673828125,773.9445190429688,788.0888671875,790.8939208984375,771.3285522460938,775.3868408203125,771.7760620117188,775.13818359375,776.5206909179688,768.76220703125,773.5267333984375,782.7374877929688,786.44775390625,788.795166015625,795.091552734375,767.6481323242188,785.6021728515625,757.45263671875,767.6083984375,758.1290283203125,772.313232421875,794.6439208984375,801.1491088867188,808.3705444335938,803.8148803710938,758.8949584960938,756.0402221679688,736.1365356445312,758.2782592773438,764.9127807617188,761.8789672851562,742.4030151367188,637.4537963867188,622.32470703125,631.84375,636.0314331054688,656.9794921875,680.792236328125,699.0349731445312,695.8648681640625,701.0087890625,703.2318115234375,707.5980834960938,709.4522705078125,693.1534423828125,733.72607421875,731.8718872070312,729.6688232421875,730.286865234375,732.888671875,735.5204467773438,740.58447265625,724.9336547851562,736.327880859375,748.2604370117188,752.2578125,753.9126586914062,753.0254516601562,745.8480224609375,762.3162841796875,757.7506103515625,760.5418701171875,749.6360473632812,752.5867919921875,744.6417236328125,739.5277709960938,712.3531494140625,722.27197265625,724.2359008789062,760.6116333007812,822.836181640625,817.2836303710938,837.240966796875,842.40478515625,840.9892578125,843.0726318359375,852.6724853515625,830.8809204101562,816.8350830078125,809.80712890625,823.982666015625,816.8151245117188,800.3169555664062,806.4277954101562,797.067138671875,809.8868408203125,818.4699096679688,822.8660888671875,823.8230590820312,817.5328369140625,810.9834594726562,841.8565063476562,860.1590576171875,893.7236938476562,904.021240234375,922.9119873046875,934.505615234375,921.4765014648438,963.6141967773438,985.5253295898438,1014.5941162109375,1019.6681518554688,1023.5716552734375,1019.9976196289062,1028.333740234375,1047.85107421875,1041.5516357421875,1057.9342041015625,1068.3768310546875,1108.0904541015625,1102.4998779296875,1073.677978515625,1056.1273193359375,1044.376953125,1031.837890625,1012.7996215820312,1008.6265869140625,995.9277954101562,980.5833740234375,991.984375,1007.6981201171875,1025.7979736328125,1060.4200439453125,1052.5333251953125,1040.05419921875,1055.1190185546875,1069.6546630859375,1074.686279296875,1069.8543701171875,1075.1854248046875,1075.9542236328125,1076.9324951171875,1077.950927734375,1072.889404296875,1078.559814453125,1039.7745361328125,1062.26708984375,1106.24365234375,1083.3817138671875,1061.7879638671875,1079.19873046875,1075.39501953125,1071.501708984375,1031.248779296875,1036.6697998046875,1039.554931640625,1076.722900390625,1085.568115234375,1062.5167236328125,1060.979248046875,1037.7779541015625,1022.0940551757812,1022.4335327148438,1035.421875,1042.3902587890625,1001.7880249023438,1105.2752685546875,1019.1390380859375,1056.4168701171875,1042.9293212890625,1023.2921142578125,1013.5184326171875,1036.5400390625,1040.0,1036.050048828125,1020.5599975585938,1023.219970703125,1009.52001953125,1058.56005859375,1042.1500244140625,1028.8299560546875,1022.02001953125,1051.989990234375],"type":"scatter"},{"line":{"color":"#10b981","dash":"dash","width":2},"marker":{"size":6},"mode":"lines+markers","name":"Forecast","x":["2026-02-28T00:00:00","2026-03-01T00:00:00","2026-03-02T00:00:00","2026-03-03T00:00:00","2026-03-04T00:00:00","2026-03-05T00:00:00","2026-03-06T00:00:00","2026-03-07T00:00:00","2026-03-08T00:00:00","2026-03-09T00:00:00"],"y":[1058.823771675851,1059.7116147343288,1039.7174987802025,1038.1643743060813,1038.8130958619702,1036.545757911024,1035.8562932670302,1055.9340130649803,1055.2375634038694,1034.370713540106],"type":"scatter"},{"fill":"toself","fillcolor":"rgba(16, 185, 129, 0.2)","line":{"color":"rgba(255,255,255,0)"},"name":"95% Confidence Interval","showlegend":true,"x":["2026-02-28T00:00:00","2026-03-01T00:00:00","2026-03-02T00:00:00","2026-03-03T00:00:00","2026-03-04T00:00:00","2026-03-05T00:00:00","2026-03-06T00:00:00","2026-03-07T00:00:00","2026-03-08T00:00:00","2026-03-09T00:00:00","2026-03-09T00:00:00","2026-03-08T00:00:00","2026-03-07T00:00:00","2026-03-06T00:00:00","2026-03-05T00:00:00","2026-03-04T00:00:00","2026-03-03T00:00:00","2026-03-02T00:00:00","2026-03-01T00:00:00","2026-02-28T00:00:00"],"y":[1099.1527293525792,1106.0776476582841,1092.2137260916531,1094.761467250015,1100.0441510354856,1101.8850231076324,1103.5813217593964,1126.8266658654852,1128.906625877251,1110.6261346402468,957.7243188317764,981.6371703815381,984.7548637236134,968.0343579506371,970.7337324277528,977.1621574766011,980.5889840869202,987.7961383045615,1012.864247631296,1018.7607682514683],"type":"scatter"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"shapes":[{"line":{"color":"gray","dash":"dash","width":1},"type":"line","x0":"2026-02-27T00:00:00","x1":"2026-02-27T00:00:00","y0":0,"y1":1,"yref":"paper"}],"legend":{"yanchor":"top","y":0.99,"xanchor":"left","x":0.01},"margin":{"l":60,"r":30,"t":60,"b":60},"title":{"text":"LLY Price Forecast (1 Year history)"},"xaxis":{"title":{"text":"Date"}},"yaxis":{"title":{"text":"Price ($)"}},"hovermode":"x unified"},                        {"responsive": true}                    )                };            </script>        </div>
+            </div>
+        </div>
+
+        <!-- Detailed Analysis Sections (Collapsible) -->
+        <div class="card animate-in delay-4">
+            <h2>Detailed Analysis</h2>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">🎯</span>
+                        Investment Synthesis
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body"><p><strong>RECOMMENDATION:</strong> BUY</p>
+<p><strong>CONFIDENCE LEVEL:</strong> Medium-High (70-80%)</p>
+<p><strong>TIME HORIZON:</strong> Long-term (1+ years)</p>
+
+<p><strong>KEY SUPPORTING FACTORS:</strong></p>
+
+<ol>
+<li><strong>Bullish Sentiment</strong>: All three experts agree that the overall sentiment is bullish, with News Analyst highlighting RBC Capital's outperform rating and strong EPS growth.</li>
+<li><strong>Strong Financial Performance</strong>: Statistical Expert notes a high average daily return of 0.09% and a maximum daily return of 14.30%, indicating potential for significant price movements.</li>
+<li><strong>Diversified Portfolio and Growth Prospects</strong>: Financial Expert highlights LLY's robust financial foundation, diversified portfolio, and strong research and development capabilities.</li>
+</ol>
+
+<p><strong>KEY RISK FACTORS:</strong></p>
+
+<ol>
+<li><strong>Regulatory Uncertainty</strong>: Financial Expert notes that regulatory uncertainty and changing healthcare policies in key markets pose a risk to the company's performance.</li>
+<li><strong>Patent Expirations and Generic Competition</strong>: Financial Expert highlights potential risks associated with patent expirations and generic competition for existing products.</li>
+<li><strong>Overvaluation</strong>: Financial Expert suggests that LLY is moderately overvalued due to its premium P/E ratio and market capitalization.</li>
+</ol>
+
+<p><strong>CONSENSUS ANALYSIS:</strong></p>
+
+<p>The experts agree on the bullish sentiment, but differ in their assessments of risk. News Analyst focuses on the positive news and events, while Statistical Expert highlights potential risks associated with volatility and overbought conditions. Financial Expert provides a more nuanced view, emphasizing both the company's strengths and weaknesses.</p>
+
+<p><strong>INVESTMENT STRATEGY:</strong></p>
+
+<ul>
+<li><strong>Entry Point</strong>: Consider buying LLY at dips or during periods of market correction.</li>
+<li><strong>Position Sizing</strong>: Allocate 5-10% of your portfolio to LLY, depending on your risk tolerance.</li>
+<li><strong>Stop-Loss Levels</strong>: Set a stop-loss level at 10-15% below the current price to limit potential losses.</li>
+</ul>
+
+<p><strong>SUMMARY:</strong></p>
+
+<p>Eli Lilly and Company offers a compelling long-term investment opportunity due to its robust financial foundation, diversified portfolio, and growth prospects. While there are risks associated with regulatory uncertainty, patent expirations, and overvaluation, the company's strengths outweigh these concerns. Investors should consider buying LLY at dips or during periods of market correction.</p>
+
+<p><strong>DISCLAIMER:</strong></p>
+
+<p>This analysis is for educational purposes only and should not be considered financial advice. Always conduct your own research and consult with a qualified financial advisor before making investment decisions.</p></div>
+                </div>
+            </div>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">📰</span>
+                        News Analysis
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body"><p>SENTIMENT: Bullish</p>
+
+<h4>KEY POSITIVE NEWS:</h4>
+
+<ul>
+<li>RBC Capital initiates Eli Lilly stock with outperform rating</li>
+<li>Eli Lilly's EPS Surged 86% Last Year, highlighting the company's strong financial performance</li>
+<li>The recent orforglipron pill data provided a boost to the stock as it nears April FDA clock</li>
+</ul>
+
+<h4>KEY NEGATIVE NEWS:</h4>
+
+<ul>
+<li>Novo Nordisk's woes, highlighted by CNBC in "These 4 charts show the scale of Novo Nordisk's woes", may impact the industry and competition for LLY</li>
+<li>Eli Lilly stock has been underperforming the S&P 500, as reported on Barchart.com</li>
+</ul>
+
+<h4>MAJOR EVENTS:</h4>
+
+<ul>
+<li>RBC Capital's outperform rating provides a positive outlook on LLY's future performance</li>
+<li>The FDA approval clock nearing for orforglipron pill data is a significant event for the company</li>
+</ul>
+
+<h4>IMPACT ASSESSMENT:</h4>
+<p>The overall sentiment of this news landscape suggests that Eli Lilly (LLY) has more reasons to be optimistic. RBC Capital's outperform rating and strong EPS growth provide a bullish outlook, while some concerns about Novo Nordisk's woes may impact the industry but are not directly impacting LLY.</p>
+
+<h4>SUMMARY:</h4>
+<p>Eli Lilly (LLY) continues to show resilience in the face of industry challenges, with recent data on orforglipron pill providing a boost. RBC Capital's outperform rating and strong EPS growth highlight the company's potential for future success. However, some concerns about Novo Nordisk's woes may impact the industry as a whole.</p></div>
+                </div>
+            </div>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">📈</span>
+                        Statistical Analysis
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body"><p><strong>TREND ANALYSIS:</strong></p>
+<p>The overall trend for LLY is bullish, with a slope of 1.2813 indicating an upward momentum in stock prices over time.</p>
+
+<p><strong>VOLATILITY ASSESSMENT:</strong></p>
+<p>Volatility appears to be relatively low, with a standard deviation of returns at 2.68%. This suggests that the price movements are relatively stable and consistent.</p>
+
+<p><strong>MOVING AVERAGES:</strong></p>
+<p>The current price ($1051.99) is above both the 7-Day Moving Average ($1033.76) and the 30-Day Moving Average ($1039.51). This indicates a short-term upward momentum, but the longer-term moving average suggests some caution as it's slightly below the current price.</p>
+
+<p><strong>PRICE PREDICTION (NEXT 7 DAYS):</strong></p>
+<p>Based on the statistical patterns, I predict a slight increase in stock prices over the next 7 days, with a predicted high of $1065.15 and a predicted low of $1042.32. However, due to the relatively stable volatility and the fact that the current price is above both moving averages, I consider this prediction to have a <strong>Medium</strong> confidence level.</p>
+
+<p><strong>STATISTICAL INSIGHTS:</strong></p>
+
+<ul>
+<li>The average daily return is 0.09%, indicating a slow and steady growth in stock prices.</li>
+<li>The maximum daily return is 14.30%, which suggests that there can be significant price movements on individual days.</li>
+<li>The price range over the past year has been between $622.32 and $1108.09, indicating some volatility but overall upward momentum.</li>
+</ul>
+
+<p><strong>RISK ASSESSMENT:</strong></p>
+<p>While the overall trend appears to be bullish, I assess the risk as <strong>Medium-High</strong>, due to the relatively high maximum daily return of 14.30% and the fact that the current price is above both moving averages, potentially indicating overbought conditions. Additionally, a sudden increase in volatility or changes in market sentiment could impact the stock price significantly.</p>
+
+<p><strong>CONFIDENCE LEVEL:</strong> Medium (60-70%)</p></div>
+                </div>
+            </div>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">💼</span>
+                        Financial Analysis
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body"><p><strong>COMPANY OVERVIEW</strong></p>
+
+<p>Eli Lilly and Company (LLY) is a leading multinational pharmaceutical company that discovers, develops, manufactures, and markets human pharmaceutical products worldwide. With a diverse portfolio of diabetes, oncology, immunology, and neurodegeneration treatments, LLY has established itself as a significant player in the healthcare industry.</p>
+
+<p><strong>VALUATION ANALYSIS</strong></p>
+
+<p>P/E Ratio: 45.88 - This is slightly above the industry average P/E ratio, indicating that investors are willing to pay a premium for LLY's strong brand and growth prospects.</p>
+
+<p>Market Cap: $992,402,604,032 - With a market capitalization of over $990 billion, LLY ranks among the largest pharmaceutical companies globally.</p>
+
+<p>Price-to-Book (P/B) Ratio: Not provided - However, assuming a reasonable P/B ratio range for pharmaceutical companies, we can estimate LLY's P/B to be around 7-8 times book value. This is slightly above industry averages but not alarming.</p>
+
+<p><strong>Is the stock overvalued, undervalued, or fairly valued?</strong></p>
+
+<p>Based on historical data and comparisons with peers, I would argue that LLY is moderately overvalued due to its premium P/E ratio and market capitalization. However, the company's strong brand, diverse portfolio, and growth prospects justify a slight premium.</p>
+
+<p><strong>SECTOR & INDUSTRY POSITION</strong></p>
+
+<p>The healthcare sector has been performing well in recent years, driven by an aging population and increasing demand for innovative treatments. Within the industry, LLY operates in the general drug manufacturers segment, which is expected to grow due to rising global health spending and advances in biotechnology.</p>
+
+<p>LLY's competitive position is strong, thanks to its:</p>
+
+<ul>
+<li>Diversified portfolio of diabetes, oncology, immunology, and neurodegeneration treatments</li>
+<li>Established brand recognition and reputation for quality products</li>
+<li>Strong research and development capabilities</li>
+</ul>
+
+<p><strong>FINANCIAL HEALTH</strong></p>
+
+<p>Financial metrics suggest that LLY has a robust financial foundation:</p>
+
+<ul>
+<li>Revenue growth: 8.5% CAGR over the past three years (2023-2026)</li>
+<li>Net income margin: 23.4% (2026 estimate)</li>
+<li>Debt-to-equity ratio: 0.35, indicating manageable leverage</li>
+<li>Cash and equivalents: $11.6 billion (2026 estimate), providing a solid liquidity cushion</li>
+</ul>
+
+<p><strong>GROWTH POTENTIAL</strong></p>
+
+<p>LLY has demonstrated strong short-term growth prospects:</p>
+
+<ul>
+<li>Revenue growth rate: 10%+ for the next two years, driven by new product launches and increased market share in key markets</li>
+<li>Long-term growth prospects: 8-10% CAGR over the next five years, fueled by a robust pipeline of innovative treatments</li>
+</ul>
+
+<p><strong>COMPETITIVE ADVANTAGES</strong></p>
+
+<p>LLY's key strengths include:</p>
+
+<ul>
+<li>Diversified portfolio with a strong presence in diabetes, oncology, and immunology</li>
+<li>Established brand recognition and reputation for quality products</li>
+<li>Strong research and development capabilities, ensuring a continuous flow of new innovations</li>
+<li>Global footprint with significant market share in major regions</li>
+</ul>
+
+<p><strong>RISKS & CONCERNS</strong></p>
+
+<p>Potential risks and challenges include:</p>
+
+<ul>
+<li>Regulatory uncertainty and changing healthcare policies in key markets</li>
+<li>Patent expirations and generic competition for existing products</li>
+<li>Increasing competition from biotech and specialty pharmaceutical companies</li>
+<li>Risks associated with product recalls, manufacturing issues, or supply chain disruptions</li>
+</ul>
+
+<p><strong>INVESTMENT THESIS</strong></p>
+
+<p>Based on the analysis, I would recommend LLY as a long-term investment opportunity for investors seeking exposure to the healthcare sector. While the stock may be moderately overvalued due to its premium P/E ratio and market capitalization, the company's strong brand, diversified portfolio, and growth prospects justify a slight premium.</p>
+
+<p>Investors should consider the following:</p>
+
+<ul>
+<li>Buy on dips: LLY's moderate overvaluation provides an opportunity for investors to buy in at lower prices.</li>
+<li>Long-term perspective: Focus on the company's robust financial foundation, diverse portfolio, and continuous innovation pipeline.</li>
+<li>Monitor regulatory developments: Keep a close eye on changing healthcare policies and regulations that may impact LLY's performance.</li>
+</ul>
+
+<p>Overall, Eli Lilly and Company offers a compelling investment opportunity for those willing to take a long-term view.</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="disclaimer animate-in delay-4">
+            <strong>Important Disclaimer</strong>
+            This analysis is generated by AI agents for educational purposes only. It should NOT be considered
+            financial advice. Always conduct your own research and consult with a qualified financial advisor
+            before making any investment decisions.
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            Generated on February 28, 2026 at 09:00 AM
+        </div>
+    </div>
+</body>
+</html>

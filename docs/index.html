@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stock Investment Planner - AI-Powered Analysis</title>
-    <meta name="description" content="AI-powered multi-agent stock analysis dashboard with forecasting for 8 stocks">
+    <meta name="description" content="AI-powered multi-agent stock analysis dashboard with forecasting for 18 stocks">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -828,7 +828,7 @@
                 <div class="stat-label">Buy Signals</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value" style="color: var(--warning);">8</div>
+                <div class="stat-value" style="color: var(--warning);">18</div>
                 <div class="stat-label">Hold Signals</div>
             </div>
             <div class="stat-card">
@@ -836,7 +836,7 @@
                 <div class="stat-label">Sell Signals</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value" style="color: var(--primary-light);">8</div>
+                <div class="stat-value" style="color: var(--primary-light);">18</div>
                 <div class="stat-label">Stocks Analyzed</div>
             </div>
         </div>
@@ -850,9 +850,9 @@
                 <input type="text" id="searchInput" placeholder="Search stocks..." oninput="filterTable()">
             </div>
             <div class="filter-buttons">
-                <button class="filter-btn active" data-filter="all" onclick="setFilter('all', this)">All (8)</button>
+                <button class="filter-btn active" data-filter="all" onclick="setFilter('all', this)">All (18)</button>
                 <button class="filter-btn" data-filter="buy" onclick="setFilter('buy', this)">Buy (0)</button>
-                <button class="filter-btn" data-filter="hold" onclick="setFilter('hold', this)">Hold (8)</button>
+                <button class="filter-btn" data-filter="hold" onclick="setFilter('hold', this)">Hold (18)</button>
                 <button class="filter-btn" data-filter="sell" onclick="setFilter('sell', this)">Sell (0)</button>
             </div>
         </div>
@@ -899,8 +899,8 @@
             <path d="M4.0,7.8 L9.9,4.0 L15.8,6.7 L21.7,11.2 L27.6,12.4 L33.5,18.0 L39.4,17.0 L45.3,20.9 L51.2,26.0 L57.1,27.3 L62.9,29.5 L68.8,32.0 L74.7,31.1 L80.6,31.4 L86.5,23.3 L92.4,25.6 L98.3,26.0 L104.2,24.7 L110.1,28.4 L116.0,25.5" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             <circle cx="116.0" cy="25.5" r="3" fill="#ef4444"/>
         </svg></td>
-                        <td class="col-prediction" data-value="-0.12">
-                            <div class="cell-prediction">$311.38</div>
+                        <td class="col-prediction" data-value="-0.13">
+                            <div class="cell-prediction">$311.35</div>
                             <div class="pred-arrow down">
                                 <span class="arrow">▼</span>
                                 <span class="cell-change negative" style="font-size: 0.8rem;">-0.1%</span>
@@ -943,15 +943,15 @@
             <path d="M4.0,4.0 L9.9,8.3 L15.8,15.9 L21.7,14.0 L27.6,26.8 L33.5,22.2 L39.4,14.4 L45.3,14.6 L51.2,20.1 L57.1,21.7 L62.9,22.0 L68.8,24.8 L74.7,23.1 L80.6,23.3 L86.5,24.0 L92.4,32.0 L98.3,29.2 L104.2,21.9 L110.1,21.2 L116.0,26.8" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             <circle cx="116.0" cy="26.8" r="3" fill="#ef4444"/>
         </svg></td>
-                        <td class="col-prediction" data-value="-0.39">
-                            <div class="cell-prediction">$391.22</div>
+                        <td class="col-prediction" data-value="-0.37">
+                            <div class="cell-prediction">$391.28</div>
                             <div class="pred-arrow down">
                                 <span class="arrow">▼</span>
                                 <span class="cell-change negative" style="font-size: 0.8rem;">-0.4%</span>
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="2918992052224">$2.92T</td>
-                        <td class="col-sentiment"><span class="mini-badge neutral">Neutral</span></td>
+                        <td class="col-sentiment"><span class="mini-badge bearish">Bearish</span></td>
                         <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
                         <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
@@ -988,7 +988,7 @@
             <circle cx="116.0" cy="21.3" r="3" fill="#10b981"/>
         </svg></td>
                         <td class="col-prediction" data-value="-2.28">
-                            <div class="cell-prediction">$258.14</div>
+                            <div class="cell-prediction">$258.15</div>
                             <div class="pred-arrow down">
                                 <span class="arrow">▼</span>
                                 <span class="cell-change negative" style="font-size: 0.8rem;">-2.3%</span>
@@ -1062,30 +1062,30 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="col-price cell-price" data-value="189.82">$189.82</td>
-                        <td class="col-change cell-change positive" data-value="1.02">+1.02%</td>
+                        <td class="col-price cell-price" data-value="177.19">$177.19</td>
+                        <td class="col-change cell-change negative" data-value="-4.16">-4.16%</td>
                         <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
             <defs>
-                <linearGradient id="grad_4121" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" style="stop-color:#10b981;stop-opacity:0.3"/>
-                    <stop offset="100%" style="stop-color:#10b981;stop-opacity:0"/>
+                <linearGradient id="grad_1159" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ef4444;stop-opacity:0.3"/>
+                    <stop offset="100%" style="stop-color:#ef4444;stop-opacity:0"/>
                 </linearGradient>
             </defs>
-            <path d="M4.0,10.6 L9.9,12.2 L15.8,9.4 L21.7,5.3 L27.6,4.0 L33.5,5.9 L39.4,13.4 L45.3,20.5 L51.2,28.9 L57.1,32.0 L62.9,13.6 L68.8,7.4 L74.7,9.4 L80.6,7.3 L86.5,11.6 L92.4,17.2 L98.3,14.2 L104.2,10.1 L110.1,10.3 L116.0,7.7 L116.0,32 L4,32 Z" fill="url(#grad_4121)"/>
-            <path d="M4.0,10.6 L9.9,12.2 L15.8,9.4 L21.7,5.3 L27.6,4.0 L33.5,5.9 L39.4,13.4 L45.3,20.5 L51.2,28.9 L57.1,32.0 L62.9,13.6 L68.8,7.4 L74.7,9.4 L80.6,7.3 L86.5,11.6 L92.4,17.2 L98.3,14.2 L104.2,10.1 L110.1,10.3 L116.0,7.7" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="116.0" cy="7.7" r="3" fill="#10b981"/>
+            <path d="M4.0,9.2 L9.9,15.8 L15.8,22.0 L21.7,29.3 L27.6,32.0 L33.5,16.0 L39.4,10.5 L45.3,12.3 L51.2,10.5 L57.1,14.2 L62.9,19.1 L68.8,16.5 L74.7,13.0 L80.6,13.1 L86.5,10.8 L92.4,8.7 L98.3,7.2 L104.2,4.0 L110.1,16.6 L116.0,25.7 L116.0,32 L4,32 Z" fill="url(#grad_1159)"/>
+            <path d="M4.0,9.2 L9.9,15.8 L15.8,22.0 L21.7,29.3 L27.6,32.0 L33.5,16.0 L39.4,10.5 L45.3,12.3 L51.2,10.5 L57.1,14.2 L62.9,19.1 L68.8,16.5 L74.7,13.0 L80.6,13.1 L86.5,10.8 L92.4,8.7 L98.3,7.2 L104.2,4.0 L110.1,16.6 L116.0,25.7" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="116.0" cy="25.7" r="3" fill="#ef4444"/>
         </svg></td>
-                        <td class="col-prediction" data-value="-2.01">
-                            <div class="cell-prediction">$186.01</div>
-                            <div class="pred-arrow down">
-                                <span class="arrow">▼</span>
-                                <span class="cell-change negative" style="font-size: 0.8rem;">-2.0%</span>
+                        <td class="col-prediction" data-value="2.43">
+                            <div class="cell-prediction">$181.49</div>
+                            <div class="pred-arrow up">
+                                <span class="arrow">▲</span>
+                                <span class="cell-change positive" style="font-size: 0.8rem;">+2.4%</span>
                             </div>
                         </td>
-                        <td class="col-mcap cell-mcap" data-value="4621547864064">$4.62T</td>
-                        <td class="col-sentiment"><span class="mini-badge bearish">Mixed/Bearish Tilted</span></td>
+                        <td class="col-mcap cell-mcap" data-value="4306603081728">$4.31T</td>
+                        <td class="col-sentiment"><span class="mini-badge bearish">Bearish</span></td>
                         <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
-                        <td class="col-fundamental"><span class="mini-badge bearish">Overvalued</span></td>
+                        <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action">
                             <a href="nvda.html" class="view-link">
@@ -1106,29 +1106,29 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="col-price cell-price" data-value="655.66">$655.66</td>
-                        <td class="col-change cell-change positive" data-value="1.69">+1.69%</td>
+                        <td class="col-price cell-price" data-value="648.18">$648.18</td>
+                        <td class="col-change cell-change negative" data-value="-1.34">-1.34%</td>
                         <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
             <defs>
-                <linearGradient id="grad_593" x1="0%" y1="0%" x2="0%" y2="100%">
+                <linearGradient id="grad_1406" x1="0%" y1="0%" x2="0%" y2="100%">
                     <stop offset="0%" style="stop-color:#ef4444;stop-opacity:0.3"/>
                     <stop offset="100%" style="stop-color:#ef4444;stop-opacity:0"/>
                 </linearGradient>
             </defs>
-            <path d="M4.0,26.5 L9.9,22.6 L15.8,22.5 L21.7,23.7 L27.6,4.0 L33.5,10.2 L39.4,13.0 L45.3,17.2 L51.2,23.6 L57.1,23.3 L62.9,25.7 L68.8,21.3 L74.7,23.1 L80.6,23.7 L86.5,29.0 L92.4,31.9 L98.3,32.0 L104.2,30.9 L110.1,30.4 L116.0,27.4 L116.0,32 L4,32 Z" fill="url(#grad_593)"/>
-            <path d="M4.0,26.5 L9.9,22.6 L15.8,22.5 L21.7,23.7 L27.6,4.0 L33.5,10.2 L39.4,13.0 L45.3,17.2 L51.2,23.6 L57.1,23.3 L62.9,25.7 L68.8,21.3 L74.7,23.1 L80.6,23.7 L86.5,29.0 L92.4,31.9 L98.3,32.0 L104.2,30.9 L110.1,30.4 L116.0,27.4" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="116.0" cy="27.4" r="3" fill="#ef4444"/>
+            <path d="M4.0,4.0 L9.9,7.6 L15.8,12.8 L21.7,20.8 L27.6,20.4 L33.5,23.4 L39.4,17.9 L45.3,20.2 L51.2,20.9 L57.1,27.6 L62.9,31.1 L68.8,31.3 L74.7,29.9 L80.6,29.3 L86.5,25.5 L92.4,32.0 L98.3,31.3 L104.2,26.2 L110.1,25.0 L116.0,28.1 L116.0,32 L4,32 Z" fill="url(#grad_1406)"/>
+            <path d="M4.0,4.0 L9.9,7.6 L15.8,12.8 L21.7,20.8 L27.6,20.4 L33.5,23.4 L39.4,17.9 L45.3,20.2 L51.2,20.9 L57.1,27.6 L62.9,31.1 L68.8,31.3 L74.7,29.9 L80.6,29.3 L86.5,25.5 L92.4,32.0 L98.3,31.3 L104.2,26.2 L110.1,25.0 L116.0,28.1" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="116.0" cy="28.1" r="3" fill="#ef4444"/>
         </svg></td>
-                        <td class="col-prediction" data-value="-5.22">
-                            <div class="cell-prediction">$621.43</div>
+                        <td class="col-prediction" data-value="-2.51">
+                            <div class="cell-prediction">$631.90</div>
                             <div class="pred-arrow down">
                                 <span class="arrow">▼</span>
-                                <span class="cell-change negative" style="font-size: 0.8rem;">-5.2%</span>
+                                <span class="cell-change negative" style="font-size: 0.8rem;">-2.5%</span>
                             </div>
                         </td>
-                        <td class="col-mcap cell-mcap" data-value="1658528202752">$1.66T</td>
+                        <td class="col-mcap cell-mcap" data-value="1639607173120">$1.64T</td>
                         <td class="col-sentiment"><span class="mini-badge neutral">Neutral</span></td>
-                        <td class="col-technical"><span class="mini-badge bullish">Bullish</span></td>
+                        <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
                         <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action">
@@ -1150,28 +1150,28 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="col-price cell-price" data-value="411.82">$411.82</td>
-                        <td class="col-change cell-change positive" data-value="0.03">+0.03%</td>
+                        <td class="col-price cell-price" data-value="402.51">$402.51</td>
+                        <td class="col-change cell-change negative" data-value="-1.49">-1.49%</td>
                         <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
             <defs>
-                <linearGradient id="grad_3339" x1="0%" y1="0%" x2="0%" y2="100%">
+                <linearGradient id="grad_595" x1="0%" y1="0%" x2="0%" y2="100%">
                     <stop offset="0%" style="stop-color:#ef4444;stop-opacity:0.3"/>
                     <stop offset="100%" style="stop-color:#ef4444;stop-opacity:0"/>
                 </linearGradient>
             </defs>
-            <path d="M4.0,4.0 L9.9,11.5 L15.8,13.8 L21.7,13.5 L27.6,21.6 L33.5,14.1 L39.4,18.7 L45.3,18.6 L51.2,27.2 L57.1,32.0 L62.9,24.5 L68.8,21.1 L74.7,16.9 L80.6,15.2 L86.5,21.3 L92.4,21.1 L98.3,24.8 L104.2,24.4 L110.1,24.2 L116.0,24.1 L116.0,32 L4,32 Z" fill="url(#grad_3339)"/>
-            <path d="M4.0,4.0 L9.9,11.5 L15.8,13.8 L21.7,13.5 L27.6,21.6 L33.5,14.1 L39.4,18.7 L45.3,18.6 L51.2,27.2 L57.1,32.0 L62.9,24.5 L68.8,21.1 L74.7,16.9 L80.6,15.2 L86.5,21.3 L92.4,21.1 L98.3,24.8 L104.2,24.4 L110.1,24.2 L116.0,24.1" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="116.0" cy="24.1" r="3" fill="#ef4444"/>
+            <path d="M4.0,4.0 L9.9,11.3 L15.8,11.1 L21.7,24.6 L27.6,32.0 L33.5,20.3 L39.4,15.0 L45.3,8.4 L51.2,5.8 L57.1,15.3 L62.9,14.9 L68.8,20.7 L74.7,20.1 L80.6,19.8 L86.5,19.7 L92.4,29.8 L98.3,21.7 L104.2,15.0 L110.1,22.4 L116.0,27.5 L116.0,32 L4,32 Z" fill="url(#grad_595)"/>
+            <path d="M4.0,4.0 L9.9,11.3 L15.8,11.1 L21.7,24.6 L27.6,32.0 L33.5,20.3 L39.4,15.0 L45.3,8.4 L51.2,5.8 L57.1,15.3 L62.9,14.9 L68.8,20.7 L74.7,20.1 L80.6,19.8 L86.5,19.7 L92.4,29.8 L98.3,21.7 L104.2,15.0 L110.1,22.4 L116.0,27.5" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="116.0" cy="27.5" r="3" fill="#ef4444"/>
         </svg></td>
-                        <td class="col-prediction" data-value="-3.15">
-                            <div class="cell-prediction">$398.85</div>
+                        <td class="col-prediction" data-value="-2.64">
+                            <div class="cell-prediction">$391.88</div>
                             <div class="pred-arrow down">
                                 <span class="arrow">▼</span>
-                                <span class="cell-change negative" style="font-size: 0.8rem;">-3.1%</span>
+                                <span class="cell-change negative" style="font-size: 0.8rem;">-2.6%</span>
                             </div>
                         </td>
-                        <td class="col-mcap cell-mcap" data-value="1545326559232">$1.55T</td>
-                        <td class="col-sentiment"><span class="mini-badge neutral">Neutral</span></td>
+                        <td class="col-mcap cell-mcap" data-value="1510391414784">$1.51T</td>
+                        <td class="col-sentiment"><span class="mini-badge bearish">Bearish</span></td>
                         <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
                         <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
@@ -1194,33 +1194,473 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="col-price cell-price" data-value="135.24">$135.24</td>
-                        <td class="col-change cell-change positive" data-value="0.26">+0.26%</td>
+                        <td class="col-price cell-price" data-value="137.19">$137.19</td>
+                        <td class="col-change cell-change positive" data-value="0.92">+0.92%</td>
                         <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
             <defs>
-                <linearGradient id="grad_8257" x1="0%" y1="0%" x2="0%" y2="100%">
+                <linearGradient id="grad_9422" x1="0%" y1="0%" x2="0%" y2="100%">
                     <stop offset="0%" style="stop-color:#ef4444;stop-opacity:0.3"/>
                     <stop offset="100%" style="stop-color:#ef4444;stop-opacity:0"/>
                 </linearGradient>
             </defs>
-            <path d="M4.0,4.0 L9.9,5.5 L15.8,6.7 L21.7,12.5 L27.6,16.3 L33.5,19.9 L39.4,19.1 L45.3,12.1 L51.2,24.8 L57.1,31.4 L62.9,27.3 L68.8,22.5 L74.7,24.8 L80.6,27.5 L86.5,32.0 L92.4,30.4 L98.3,29.3 L104.2,27.7 L110.1,28.0 L116.0,27.8 L116.0,32 L4,32 Z" fill="url(#grad_8257)"/>
-            <path d="M4.0,4.0 L9.9,5.5 L15.8,6.7 L21.7,12.5 L27.6,16.3 L33.5,19.9 L39.4,19.1 L45.3,12.1 L51.2,24.8 L57.1,31.4 L62.9,27.3 L68.8,22.5 L74.7,24.8 L80.6,27.5 L86.5,32.0 L92.4,30.4 L98.3,29.3 L104.2,27.7 L110.1,28.0 L116.0,27.8" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="116.0" cy="27.8" r="3" fill="#ef4444"/>
+            <path d="M4.0,14.9 L9.9,13.8 L15.8,4.0 L21.7,21.7 L27.6,30.9 L33.5,25.2 L39.4,18.4 L45.3,21.7 L51.2,25.4 L57.1,31.7 L62.9,29.5 L68.8,28.0 L74.7,25.7 L80.6,26.2 L86.5,25.8 L92.4,30.3 L98.3,32.0 L104.2,26.8 L110.1,25.2 L116.0,23.9 L116.0,32 L4,32 Z" fill="url(#grad_9422)"/>
+            <path d="M4.0,14.9 L9.9,13.8 L15.8,4.0 L21.7,21.7 L27.6,30.9 L33.5,25.2 L39.4,18.4 L45.3,21.7 L51.2,25.4 L57.1,31.7 L62.9,29.5 L68.8,28.0 L74.7,25.7 L80.6,26.2 L86.5,25.8 L92.4,30.3 L98.3,32.0 L104.2,26.8 L110.1,25.2 L116.0,23.9" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="116.0" cy="23.9" r="3" fill="#ef4444"/>
         </svg></td>
-                        <td class="col-prediction" data-value="-0.55">
-                            <div class="cell-prediction">$134.49</div>
-                            <div class="pred-arrow down">
-                                <span class="arrow">▼</span>
-                                <span class="cell-change negative" style="font-size: 0.8rem;">-0.6%</span>
+                        <td class="col-prediction" data-value="0.30">
+                            <div class="cell-prediction">$137.60</div>
+                            <div class="pred-arrow up">
+                                <span class="arrow">▲</span>
+                                <span class="cell-change positive" style="font-size: 0.8rem;">+0.3%</span>
                             </div>
                         </td>
-                        <td class="col-mcap cell-mcap" data-value="322335932416">$322.3B</td>
-                        <td class="col-sentiment"><span class="mini-badge bullish">Neutral to Slightly Bullish</span></td>
+                        <td class="col-mcap cell-mcap" data-value="328113979392">$328.1B</td>
+                        <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
                         <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
                         <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action">
                             <a href="pltr.html" class="view-link">
+                                Details
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+
+                    <tr data-rec="hold" data-symbol="DUOL" data-company="Duolingo Inc." onclick="window.location='duol.html'">
+                        <td class="col-stock">
+                            <div class="cell-stock">
+                                <div>
+                                    <div class="stock-symbol">DUOL</div>
+                                    <div class="stock-company">Duolingo Inc.</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="col-price cell-price" data-value="101.00">$101.00</td>
+                        <td class="col-change cell-change negative" data-value="-14.01">-14.01%</td>
+                        <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
+            <defs>
+                <linearGradient id="grad_6892" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ef4444;stop-opacity:0.3"/>
+                    <stop offset="100%" style="stop-color:#ef4444;stop-opacity:0"/>
+                </linearGradient>
+            </defs>
+            <path d="M4.0,4.0 L9.9,5.8 L15.8,15.7 L21.7,18.5 L27.6,20.7 L33.5,16.4 L39.4,16.8 L45.3,15.3 L51.2,25.0 L57.1,22.6 L62.9,22.2 L68.8,22.6 L74.7,22.3 L80.6,23.4 L86.5,21.9 L92.4,27.7 L98.3,24.9 L104.2,23.0 L110.1,18.1 L116.0,32.0 L116.0,32 L4,32 Z" fill="url(#grad_6892)"/>
+            <path d="M4.0,4.0 L9.9,5.8 L15.8,15.7 L21.7,18.5 L27.6,20.7 L33.5,16.4 L39.4,16.8 L45.3,15.3 L51.2,25.0 L57.1,22.6 L62.9,22.2 L68.8,22.6 L74.7,22.3 L80.6,23.4 L86.5,21.9 L92.4,27.7 L98.3,24.9 L104.2,23.0 L110.1,18.1 L116.0,32.0" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="116.0" cy="32.0" r="3" fill="#ef4444"/>
+        </svg></td>
+                        <td class="col-prediction" data-value="-7.29">
+                            <div class="cell-prediction">$93.64</div>
+                            <div class="pred-arrow down">
+                                <span class="arrow">▼</span>
+                                <span class="cell-change negative" style="font-size: 0.8rem;">-7.3%</span>
+                            </div>
+                        </td>
+                        <td class="col-mcap cell-mcap" data-value="4668962816">$4.7B</td>
+                        <td class="col-sentiment"><span class="mini-badge bearish">Bearish</span></td>
+                        <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
+                        <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
+                        <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
+                        <td class="col-action">
+                            <a href="duol.html" class="view-link">
+                                Details
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+
+                    <tr data-rec="hold" data-symbol="AVGO" data-company="Broadcom Inc." onclick="window.location='avgo.html'">
+                        <td class="col-stock">
+                            <div class="cell-stock">
+                                <div>
+                                    <div class="stock-symbol">AVGO</div>
+                                    <div class="stock-company">Broadcom Inc.</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="col-price cell-price" data-value="319.55">$319.55</td>
+                        <td class="col-change cell-change negative" data-value="-0.67">-0.67%</td>
+                        <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
+            <defs>
+                <linearGradient id="grad_2661" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ef4444;stop-opacity:0.3"/>
+                    <stop offset="100%" style="stop-color:#ef4444;stop-opacity:0"/>
+                </linearGradient>
+            </defs>
+            <path d="M4.0,13.9 L9.9,14.0 L15.8,22.4 L21.7,32.0 L27.6,30.1 L33.5,12.6 L39.4,4.0 L45.3,6.7 L51.2,4.9 L57.1,14.0 L62.9,18.6 L68.8,12.9 L74.7,12.1 L80.6,11.8 L86.5,12.8 L92.4,14.6 L98.3,18.4 L104.2,13.1 L110.1,21.4 L116.0,23.0 L116.0,32 L4,32 Z" fill="url(#grad_2661)"/>
+            <path d="M4.0,13.9 L9.9,14.0 L15.8,22.4 L21.7,32.0 L27.6,30.1 L33.5,12.6 L39.4,4.0 L45.3,6.7 L51.2,4.9 L57.1,14.0 L62.9,18.6 L68.8,12.9 L74.7,12.1 L80.6,11.8 L86.5,12.8 L92.4,14.6 L98.3,18.4 L104.2,13.1 L110.1,21.4 L116.0,23.0" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="116.0" cy="23.0" r="3" fill="#ef4444"/>
+        </svg></td>
+                        <td class="col-prediction" data-value="0.74">
+                            <div class="cell-prediction">$321.92</div>
+                            <div class="pred-arrow up">
+                                <span class="arrow">▲</span>
+                                <span class="cell-change positive" style="font-size: 0.8rem;">+0.7%</span>
+                            </div>
+                        </td>
+                        <td class="col-mcap cell-mcap" data-value="1515073961984">$1.52T</td>
+                        <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
+                        <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
+                        <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
+                        <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
+                        <td class="col-action">
+                            <a href="avgo.html" class="view-link">
+                                Details
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+
+                    <tr data-rec="hold" data-symbol="CRM" data-company="Salesforce Inc." onclick="window.location='crm.html'">
+                        <td class="col-stock">
+                            <div class="cell-stock">
+                                <div>
+                                    <div class="stock-symbol">CRM</div>
+                                    <div class="stock-company">Salesforce Inc.</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="col-price cell-price" data-value="194.79">$194.79</td>
+                        <td class="col-change cell-change negative" data-value="-2.35">-2.35%</td>
+                        <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
+            <defs>
+                <linearGradient id="grad_3640" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ef4444;stop-opacity:0.3"/>
+                    <stop offset="100%" style="stop-color:#ef4444;stop-opacity:0"/>
+                </linearGradient>
+            </defs>
+            <path d="M4.0,4.0 L9.9,5.2 L15.8,17.1 L21.7,14.5 L27.6,22.3 L33.5,21.2 L39.4,19.0 L45.3,19.5 L51.2,26.4 L57.1,26.0 L62.9,22.5 L68.8,27.0 L74.7,24.1 L80.6,26.2 L86.5,26.3 L92.4,32.0 L98.3,26.0 L104.2,20.9 L110.1,14.5 L116.0,18.4 L116.0,32 L4,32 Z" fill="url(#grad_3640)"/>
+            <path d="M4.0,4.0 L9.9,5.2 L15.8,17.1 L21.7,14.5 L27.6,22.3 L33.5,21.2 L39.4,19.0 L45.3,19.5 L51.2,26.4 L57.1,26.0 L62.9,22.5 L68.8,27.0 L74.7,24.1 L80.6,26.2 L86.5,26.3 L92.4,32.0 L98.3,26.0 L104.2,20.9 L110.1,14.5 L116.0,18.4" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="116.0" cy="18.4" r="3" fill="#ef4444"/>
+        </svg></td>
+                        <td class="col-prediction" data-value="-1.47">
+                            <div class="cell-prediction">$191.93</div>
+                            <div class="pred-arrow down">
+                                <span class="arrow">▼</span>
+                                <span class="cell-change negative" style="font-size: 0.8rem;">-1.5%</span>
+                            </div>
+                        </td>
+                        <td class="col-mcap cell-mcap" data-value="185440075776">$185.4B</td>
+                        <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
+                        <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
+                        <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
+                        <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
+                        <td class="col-action">
+                            <a href="crm.html" class="view-link">
+                                Details
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+
+                    <tr data-rec="hold" data-symbol="AMD" data-company="Advanced Micro Devices Inc." onclick="window.location='amd.html'">
+                        <td class="col-stock">
+                            <div class="cell-stock">
+                                <div>
+                                    <div class="stock-symbol">AMD</div>
+                                    <div class="stock-company">Advanced Micro Devices Inc.</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="col-price cell-price" data-value="200.21">$200.21</td>
+                        <td class="col-change cell-change negative" data-value="-1.70">-1.70%</td>
+                        <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
+            <defs>
+                <linearGradient id="grad_5962" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ef4444;stop-opacity:0.3"/>
+                    <stop offset="100%" style="stop-color:#ef4444;stop-opacity:0"/>
+                </linearGradient>
+            </defs>
+            <path d="M4.0,9.0 L9.9,4.0 L15.8,6.2 L21.7,28.0 L27.6,32.0 L33.5,23.7 L39.4,19.8 L45.3,21.0 L51.2,21.0 L57.1,25.0 L62.9,24.3 L68.8,26.5 L74.7,28.0 L80.6,26.3 L86.5,28.0 L92.4,29.9 L98.3,20.9 L104.2,22.4 L110.1,26.2 L116.0,28.0 L116.0,32 L4,32 Z" fill="url(#grad_5962)"/>
+            <path d="M4.0,9.0 L9.9,4.0 L15.8,6.2 L21.7,28.0 L27.6,32.0 L33.5,23.7 L39.4,19.8 L45.3,21.0 L51.2,21.0 L57.1,25.0 L62.9,24.3 L68.8,26.5 L74.7,28.0 L80.6,26.3 L86.5,28.0 L92.4,29.9 L98.3,20.9 L104.2,22.4 L110.1,26.2 L116.0,28.0" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="116.0" cy="28.0" r="3" fill="#ef4444"/>
+        </svg></td>
+                        <td class="col-prediction" data-value="3.57">
+                            <div class="cell-prediction">$207.37</div>
+                            <div class="pred-arrow up">
+                                <span class="arrow">▲</span>
+                                <span class="cell-change positive" style="font-size: 0.8rem;">+3.6%</span>
+                            </div>
+                        </td>
+                        <td class="col-mcap cell-mcap" data-value="326424559616">$326.4B</td>
+                        <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
+                        <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
+                        <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
+                        <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
+                        <td class="col-action">
+                            <a href="amd.html" class="view-link">
+                                Details
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+
+                    <tr data-rec="hold" data-symbol="NFLX" data-company="Netflix Inc." onclick="window.location='nflx.html'">
+                        <td class="col-stock">
+                            <div class="cell-stock">
+                                <div>
+                                    <div class="stock-symbol">NFLX</div>
+                                    <div class="stock-company">Netflix Inc.</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="col-price cell-price" data-value="96.24">$96.24</td>
+                        <td class="col-change cell-change positive" data-value="13.75">+13.75%</td>
+                        <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
+            <defs>
+                <linearGradient id="grad_861" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#10b981;stop-opacity:0.3"/>
+                    <stop offset="100%" style="stop-color:#10b981;stop-opacity:0"/>
+                </linearGradient>
+            </defs>
+            <path d="M4.0,21.5 L9.9,22.5 L15.8,26.4 L21.7,26.1 L27.6,25.1 L33.5,23.3 L39.4,24.3 L45.3,23.3 L51.2,26.8 L57.1,32.0 L62.9,30.6 L68.8,30.4 L74.7,29.1 L80.6,30.4 L86.5,28.1 L92.4,31.8 L98.3,29.0 L104.2,22.6 L110.1,20.0 L116.0,4.0 L116.0,32 L4,32 Z" fill="url(#grad_861)"/>
+            <path d="M4.0,21.5 L9.9,22.5 L15.8,26.4 L21.7,26.1 L27.6,25.1 L33.5,23.3 L39.4,24.3 L45.3,23.3 L51.2,26.8 L57.1,32.0 L62.9,30.6 L68.8,30.4 L74.7,29.1 L80.6,30.4 L86.5,28.1 L92.4,31.8 L98.3,29.0 L104.2,22.6 L110.1,20.0 L116.0,4.0" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="116.0" cy="4.0" r="3" fill="#10b981"/>
+        </svg></td>
+                        <td class="col-prediction" data-value="-1.44">
+                            <div class="cell-prediction">$94.85</div>
+                            <div class="pred-arrow down">
+                                <span class="arrow">▼</span>
+                                <span class="cell-change negative" style="font-size: 0.8rem;">-1.4%</span>
+                            </div>
+                        </td>
+                        <td class="col-mcap cell-mcap" data-value="408239439872">$408.2B</td>
+                        <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
+                        <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
+                        <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
+                        <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
+                        <td class="col-action">
+                            <a href="nflx.html" class="view-link">
+                                Details
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+
+                    <tr data-rec="hold" data-symbol="COIN" data-company="Coinbase Global Inc." onclick="window.location='coin.html'">
+                        <td class="col-stock">
+                            <div class="cell-stock">
+                                <div>
+                                    <div class="stock-symbol">COIN</div>
+                                    <div class="stock-company">Coinbase Global Inc.</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="col-price cell-price" data-value="175.85">$175.85</td>
+                        <td class="col-change cell-change negative" data-value="-2.88">-2.88%</td>
+                        <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
+            <defs>
+                <linearGradient id="grad_87" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ef4444;stop-opacity:0.3"/>
+                    <stop offset="100%" style="stop-color:#ef4444;stop-opacity:0"/>
+                </linearGradient>
+            </defs>
+            <path d="M4.0,4.0 L9.9,7.6 L15.8,11.9 L21.7,17.6 L27.6,29.4 L33.5,19.5 L39.4,18.3 L45.3,20.8 L51.2,25.7 L57.1,32.0 L62.9,19.9 L68.8,19.0 L74.7,20.0 L80.6,19.0 L86.5,16.2 L92.4,22.0 L98.3,21.1 L104.2,9.6 L110.1,11.1 L116.0,13.9 L116.0,32 L4,32 Z" fill="url(#grad_87)"/>
+            <path d="M4.0,4.0 L9.9,7.6 L15.8,11.9 L21.7,17.6 L27.6,29.4 L33.5,19.5 L39.4,18.3 L45.3,20.8 L51.2,25.7 L57.1,32.0 L62.9,19.9 L68.8,19.0 L74.7,20.0 L80.6,19.0 L86.5,16.2 L92.4,22.0 L98.3,21.1 L104.2,9.6 L110.1,11.1 L116.0,13.9" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="116.0" cy="13.9" r="3" fill="#ef4444"/>
+        </svg></td>
+                        <td class="col-prediction" data-value="0.01">
+                            <div class="cell-prediction">$175.86</div>
+                            <div class="pred-arrow up">
+                                <span class="arrow">▲</span>
+                                <span class="cell-change positive" style="font-size: 0.8rem;">+0.0%</span>
+                            </div>
+                        </td>
+                        <td class="col-mcap cell-mcap" data-value="47419289600">$47.4B</td>
+                        <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
+                        <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
+                        <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
+                        <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
+                        <td class="col-action">
+                            <a href="coin.html" class="view-link">
+                                Details
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+
+                    <tr data-rec="hold" data-symbol="LLY" data-company="Eli Lilly and Company" onclick="window.location='lly.html'">
+                        <td class="col-stock">
+                            <div class="cell-stock">
+                                <div>
+                                    <div class="stock-symbol">LLY</div>
+                                    <div class="stock-company">Eli Lilly and Company</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="col-price cell-price" data-value="1051.99">$1051.99</td>
+                        <td class="col-change cell-change positive" data-value="2.93">+2.93%</td>
+                        <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
+            <defs>
+                <linearGradient id="grad_4682" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#10b981;stop-opacity:0.3"/>
+                    <stop offset="100%" style="stop-color:#10b981;stop-opacity:0"/>
+                </linearGradient>
+            </defs>
+            <path d="M4.0,22.9 L9.9,21.0 L15.8,32.0 L21.7,4.0 L27.6,27.3 L33.5,17.2 L39.4,20.9 L45.3,26.2 L51.2,28.8 L57.1,22.6 L62.9,21.7 L68.8,22.7 L74.7,26.9 L80.6,26.2 L86.5,29.9 L92.4,16.6 L98.3,21.1 L104.2,24.7 L110.1,26.5 L116.0,18.4 L116.0,32 L4,32 Z" fill="url(#grad_4682)"/>
+            <path d="M4.0,22.9 L9.9,21.0 L15.8,32.0 L21.7,4.0 L27.6,27.3 L33.5,17.2 L39.4,20.9 L45.3,26.2 L51.2,28.8 L57.1,22.6 L62.9,21.7 L68.8,22.7 L74.7,26.9 L80.6,26.2 L86.5,29.9 L92.4,16.6 L98.3,21.1 L104.2,24.7 L110.1,26.5 L116.0,18.4" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="116.0" cy="18.4" r="3" fill="#10b981"/>
+        </svg></td>
+                        <td class="col-prediction" data-value="-1.67">
+                            <div class="cell-prediction">$1034.37</div>
+                            <div class="pred-arrow down">
+                                <span class="arrow">▼</span>
+                                <span class="cell-change negative" style="font-size: 0.8rem;">-1.7%</span>
+                            </div>
+                        </td>
+                        <td class="col-mcap cell-mcap" data-value="992402604032">$992.4B</td>
+                        <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
+                        <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
+                        <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
+                        <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
+                        <td class="col-action">
+                            <a href="lly.html" class="view-link">
+                                Details
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+
+                    <tr data-rec="hold" data-symbol="UBER" data-company="Uber Technologies Inc." onclick="window.location='uber.html'">
+                        <td class="col-stock">
+                            <div class="cell-stock">
+                                <div>
+                                    <div class="stock-symbol">UBER</div>
+                                    <div class="stock-company">Uber Technologies Inc.</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="col-price cell-price" data-value="75.42">$75.42</td>
+                        <td class="col-change cell-change positive" data-value="0.83">+0.83%</td>
+                        <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
+            <defs>
+                <linearGradient id="grad_1144" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ef4444;stop-opacity:0.3"/>
+                    <stop offset="100%" style="stop-color:#ef4444;stop-opacity:0"/>
+                </linearGradient>
+            </defs>
+            <path d="M4.0,6.0 L9.9,4.0 L15.8,11.5 L21.7,21.9 L27.6,18.5 L33.5,19.7 L39.4,21.9 L45.3,22.9 L51.2,29.4 L57.1,28.8 L62.9,32.0 L68.8,30.6 L74.7,24.8 L80.6,24.4 L86.5,22.0 L92.4,30.1 L98.3,28.4 L104.2,24.7 L110.1,19.6 L116.0,18.0 L116.0,32 L4,32 Z" fill="url(#grad_1144)"/>
+            <path d="M4.0,6.0 L9.9,4.0 L15.8,11.5 L21.7,21.9 L27.6,18.5 L33.5,19.7 L39.4,21.9 L45.3,22.9 L51.2,29.4 L57.1,28.8 L62.9,32.0 L68.8,30.6 L74.7,24.8 L80.6,24.4 L86.5,22.0 L92.4,30.1 L98.3,28.4 L104.2,24.7 L110.1,19.6 L116.0,18.0" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="116.0" cy="18.0" r="3" fill="#ef4444"/>
+        </svg></td>
+                        <td class="col-prediction" data-value="-1.48">
+                            <div class="cell-prediction">$74.31</div>
+                            <div class="pred-arrow down">
+                                <span class="arrow">▼</span>
+                                <span class="cell-change negative" style="font-size: 0.8rem;">-1.5%</span>
+                            </div>
+                        </td>
+                        <td class="col-mcap cell-mcap" data-value="156709961728">$156.7B</td>
+                        <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
+                        <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
+                        <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
+                        <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
+                        <td class="col-action">
+                            <a href="uber.html" class="view-link">
+                                Details
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+
+                    <tr data-rec="hold" data-symbol="PANW" data-company="Palo Alto Networks Inc." onclick="window.location='panw.html'">
+                        <td class="col-stock">
+                            <div class="cell-stock">
+                                <div>
+                                    <div class="stock-symbol">PANW</div>
+                                    <div class="stock-company">Palo Alto Networks Inc.</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="col-price cell-price" data-value="148.92">$148.92</td>
+                        <td class="col-change cell-change negative" data-value="-0.32">-0.32%</td>
+                        <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
+            <defs>
+                <linearGradient id="grad_8458" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ef4444;stop-opacity:0.3"/>
+                    <stop offset="100%" style="stop-color:#ef4444;stop-opacity:0"/>
+                </linearGradient>
+            </defs>
+            <path d="M4.0,4.0 L9.9,5.2 L15.8,12.5 L21.7,12.1 L27.6,21.6 L33.5,18.0 L39.4,12.7 L45.3,13.1 L51.2,13.3 L57.1,15.2 L62.9,11.9 L68.8,14.7 L74.7,23.5 L80.6,24.6 L86.5,26.4 L92.4,30.0 L98.3,32.0 L104.2,29.5 L110.1,25.9 L116.0,26.2 L116.0,32 L4,32 Z" fill="url(#grad_8458)"/>
+            <path d="M4.0,4.0 L9.9,5.2 L15.8,12.5 L21.7,12.1 L27.6,21.6 L33.5,18.0 L39.4,12.7 L45.3,13.1 L51.2,13.3 L57.1,15.2 L62.9,11.9 L68.8,14.7 L74.7,23.5 L80.6,24.6 L86.5,26.4 L92.4,30.0 L98.3,32.0 L104.2,29.5 L110.1,25.9 L116.0,26.2" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="116.0" cy="26.2" r="3" fill="#ef4444"/>
+        </svg></td>
+                        <td class="col-prediction" data-value="-1.89">
+                            <div class="cell-prediction">$146.11</div>
+                            <div class="pred-arrow down">
+                                <span class="arrow">▼</span>
+                                <span class="cell-change negative" style="font-size: 0.8rem;">-1.9%</span>
+                            </div>
+                        </td>
+                        <td class="col-mcap cell-mcap" data-value="121518718976">$121.5B</td>
+                        <td class="col-sentiment"><span class="mini-badge bearish">Bearish</span></td>
+                        <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
+                        <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
+                        <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
+                        <td class="col-action">
+                            <a href="panw.html" class="view-link">
+                                Details
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+
+                    <tr data-rec="hold" data-symbol="SHOP" data-company="Shopify Inc." onclick="window.location='shop.html'">
+                        <td class="col-stock">
+                            <div class="cell-stock">
+                                <div>
+                                    <div class="stock-symbol">SHOP</div>
+                                    <div class="stock-company">Shopify Inc.</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="col-price cell-price" data-value="120.73">$120.73</td>
+                        <td class="col-change cell-change negative" data-value="-4.16">-4.16%</td>
+                        <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
+            <defs>
+                <linearGradient id="grad_6900" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ef4444;stop-opacity:0.3"/>
+                    <stop offset="100%" style="stop-color:#ef4444;stop-opacity:0"/>
+                </linearGradient>
+            </defs>
+            <path d="M4.0,5.3 L9.9,4.0 L15.8,20.8 L21.7,27.6 L27.6,31.2 L33.5,30.2 L39.4,21.9 L45.3,10.4 L51.2,21.5 L57.1,32.0 L62.9,29.3 L68.8,28.3 L74.7,17.7 L80.6,14.9 L86.5,11.8 L92.4,23.4 L98.3,23.8 L104.2,19.5 L110.1,12.1 L116.0,18.9 L116.0,32 L4,32 Z" fill="url(#grad_6900)"/>
+            <path d="M4.0,5.3 L9.9,4.0 L15.8,20.8 L21.7,27.6 L27.6,31.2 L33.5,30.2 L39.4,21.9 L45.3,10.4 L51.2,21.5 L57.1,32.0 L62.9,29.3 L68.8,28.3 L74.7,17.7 L80.6,14.9 L86.5,11.8 L92.4,23.4 L98.3,23.8 L104.2,19.5 L110.1,12.1 L116.0,18.9" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="116.0" cy="18.9" r="3" fill="#ef4444"/>
+        </svg></td>
+                        <td class="col-prediction" data-value="-1.22">
+                            <div class="cell-prediction">$119.25</div>
+                            <div class="pred-arrow down">
+                                <span class="arrow">▼</span>
+                                <span class="cell-change negative" style="font-size: 0.8rem;">-1.2%</span>
+                            </div>
+                        </td>
+                        <td class="col-mcap cell-mcap" data-value="157562748928">$157.6B</td>
+                        <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
+                        <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
+                        <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
+                        <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
+                        <td class="col-action">
+                            <a href="shop.html" class="view-link">
                                 Details
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M5 12h14M12 5l7 7-7 7"/>

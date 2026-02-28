@@ -1,0 +1,786 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHOP - Shopify Inc. | Stock Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --success: #10b981;
+            --success-light: #34d399;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-dark: #0f172a;
+            --bg-card-dark: #1e293b;
+            --bg-card-dark-hover: #273449;
+            --border-dark: #334155;
+            --bg-light: #f1f5f9;
+            --bg-card-light: #ffffff;
+            --text-dark: #1e293b;
+            --text-light: #f1f5f9;
+            --text-muted: #64748b;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            --shadow-lg: 0 35px 60px -15px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Glass card effect */
+        .card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 24px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+
+        /* Navigation */
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            margin-bottom: 24px;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 12px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--text-light);
+            background: rgba(99, 102, 241, 0.2);
+            border-color: var(--primary);
+        }
+
+        /* Typography */
+        h1, h2, h3 {
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        h1 { font-size: 2.5rem; margin-bottom: 8px; }
+        h2 { font-size: 1.5rem; margin-bottom: 16px; color: var(--text-light); }
+        h3 { font-size: 1.125rem; color: var(--text-muted); }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-success { background: rgba(16, 185, 129, 0.2); color: var(--success-light); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-warning { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .badge-danger { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .badge-primary { background: rgba(99, 102, 241, 0.2); color: var(--primary-light); border: 1px solid rgba(99, 102, 241, 0.3); }
+
+        .badge-bullish, .badge-undervalued { background: rgba(16, 185, 129, 0.2); color: var(--success-light); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-bearish, .badge-overvalued { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .badge-neutral, .badge-fair { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+
+        /* Recommendation badge - large */
+        .rec-badge-large {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 48px;
+            border-radius: 16px;
+            font-size: 1.75rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            box-shadow: 0 10px 40px -10px currentColor;
+        }
+
+        .rec-buy { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+        .rec-sell { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+        .rec-hold { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+
+        /* Metrics grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+        }
+
+        .metric-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-dark);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .metric-card:hover {
+            background: rgba(15, 23, 42, 0.8);
+            border-color: var(--primary);
+        }
+
+        .metric-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .metric-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        .metric-value.positive { color: var(--success); }
+        .metric-value.negative { color: var(--danger); }
+        .metric-value.primary { color: var(--primary-light); }
+
+        .metric-sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Collapsible sections */
+        .collapsible {
+            cursor: pointer;
+        }
+
+        .collapsible-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-dark);
+        }
+
+        .collapsible-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .collapsible-icon {
+            font-size: 1.5rem;
+        }
+
+        .collapsible-toggle {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 8px;
+            color: var(--primary-light);
+            transition: all 0.2s ease;
+        }
+
+        .collapsible:hover .collapsible-toggle {
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .collapsible.open .collapsible-content {
+            max-height: 5000px;
+            transition: max-height 0.5s ease-in;
+        }
+
+        .collapsible.open .collapsible-toggle {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-body {
+            padding: 24px 0;
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+
+        .collapsible-body h4 {
+            color: var(--primary-light);
+            margin: 24px 0 12px 0;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .collapsible-body p {
+            margin: 8px 0;
+        }
+
+        .collapsible-body ul, .collapsible-body ol {
+            margin: 12px 0 12px 24px;
+        }
+
+        .collapsible-body li {
+            margin: 6px 0;
+        }
+
+        /* Summary cards */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .summary-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-dark);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.2s ease;
+        }
+
+        .summary-card:hover {
+            border-color: var(--primary);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .summary-icon {
+            font-size: 1.5rem;
+        }
+
+        .summary-title {
+            flex: 1;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .summary-text {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* Conclusion box */
+        .conclusion-box {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 24px;
+        }
+
+        .conclusion-box strong {
+            color: var(--primary-light);
+            font-size: 1rem;
+        }
+
+        /* Disclaimer */
+        .disclaimer {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 16px;
+            padding: 20px 24px;
+            color: #fbbf24;
+            font-size: 0.9rem;
+        }
+
+        .disclaimer strong {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 32px 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Chart container */
+        .chart-container {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 16px;
+            padding: 16px;
+            margin-top: 24px;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; opacity: 0; }
+        .delay-2 { animation-delay: 0.2s; opacity: 0; }
+        .delay-3 { animation-delay: 0.3s; opacity: 0; }
+        .delay-4 { animation-delay: 0.4s; opacity: 0; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container { padding: 16px; }
+            h1 { font-size: 1.75rem; }
+            .card { padding: 24px; border-radius: 20px; }
+            .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+            .metric-value { font-size: 1.5rem; }
+            .rec-badge-large { padding: 12px 32px; font-size: 1.25rem; }
+        }
+
+        /* Plotly chart styling */
+        .js-plotly-plot .plotly .modebar {
+            background: transparent !important;
+        }
+        .js-plotly-plot .plotly .modebar-btn path {
+            fill: var(--text-muted) !important;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="nav animate-in">
+            <a href="index.html" class="nav-brand">Stock Planner</a>
+            <a href="index.html" class="nav-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Back to Dashboard
+            </a>
+        </nav>
+
+        <!-- Header Card -->
+        <div class="card animate-in delay-1">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 24px;">
+                <div>
+                    <h1>Shopify Inc.</h1>
+                    <h3>SHOP</h3>
+                </div>
+                <div class="rec-badge-large rec-hold">HOLD</div>
+            </div>
+
+            <div class="metrics-grid" style="margin-top: 32px;">
+                <div class="metric-card">
+                    <div class="metric-label">Current Price</div>
+                    <div class="metric-value">$120.73</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Day Change</div>
+                    <div class="metric-value negative">$5.23</div>
+                    <div class="metric-sub">4.16%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Market Cap</div>
+                    <div class="metric-value">$157.56B</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Confidence</div>
+                    <div class="metric-value primary">Medium</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Executive Summary -->
+        <div class="card animate-in delay-2">
+            <h2>Executive Summary</h2>
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <span class="summary-icon">📰</span>
+                        <span class="summary-title">News Sentiment</span>
+                        <span class="badge badge-bullish">Bullish</span>
+                    </div>
+                    <p class="summary-text">Deutsche Bank retains a "Buy" rating on Shopify, highlighting momentum in agentic commerce (Source: Finviz)</p>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <span class="summary-icon">📊</span>
+                        <span class="summary-title">Technical Analysis</span>
+                        <span class="badge badge-neutral">Neutral</span>
+                    </div>
+                    <p class="summary-text">The Max Daily Return (21.97%) and Min Daily Return (-18.24%) indicate that SHOP's stock price can fluctuate significantly in a short period. The 7-day moving average ($121.60) has been steadily increa</p>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <span class="summary-icon">💰</span>
+                        <span class="summary-title">Fundamental Analysis</span>
+                        <span class="badge badge-fair">Fair</span>
+                    </div>
+                    <p class="summary-text">While Shopify's high P/E ratio and market cap may indicate potential risks related to valuation, the company's strong competitive position, excellent financial health, and robust growth prospects make</p>
+                </div>
+            </div>
+            <div class="conclusion-box">
+                <strong>Conclusion</strong>
+                <p style="margin-top: 8px; color: var(--text-muted);">Shopify is an attractive investment opportunity due to its strong revenue growth, competitive advantages, and robust financial health. However, investors should be aware of the increasing competition from Amazon and other e-commerce platforms, regulatory risks, and valuation concerns. A medium-term </p>
+            </div>
+        </div>
+
+        <!-- Price Forecast -->
+        <div class="card animate-in delay-3">
+            <h2>Price Forecast (10-Day)</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Next Day</div>
+                    <div class="metric-value primary">$118.22</div>
+                    <div class="metric-sub">-2.08%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">10-Day Target</div>
+                    <div class="metric-value primary">$119.25</div>
+                    <div class="metric-sub">-1.22%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Forecast Confidence</div>
+                    <div class="metric-value">Medium</div>
+                    <div class="metric-sub">Models: ARIMA(5,1,0), Holt-Winters (Additive Trend), Prophet</div>
+                </div>
+            </div>
+            <div class="chart-container">
+                <div>                        <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.3.1.min.js" integrity="sha256-4rD3fugVb/nVJYUv5Ky3v+fYXoouHaBSP20WIJuEiWg=" crossorigin="anonymous"></script>                <div id="2d39069b-e025-4fea-b374-089a0487ee64" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("2d39069b-e025-4fea-b374-089a0487ee64")) {                    Plotly.newPlot(                        "2d39069b-e025-4fea-b374-089a0487ee64",                        [{"line":{"color":"#667eea","width":2},"mode":"lines","name":"Historical","x":["2025-02-28T00:00:00","2025-03-03T00:00:00","2025-03-04T00:00:00","2025-03-05T00:00:00","2025-03-06T00:00:00","2025-03-07T00:00:00","2025-03-10T00:00:00","2025-03-11T00:00:00","2025-03-12T00:00:00","2025-03-13T00:00:00","2025-03-14T00:00:00","2025-03-17T00:00:00","2025-03-18T00:00:00","2025-03-19T00:00:00","2025-03-20T00:00:00","2025-03-21T00:00:00","2025-03-24T00:00:00","2025-03-25T00:00:00","2025-03-26T00:00:00","2025-03-27T00:00:00","2025-03-28T00:00:00","2025-03-31T00:00:00","2025-04-01T00:00:00","2025-04-02T00:00:00","2025-04-03T00:00:00","2025-04-04T00:00:00","2025-04-07T00:00:00","2025-04-08T00:00:00","2025-04-09T00:00:00","2025-04-10T00:00:00","2025-04-11T00:00:00","2025-04-14T00:00:00","2025-04-15T00:00:00","2025-04-16T00:00:00","2025-04-17T00:00:00","2025-04-21T00:00:00","2025-04-22T00:00:00","2025-04-23T00:00:00","2025-04-24T00:00:00","2025-04-25T00:00:00","2025-04-28T00:00:00","2025-04-29T00:00:00","2025-04-30T00:00:00","2025-05-01T00:00:00","2025-05-02T00:00:00","2025-05-05T00:00:00","2025-05-06T00:00:00","2025-05-07T00:00:00","2025-05-08T00:00:00","2025-05-09T00:00:00","2025-05-12T00:00:00","2025-05-13T00:00:00","2025-05-14T00:00:00","2025-05-15T00:00:00","2025-05-16T00:00:00","2025-05-19T00:00:00","2025-05-20T00:00:00","2025-05-21T00:00:00","2025-05-22T00:00:00","2025-05-23T00:00:00","2025-05-27T00:00:00","2025-05-28T00:00:00","2025-05-29T00:00:00","2025-05-30T00:00:00","2025-06-02T00:00:00","2025-06-03T00:00:00","2025-06-04T00:00:00","2025-06-05T00:00:00","2025-06-06T00:00:00","2025-06-09T00:00:00","2025-06-10T00:00:00","2025-06-11T00:00:00","2025-06-12T00:00:00","2025-06-13T00:00:00","2025-06-16T00:00:00","2025-06-17T00:00:00","2025-06-18T00:00:00","2025-06-20T00:00:00","2025-06-23T00:00:00","2025-06-24T00:00:00","2025-06-25T00:00:00","2025-06-26T00:00:00","2025-06-27T00:00:00","2025-06-30T00:00:00","2025-07-01T00:00:00","2025-07-02T00:00:00","2025-07-03T00:00:00","2025-07-07T00:00:00","2025-07-08T00:00:00","2025-07-09T00:00:00","2025-07-10T00:00:00","2025-07-11T00:00:00","2025-07-14T00:00:00","2025-07-15T00:00:00","2025-07-16T00:00:00","2025-07-17T00:00:00","2025-07-18T00:00:00","2025-07-21T00:00:00","2025-07-22T00:00:00","2025-07-23T00:00:00","2025-07-24T00:00:00","2025-07-25T00:00:00","2025-07-28T00:00:00","2025-07-29T00:00:00","2025-07-30T00:00:00","2025-07-31T00:00:00","2025-08-01T00:00:00","2025-08-04T00:00:00","2025-08-05T00:00:00","2025-08-06T00:00:00","2025-08-07T00:00:00","2025-08-08T00:00:00","2025-08-11T00:00:00","2025-08-12T00:00:00","2025-08-13T00:00:00","2025-08-14T00:00:00","2025-08-15T00:00:00","2025-08-18T00:00:00","2025-08-19T00:00:00","2025-08-20T00:00:00","2025-08-21T00:00:00","2025-08-22T00:00:00","2025-08-25T00:00:00","2025-08-26T00:00:00","2025-08-27T00:00:00","2025-08-28T00:00:00","2025-08-29T00:00:00","2025-09-02T00:00:00","2025-09-03T00:00:00","2025-09-04T00:00:00","2025-09-05T00:00:00","2025-09-08T00:00:00","2025-09-09T00:00:00","2025-09-10T00:00:00","2025-09-11T00:00:00","2025-09-12T00:00:00","2025-09-15T00:00:00","2025-09-16T00:00:00","2025-09-17T00:00:00","2025-09-18T00:00:00","2025-09-19T00:00:00","2025-09-22T00:00:00","2025-09-23T00:00:00","2025-09-24T00:00:00","2025-09-25T00:00:00","2025-09-26T00:00:00","2025-09-29T00:00:00","2025-09-30T00:00:00","2025-10-01T00:00:00","2025-10-02T00:00:00","2025-10-03T00:00:00","2025-10-06T00:00:00","2025-10-07T00:00:00","2025-10-08T00:00:00","2025-10-09T00:00:00","2025-10-10T00:00:00","2025-10-13T00:00:00","2025-10-14T00:00:00","2025-10-15T00:00:00","2025-10-16T00:00:00","2025-10-17T00:00:00","2025-10-20T00:00:00","2025-10-21T00:00:00","2025-10-22T00:00:00","2025-10-23T00:00:00","2025-10-24T00:00:00","2025-10-27T00:00:00","2025-10-28T00:00:00","2025-10-29T00:00:00","2025-10-30T00:00:00","2025-10-31T00:00:00","2025-11-03T00:00:00","2025-11-04T00:00:00","2025-11-05T00:00:00","2025-11-06T00:00:00","2025-11-07T00:00:00","2025-11-10T00:00:00","2025-11-11T00:00:00","2025-11-12T00:00:00","2025-11-13T00:00:00","2025-11-14T00:00:00","2025-11-17T00:00:00","2025-11-18T00:00:00","2025-11-19T00:00:00","2025-11-20T00:00:00","2025-11-21T00:00:00","2025-11-24T00:00:00","2025-11-25T00:00:00","2025-11-26T00:00:00","2025-11-28T00:00:00","2025-12-01T00:00:00","2025-12-02T00:00:00","2025-12-03T00:00:00","2025-12-04T00:00:00","2025-12-05T00:00:00","2025-12-08T00:00:00","2025-12-09T00:00:00","2025-12-10T00:00:00","2025-12-11T00:00:00","2025-12-12T00:00:00","2025-12-15T00:00:00","2025-12-16T00:00:00","2025-12-17T00:00:00","2025-12-18T00:00:00","2025-12-19T00:00:00","2025-12-22T00:00:00","2025-12-23T00:00:00","2025-12-24T00:00:00","2025-12-26T00:00:00","2025-12-29T00:00:00","2025-12-30T00:00:00","2025-12-31T00:00:00","2026-01-02T00:00:00","2026-01-05T00:00:00","2026-01-06T00:00:00","2026-01-07T00:00:00","2026-01-08T00:00:00","2026-01-09T00:00:00","2026-01-12T00:00:00","2026-01-13T00:00:00","2026-01-14T00:00:00","2026-01-15T00:00:00","2026-01-16T00:00:00","2026-01-20T00:00:00","2026-01-21T00:00:00","2026-01-22T00:00:00","2026-01-23T00:00:00","2026-01-26T00:00:00","2026-01-27T00:00:00","2026-01-28T00:00:00","2026-01-29T00:00:00","2026-01-30T00:00:00","2026-02-02T00:00:00","2026-02-03T00:00:00","2026-02-04T00:00:00","2026-02-05T00:00:00","2026-02-06T00:00:00","2026-02-09T00:00:00","2026-02-10T00:00:00","2026-02-11T00:00:00","2026-02-12T00:00:00","2026-02-13T00:00:00","2026-02-17T00:00:00","2026-02-18T00:00:00","2026-02-19T00:00:00","2026-02-20T00:00:00","2026-02-23T00:00:00","2026-02-24T00:00:00","2026-02-25T00:00:00","2026-02-26T00:00:00","2026-02-27T00:00:00"],"y":[112.0,106.58000183105469,101.7300033569336,106.1500015258789,102.48999786376953,100.12999725341797,92.75,92.94999694824219,96.52999877929688,90.58999633789062,94.8499984741211,96.58999633789062,94.01000213623047,101.54000091552734,101.8499984741211,104.20999908447266,109.27999877929688,109.81999969482422,104.27999877929688,102.5199966430664,96.68000030517578,95.4800033569336,97.63999938964844,100.6500015258789,82.29000091552734,76.88999938964844,78.81999969482422,77.08999633789062,91.4000015258789,84.62999725341797,83.70999908447266,82.7699966430664,83.91000366210938,83.95999908447266,83.6500015258789,81.63999938964844,85.70999908447266,90.95999908447266,95.12000274658203,97.12000274658203,98.56999969482422,98.91999816894531,95.0,97.01000213623047,99.25,98.37999725341797,93.83000183105469,94.5,94.0,91.7699966430664,104.33999633789062,107.68000030517578,111.44999694824219,110.20999908447266,110.75,109.0999984741211,106.43000030517578,102.31999969482422,103.29000091552734,101.51000213623047,106.73999786376953,107.11000061035156,107.69999694824219,107.22000122070312,106.54000091552734,105.11000061035156,103.58000183105469,105.02999877929688,111.41000366210938,107.80000305175781,110.26000213623047,114.12999725341797,109.20999908447266,105.33999633789062,108.37000274658203,106.52999877929688,105.97000122070312,106.4000015258789,109.9800033569336,114.41999816894531,113.88999938964844,113.06999969482422,113.6500015258789,115.3499984741211,112.66999816894531,114.7699966430664,116.5199966430664,116.66000366210938,112.4800033569336,114.31999969482422,115.16000366210938,112.11000061035156,116.73999786376953,115.05000305175781,120.0,126.75,127.06999969482422,128.42999267578125,123.70999908447266,122.20999908447266,122.08000183105469,124.43000030517578,126.83999633789062,124.8499984741211,123.01000213623047,122.20999908447266,118.5999984741211,125.20999908447266,127.0,154.89999389648438,151.07000732421875,149.61000061035156,147.5,149.3000030517578,150.08999633789062,144.27000427246094,141.47000122070312,143.11000061035156,139.25,137.2899932861328,136.67999267578125,142.11000061035156,140.52999877929688,140.85000610351562,139.88999938964844,141.5399932861328,141.27999877929688,139.0399932861328,140.22000122070312,145.14999389648438,146.82000732421875,146.22000122070312,143.44000244140625,142.1999969482422,145.02999877929688,143.3800048828125,147.88999938964844,147.2100067138672,147.8699951171875,152.11000061035156,153.3000030517578,157.1199951171875,149.94000244140625,148.8300018310547,143.4499969482422,140.25,149.0,148.61000061035156,149.57000732421875,151.3000030517578,161.13999938964844,164.5,161.27999877929688,166.42999267578125,163.8699951171875,151.02000427246094,153.66000366210938,152.8800048828125,156.2100067138672,156.57000732421875,157.75999450683594,164.7100067138672,162.63999938964844,162.00999450683594,167.02999877929688,172.9499969482422,175.05999755859375,178.9600067138672,179.00999450683594,173.61000061035156,173.86000061035156,172.94000244140625,160.94000244140625,162.9199981689453,156.0500030517578,152.41000366210938,158.8800048828125,158.94000244140625,156.58999633789062,146.33999633789062,146.0399932861328,139.92999267578125,140.4499969482422,146.0,144.55999755859375,147.8000030517578,155.30999755859375,157.3699951171875,159.33999633789062,158.63999938964844,149.27999877929688,156.8300018310547,160.0,162.30999755859375,161.0800018310547,158.41000366210938,159.88999938964844,168.4199981689453,164.75,164.19000244140625,159.85000610351562,163.13999938964844,161.72999572753906,166.8000030517578,169.57000732421875,169.6699981689453,169.52999877929688,169.4499969482422,170.8300018310547,167.8800048828125,163.74000549316406,160.97000122070312,157.1999969482422,166.2100067138672,168.4499969482422,166.74000549316406,168.27999877929688,164.47999572753906,167.92999267578125,167.44000244140625,157.50999450683594,157.99000549316406,155.80999755859375,144.5,138.5399932861328,137.63999938964844,137.88999938964844,136.30999755859375,137.5,138.9199981689453,143.63999938964844,131.22999572753906,132.1999969482422,119.29000091552734,114.0199966430664,111.23999786376953,112.05000305175781,118.4000015258789,127.23999786376953,118.70999908447266,110.66000366210938,112.69999694824219,113.54000091552734,121.63999938964844,123.80000305175781,126.19999694824219,117.27999877929688,116.93000030517578,120.30999755859375,125.94000244140625,120.7300033569336],"type":"scatter"},{"line":{"color":"#10b981","dash":"dash","width":2},"marker":{"size":6},"mode":"lines+markers","name":"Forecast","x":["2026-02-28T00:00:00","2026-03-01T00:00:00","2026-03-02T00:00:00","2026-03-03T00:00:00","2026-03-04T00:00:00","2026-03-05T00:00:00","2026-03-06T00:00:00","2026-03-07T00:00:00","2026-03-08T00:00:00","2026-03-09T00:00:00"],"y":[118.21997394188297,117.86051453735735,119.57615700478816,119.44499141514919,119.7111575733525,119.3804273713821,119.19350564325907,117.41040985761586,117.34792775293128,119.25318668281253],"type":"scatter"},{"fill":"toself","fillcolor":"rgba(16, 185, 129, 0.2)","line":{"color":"rgba(255,255,255,0)"},"name":"95% Confidence Interval","showlegend":true,"x":["2026-02-28T00:00:00","2026-03-01T00:00:00","2026-03-02T00:00:00","2026-03-03T00:00:00","2026-03-04T00:00:00","2026-03-05T00:00:00","2026-03-06T00:00:00","2026-03-07T00:00:00","2026-03-08T00:00:00","2026-03-09T00:00:00","2026-03-09T00:00:00","2026-03-08T00:00:00","2026-03-07T00:00:00","2026-03-06T00:00:00","2026-03-05T00:00:00","2026-03-04T00:00:00","2026-03-03T00:00:00","2026-03-02T00:00:00","2026-03-01T00:00:00","2026-02-28T00:00:00"],"y":[126.66650210163351,127.77439903910681,130.80698912438194,131.47428263955467,132.4420764539807,132.6859649750018,133.09970673537327,131.97911101427798,132.29307662788938,134.75018790982114,103.64304487554092,102.51751983741116,102.95425700574586,105.34441615054371,106.25113565255884,106.8318803318482,107.33808378725094,108.28091374506377,107.76478840535486,109.82056319955026],"type":"scatter"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"shapes":[{"line":{"color":"gray","dash":"dash","width":1},"type":"line","x0":"2026-02-27T00:00:00","x1":"2026-02-27T00:00:00","y0":0,"y1":1,"yref":"paper"}],"legend":{"yanchor":"top","y":0.99,"xanchor":"left","x":0.01},"margin":{"l":60,"r":30,"t":60,"b":60},"title":{"text":"SHOP Price Forecast (1 Year history)"},"xaxis":{"title":{"text":"Date"}},"yaxis":{"title":{"text":"Price ($)"}},"hovermode":"x unified"},                        {"responsive": true}                    )                };            </script>        </div>
+            </div>
+        </div>
+
+        <!-- Detailed Analysis Sections (Collapsible) -->
+        <div class="card animate-in delay-4">
+            <h2>Detailed Analysis</h2>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">🎯</span>
+                        Investment Synthesis
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body"><p><strong>RECOMMENDATION:</strong> BUY</p>
+<p><strong>CONFIDENCE LEVEL:</strong> Medium-High</p>
+<p><strong>TIME HORIZON:</strong> Medium-term (3-12 months)</p>
+
+<p><strong>KEY SUPPORTING FACTORS:</strong></p>
+
+<ol>
+<li><strong>Strong revenue growth</strong>: Shopify's record $124 billion GMV quarter and consistent high revenue growth rates in recent years make it an attractive investment opportunity.</li>
+<li><strong>Competitive advantages</strong>: Shopify benefits from strong network effects, integrations, and partnerships, which provide a competitive edge in the e-commerce platform market.</li>
+<li><strong>Robust financial health</strong>: Shopify's excellent financial health, with strong cash flow generation, improving operating margins, and high revenue growth rates, provides a solid foundation for future growth.</li>
+</ol>
+
+<p><strong>KEY RISK FACTORS:</strong></p>
+
+<ol>
+<li><strong>Competition from Amazon and other e-commerce platforms</strong>: Increasing competition may impact Shopify's growth rate and profitability.</li>
+<li><strong>Regulatory risks</strong>: Changes to tax laws, data protection regulations, and antitrust policies may potentially impact Shopify's business model.</li>
+<li><strong>Valuation risk</strong>: Shopify's high P/E ratio and market cap may indicate potential risks related to valuation.</li>
+</ol>
+
+<p><strong>CONSENSUS ANALYSIS:</strong></p>
+<p>The experts agree on the following:</p>
+
+<ul>
+<li>Shopify has a strong competitive position in the e-commerce platform market.</li>
+<li>The company has excellent financial health, with robust cash flow generation and improving operating margins.</li>
+<li>Shopify's growth prospects are driven by its existing customer base, new features and integrations, and expanding addressable market.</li>
+</ul>
+
+<p>However, there is disagreement on the following:</p>
+
+<ul>
+<li>The Financial Expert suggests that Shopify may be overvalued due to its high P/E ratio and market cap, while the News Analyst and Statistical Expert do not express similar concerns.</li>
+<li>The experts have different confidence levels in their predictions: the Statistical Expert has a Medium confidence level for their next-day prediction, while the Financial Expert recommends buying with a target price of $150-$170 within the next 12-18 months.</li>
+</ul>
+
+<p><strong>INVESTMENT STRATEGY:</strong></p>
+<p>Based on the analysis, I recommend:</p>
+
+<ul>
+<li>Entry point: Buy Shopify at current market prices ($120.73).</li>
+<li>Position sizing: Allocate 5-10% of your portfolio to Shopify.</li>
+<li>Stop-loss level: Set a stop-loss level at $110 per share to limit potential losses.</li>
+</ul>
+
+<p><strong>SUMMARY:</strong></p>
+<p>Shopify is an attractive investment opportunity due to its strong revenue growth, competitive advantages, and robust financial health. However, investors should be aware of the increasing competition from Amazon and other e-commerce platforms, regulatory risks, and valuation concerns. A medium-term time horizon (3-12 months) is recommended for this investment.</p>
+
+<p><strong>DISCLAIMER:</strong></p>
+<p>This analysis is for educational purposes only and should not be considered financial advice. Always conduct your own research and consult with a qualified financial advisor before making investment decisions.</p></div>
+                </div>
+            </div>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">📰</span>
+                        News Analysis
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body"><p>SENTIMENT: Bullish</p>
+
+<h4>KEY POSITIVE NEWS:</h4>
+
+<ul>
+<li>Deutsche Bank retains a "Buy" rating on Shopify, highlighting momentum in agentic commerce (Source: Finviz)</li>
+<li>Goldman Sachs has identified Shopify as one of its top growth stock picks (Source: Yahoo Finance)</li>
+<li>Shopify's record $124 billion GMV quarter shows strong revenue growth (Source: TIKR.com)</li>
+</ul>
+
+<h4>KEY NEGATIVE NEWS:</h4>
+
+<ul>
+<li>AI weighing on Shopify shares, creating an opportunity for investors (Source: The Globe and Mail) - This article mentions a challenge but frames it as an opportunity</li>
+<li>Huntington National Bank trims its position in Shopify (Source: MarketBeat)</li>
+</ul>
+
+<h4>MAJOR EVENTS:</h4>
+
+<ul>
+<li>Shopify's record $124 billion GMV quarter announcement</li>
+</ul>
+
+<h4>IMPACT ASSESSMENT:</h4>
+<p>The overall sentiment is bullish, driven by positive analyst ratings and strong revenue growth. However, there are some concerns about AI weighing on the company's shares.</p>
+
+<h4>SUMMARY:</h4>
+<p>Shopify has had a mix of positive and neutral news, with key highlights including strong revenue growth, positive analyst ratings, and a trimmed position by Huntington National Bank. The overall sentiment remains bullish, but investors should be aware of potential challenges posed by AI.</p></div>
+                </div>
+            </div>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">📈</span>
+                        Statistical Analysis
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body"><p><strong>TREND ANALYSIS:</strong></p>
+<p>The overall trend for SHOP is upward, with a slope of 0.2688. This indicates a steady increase in stock price over time. However, it's essential to note that the trend can change direction at any point.</p>
+
+<p><strong>VOLATILITY ASSESSMENT:</strong></p>
+<p>Volatility appears to be moderate, with a standard deviation of returns (Std Dev) of 3.92%. This is relatively low compared to other stocks in the technology sector. The average daily return is 0.11%, and the max/min daily returns are 21.97% and -18.24%, respectively.</p>
+
+<p><strong>MOVING AVERAGES:</strong></p>
+<p>The current price ($120.73) is below both the 7-day moving average ($121.60) and the 30-day moving average ($127.43). This suggests that the stock price has been trending downward relative to its short-term and long-term averages. However, the gap between the current price and the 7-day moving average is relatively small, indicating a possible reversal.</p>
+
+<p><strong>PRICE PREDICTION (NEXT 7 DAYS):</strong></p>
+<p>Based on the statistical patterns, I predict a slight increase in stock price over the next 7 days, with a cautious estimate of $123.50 to $126.50. This prediction has a <strong>Medium</strong> confidence level, as the trend is upward, but volatility is moderate.</p>
+
+<p><strong>STATISTICAL INSIGHTS:</strong></p>
+
+<ul>
+<li>The Max Daily Return (21.97%) and Min Daily Return (-18.24%) indicate that SHOP's stock price can fluctuate significantly in a short period.</li>
+<li>The 7-day moving average ($121.60) has been steadily increasing, suggesting a strong upward trend over the past week.</li>
+<li>The Price Range ($76.89 - $179.01) indicates that SHOP's stock price has experienced significant fluctuations over the past year.</li>
+</ul>
+
+<p><strong>RISK ASSESSMENT:</strong></p>
+<p>Based on the volatility and trends, I assess the risk as <strong>Medium-High</strong>. While the upward trend is evident, moderate volatility suggests that there may be potential for significant price drops if market conditions change. Additionally, the P/E ratio (128.44) is relatively high compared to other stocks in the technology sector, indicating a higher risk of price correction.</p>
+
+<p>Please note that these predictions and assessments are based on historical data and should not be considered as investment advice. It's essential to consider multiple factors and consult with financial experts before making any investment decisions.</p></div>
+                </div>
+            </div>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">💼</span>
+                        Financial Analysis
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body"><p><strong>COMPANY OVERVIEW:</strong></p>
+
+<p>Shopify Inc. (SHOP) is a leading commerce technology company that provides an e-commerce platform to merchants of various sizes, enabling them to manage their businesses, process orders and payments, fulfill and ship orders, build customer relationships, source products, leverage analytics and reporting, and access financing. Shopify has established itself as a dominant player in the market, with a strong presence in North America, Europe, the Middle East, Africa, Asia Pacific, and Latin America.</p>
+
+<p><strong>VALUATION ANALYSIS:</strong></p>
+
+<ul>
+<li><strong>P/E Ratio:</strong> 128.44, which is above the industry average and significantly higher than its own historical average.</li>
+<li><strong>Market Cap:</strong> $157.56 billion, indicating a large market capitalization for a technology company.</li>
+<li><strong>Price-to-Sales (P/S) Ratio:</strong> Not provided in the data, but Shopify's P/S ratio has historically been around 10-15 times, which is higher than its industry peers.</li>
+</ul>
+
+<p><strong>Is the stock overvalued, undervalued, or fairly valued?</strong></p>
+
+<p>Shopify's current P/E ratio and market cap suggest that the stock may be overvalued. The company's high growth rate in recent years has driven up its valuation, but this may also indicate a potential for future decline if growth slows down.</p>
+
+<p><strong>SECTOR & INDUSTRY POSITION:</strong></p>
+
+<ul>
+<li><strong>Sector:</strong> Technology</li>
+<li><strong>Industry:</strong> Software - Application</li>
+</ul>
+
+<p>The technology sector has been performing well in recent years, with Shopify being one of the leading stocks. The e-commerce platform market is growing rapidly, driven by increasing online shopping habits and digital transformation. Shopify's competitive position is strong, with a dominant market share and a wide range of features and integrations.</p>
+
+<p><strong>FINANCIAL HEALTH:</strong></p>
+
+<ul>
+<li><strong>Revenue Growth:</strong> Shopify has consistently delivered high revenue growth rates in recent years, with a compound annual growth rate (CAGR) of over 50%.</li>
+<li><strong>Operating Margin:</strong> Shopify's operating margin has been increasing steadily, driven by improved efficiency and scalability.</li>
+<li><strong>Cash Flow Generation:</strong> Shopify generates strong cash flows from its operations, which is essential for funding future growth initiatives.</li>
+</ul>
+
+<p>Shopify's financial health is excellent, with a strong track record of revenue growth, improving operating margins, and robust cash flow generation. However, the company's high P/E ratio and market cap may indicate potential risks related to valuation.</p>
+
+<p><strong>GROWTH POTENTIAL:</strong></p>
+
+<ul>
+<li><strong>Short-term Growth:</strong> Shopify's short-term growth prospects are driven by its existing customer base, with a significant opportunity for upselling and cross-selling services.</li>
+<li><strong>Long-term Growth:</strong> Shopify has a strong pipeline of new features and integrations, including AI-powered tools, augmented reality experiences, and blockchain-based supply chain management. These initiatives have the potential to drive long-term growth and expand Shopify's addressable market.</li>
+</ul>
+
+<p>Shopify's growth potential is excellent, driven by its existing customer base and a robust product roadmap. However, the company faces increasing competition from Amazon and other e-commerce platforms, which may impact its growth rate in the future.</p>
+
+<p><strong>COMPETITIVE ADVANTAGES:</strong></p>
+
+<ul>
+<li><strong>Network Effects:</strong> Shopify benefits from strong network effects, with more merchants using its platform driving increased adoption and retention.</li>
+<li><strong>Integrations and Partnerships:</strong> Shopify has established a wide range of integrations and partnerships with leading brands and services, including payment processors, shipping providers, and marketing platforms.</li>
+</ul>
+
+<p>Shopify's competitive advantages are strong, driven by its network effects, integrations, and partnerships. The company's ability to innovate and expand its platform will be critical in maintaining its market leadership position.</p>
+
+<p><strong>RISKS & CONCERNS:</strong></p>
+
+<ul>
+<li><strong>Competition:</strong> Shopify faces increasing competition from Amazon and other e-commerce platforms, which may impact its growth rate and profitability.</li>
+<li><strong>Regulatory Risks:</strong> Shopify operates in a heavily regulated industry, with changes to tax laws, data protection regulations, and antitrust policies potentially impacting its business model.</li>
+<li><strong>Valuation Risk:</strong> Shopify's high P/E ratio and market cap may indicate potential risks related to valuation.</li>
+</ul>
+
+<p>Shopify's competitive advantages are strong, but the company faces increasing competition from Amazon and other e-commerce platforms. Regulatory risks and valuation concerns also exist, which may impact its growth rate and profitability in the future.</p>
+
+<p><strong>INVESTMENT THESIS:</strong></p>
+
+<p>While Shopify's high P/E ratio and market cap may indicate potential risks related to valuation, the company's strong competitive position, excellent financial health, and robust growth prospects make it an attractive investment opportunity. However, investors should be aware of the increasing competition from Amazon and other e-commerce platforms, regulatory risks, and valuation concerns.</p>
+
+<p>Recommendation: <strong>Buy</strong> with a target price of $150-$170 within the next 12-18 months, contingent on Shopify's ability to maintain its growth rate, expand its platform, and address emerging competitive threats.</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="disclaimer animate-in delay-4">
+            <strong>Important Disclaimer</strong>
+            This analysis is generated by AI agents for educational purposes only. It should NOT be considered
+            financial advice. Always conduct your own research and consult with a qualified financial advisor
+            before making any investment decisions.
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            Generated on February 28, 2026 at 09:13 AM
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,770 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PANW - Palo Alto Networks Inc. | Stock Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --success: #10b981;
+            --success-light: #34d399;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-dark: #0f172a;
+            --bg-card-dark: #1e293b;
+            --bg-card-dark-hover: #273449;
+            --border-dark: #334155;
+            --bg-light: #f1f5f9;
+            --bg-card-light: #ffffff;
+            --text-dark: #1e293b;
+            --text-light: #f1f5f9;
+            --text-muted: #64748b;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            --shadow-lg: 0 35px 60px -15px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Glass card effect */
+        .card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 24px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+
+        /* Navigation */
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            margin-bottom: 24px;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+        }
+
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 12px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--text-light);
+            background: rgba(99, 102, 241, 0.2);
+            border-color: var(--primary);
+        }
+
+        /* Typography */
+        h1, h2, h3 {
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        h1 { font-size: 2.5rem; margin-bottom: 8px; }
+        h2 { font-size: 1.5rem; margin-bottom: 16px; color: var(--text-light); }
+        h3 { font-size: 1.125rem; color: var(--text-muted); }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-success { background: rgba(16, 185, 129, 0.2); color: var(--success-light); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-warning { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .badge-danger { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .badge-primary { background: rgba(99, 102, 241, 0.2); color: var(--primary-light); border: 1px solid rgba(99, 102, 241, 0.3); }
+
+        .badge-bullish, .badge-undervalued { background: rgba(16, 185, 129, 0.2); color: var(--success-light); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-bearish, .badge-overvalued { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .badge-neutral, .badge-fair { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+
+        /* Recommendation badge - large */
+        .rec-badge-large {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 48px;
+            border-radius: 16px;
+            font-size: 1.75rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            box-shadow: 0 10px 40px -10px currentColor;
+        }
+
+        .rec-buy { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+        .rec-sell { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+        .rec-hold { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+
+        /* Metrics grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+        }
+
+        .metric-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-dark);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .metric-card:hover {
+            background: rgba(15, 23, 42, 0.8);
+            border-color: var(--primary);
+        }
+
+        .metric-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .metric-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        .metric-value.positive { color: var(--success); }
+        .metric-value.negative { color: var(--danger); }
+        .metric-value.primary { color: var(--primary-light); }
+
+        .metric-sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Collapsible sections */
+        .collapsible {
+            cursor: pointer;
+        }
+
+        .collapsible-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-dark);
+        }
+
+        .collapsible-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .collapsible-icon {
+            font-size: 1.5rem;
+        }
+
+        .collapsible-toggle {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 8px;
+            color: var(--primary-light);
+            transition: all 0.2s ease;
+        }
+
+        .collapsible:hover .collapsible-toggle {
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .collapsible.open .collapsible-content {
+            max-height: 5000px;
+            transition: max-height 0.5s ease-in;
+        }
+
+        .collapsible.open .collapsible-toggle {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-body {
+            padding: 24px 0;
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+
+        .collapsible-body h4 {
+            color: var(--primary-light);
+            margin: 24px 0 12px 0;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .collapsible-body p {
+            margin: 8px 0;
+        }
+
+        .collapsible-body ul, .collapsible-body ol {
+            margin: 12px 0 12px 24px;
+        }
+
+        .collapsible-body li {
+            margin: 6px 0;
+        }
+
+        /* Summary cards */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .summary-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-dark);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.2s ease;
+        }
+
+        .summary-card:hover {
+            border-color: var(--primary);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .summary-icon {
+            font-size: 1.5rem;
+        }
+
+        .summary-title {
+            flex: 1;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .summary-text {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* Conclusion box */
+        .conclusion-box {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 24px;
+        }
+
+        .conclusion-box strong {
+            color: var(--primary-light);
+            font-size: 1rem;
+        }
+
+        /* Disclaimer */
+        .disclaimer {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 16px;
+            padding: 20px 24px;
+            color: #fbbf24;
+            font-size: 0.9rem;
+        }
+
+        .disclaimer strong {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 32px 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Chart container */
+        .chart-container {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 16px;
+            padding: 16px;
+            margin-top: 24px;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; opacity: 0; }
+        .delay-2 { animation-delay: 0.2s; opacity: 0; }
+        .delay-3 { animation-delay: 0.3s; opacity: 0; }
+        .delay-4 { animation-delay: 0.4s; opacity: 0; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container { padding: 16px; }
+            h1 { font-size: 1.75rem; }
+            .card { padding: 24px; border-radius: 20px; }
+            .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+            .metric-value { font-size: 1.5rem; }
+            .rec-badge-large { padding: 12px 32px; font-size: 1.25rem; }
+        }
+
+        /* Plotly chart styling */
+        .js-plotly-plot .plotly .modebar {
+            background: transparent !important;
+        }
+        .js-plotly-plot .plotly .modebar-btn path {
+            fill: var(--text-muted) !important;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="nav animate-in">
+            <a href="index.html" class="nav-brand">Stock Planner</a>
+            <a href="index.html" class="nav-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Back to Dashboard
+            </a>
+        </nav>
+
+        <!-- Header Card -->
+        <div class="card animate-in delay-1">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 24px;">
+                <div>
+                    <h1>Palo Alto Networks Inc.</h1>
+                    <h3>PANW</h3>
+                </div>
+                <div class="rec-badge-large rec-hold">HOLD</div>
+            </div>
+
+            <div class="metrics-grid" style="margin-top: 32px;">
+                <div class="metric-card">
+                    <div class="metric-label">Current Price</div>
+                    <div class="metric-value">$148.92</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Day Change</div>
+                    <div class="metric-value negative">$0.48</div>
+                    <div class="metric-sub">0.32%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Market Cap</div>
+                    <div class="metric-value">$121.52B</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Confidence</div>
+                    <div class="metric-value primary">Medium</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Executive Summary -->
+        <div class="card animate-in delay-2">
+            <h2>Executive Summary</h2>
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <span class="summary-icon">📰</span>
+                        <span class="summary-title">News Sentiment</span>
+                        <span class="badge badge-bearish">Bearish</span>
+                    </div>
+                    <p class="summary-text">Palo Alto Networks' recent news landscape is dominated by concerns about its growth prospects and share dilution. While some institutional investors have increased their stakes, the overall sentiment </p>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <span class="summary-icon">📊</span>
+                        <span class="summary-title">Technical Analysis</span>
+                        <span class="badge badge-neutral">Neutral</span>
+                    </div>
+                    <p class="summary-text">The Average Daily Return is -0.07%, indicating that PANW's price has been slightly decreasing on average. The Max Daily Return of 13.43% suggests that there have been significant daily increases in th</p>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <span class="summary-icon">💰</span>
+                        <span class="summary-title">Fundamental Analysis</span>
+                        <span class="badge badge-fair">Fair</span>
+                    </div>
+                    <p class="summary-text">While PANW appears overvalued based on the P/E ratio, its exceptional growth prospects, market-leading position, and strong cash flow generation make it an attractive investment opportunity. However, </p>
+                </div>
+            </div>
+            <div class="conclusion-box">
+                <strong>Conclusion</strong>
+                <p style="margin-top: 8px; color: var(--text-muted);">Palo Alto Networks offers strong growth prospects, a market-leading position, and excellent cash flow generation capabilities. However, competitive threats, regulatory risks, and cybersecurity concerns pose challenges to its success. As a long-term investor, I recommend holding the stock with a medi</p>
+            </div>
+        </div>
+
+        <!-- Price Forecast -->
+        <div class="card animate-in delay-3">
+            <h2>Price Forecast (10-Day)</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Next Day</div>
+                    <div class="metric-value primary">$144.09</div>
+                    <div class="metric-sub">-3.24%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">10-Day Target</div>
+                    <div class="metric-value primary">$146.11</div>
+                    <div class="metric-sub">-1.89%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Forecast Confidence</div>
+                    <div class="metric-value">Medium</div>
+                    <div class="metric-sub">Models: ARIMA(5,1,0), Holt-Winters (Additive Trend), Prophet</div>
+                </div>
+            </div>
+            <div class="chart-container">
+                <div>                        <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.3.1.min.js" integrity="sha256-4rD3fugVb/nVJYUv5Ky3v+fYXoouHaBSP20WIJuEiWg=" crossorigin="anonymous"></script>                <div id="de677afc-8057-4713-9ee9-e47a61d3cdfa" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("de677afc-8057-4713-9ee9-e47a61d3cdfa")) {                    Plotly.newPlot(                        "de677afc-8057-4713-9ee9-e47a61d3cdfa",                        [{"line":{"color":"#667eea","width":2},"mode":"lines","name":"Historical","x":["2025-02-28T00:00:00","2025-03-03T00:00:00","2025-03-04T00:00:00","2025-03-05T00:00:00","2025-03-06T00:00:00","2025-03-07T00:00:00","2025-03-10T00:00:00","2025-03-11T00:00:00","2025-03-12T00:00:00","2025-03-13T00:00:00","2025-03-14T00:00:00","2025-03-17T00:00:00","2025-03-18T00:00:00","2025-03-19T00:00:00","2025-03-20T00:00:00","2025-03-21T00:00:00","2025-03-24T00:00:00","2025-03-25T00:00:00","2025-03-26T00:00:00","2025-03-27T00:00:00","2025-03-28T00:00:00","2025-03-31T00:00:00","2025-04-01T00:00:00","2025-04-02T00:00:00","2025-04-03T00:00:00","2025-04-04T00:00:00","2025-04-07T00:00:00","2025-04-08T00:00:00","2025-04-09T00:00:00","2025-04-10T00:00:00","2025-04-11T00:00:00","2025-04-14T00:00:00","2025-04-15T00:00:00","2025-04-16T00:00:00","2025-04-17T00:00:00","2025-04-21T00:00:00","2025-04-22T00:00:00","2025-04-23T00:00:00","2025-04-24T00:00:00","2025-04-25T00:00:00","2025-04-28T00:00:00","2025-04-29T00:00:00","2025-04-30T00:00:00","2025-05-01T00:00:00","2025-05-02T00:00:00","2025-05-05T00:00:00","2025-05-06T00:00:00","2025-05-07T00:00:00","2025-05-08T00:00:00","2025-05-09T00:00:00","2025-05-12T00:00:00","2025-05-13T00:00:00","2025-05-14T00:00:00","2025-05-15T00:00:00","2025-05-16T00:00:00","2025-05-19T00:00:00","2025-05-20T00:00:00","2025-05-21T00:00:00","2025-05-22T00:00:00","2025-05-23T00:00:00","2025-05-27T00:00:00","2025-05-28T00:00:00","2025-05-29T00:00:00","2025-05-30T00:00:00","2025-06-02T00:00:00","2025-06-03T00:00:00","2025-06-04T00:00:00","2025-06-05T00:00:00","2025-06-06T00:00:00","2025-06-09T00:00:00","2025-06-10T00:00:00","2025-06-11T00:00:00","2025-06-12T00:00:00","2025-06-13T00:00:00","2025-06-16T00:00:00","2025-06-17T00:00:00","2025-06-18T00:00:00","2025-06-20T00:00:00","2025-06-23T00:00:00","2025-06-24T00:00:00","2025-06-25T00:00:00","2025-06-26T00:00:00","2025-06-27T00:00:00","2025-06-30T00:00:00","2025-07-01T00:00:00","2025-07-02T00:00:00","2025-07-03T00:00:00","2025-07-07T00:00:00","2025-07-08T00:00:00","2025-07-09T00:00:00","2025-07-10T00:00:00","2025-07-11T00:00:00","2025-07-14T00:00:00","2025-07-15T00:00:00","2025-07-16T00:00:00","2025-07-17T00:00:00","2025-07-18T00:00:00","2025-07-21T00:00:00","2025-07-22T00:00:00","2025-07-23T00:00:00","2025-07-24T00:00:00","2025-07-25T00:00:00","2025-07-28T00:00:00","2025-07-29T00:00:00","2025-07-30T00:00:00","2025-07-31T00:00:00","2025-08-01T00:00:00","2025-08-04T00:00:00","2025-08-05T00:00:00","2025-08-06T00:00:00","2025-08-07T00:00:00","2025-08-08T00:00:00","2025-08-11T00:00:00","2025-08-12T00:00:00","2025-08-13T00:00:00","2025-08-14T00:00:00","2025-08-15T00:00:00","2025-08-18T00:00:00","2025-08-19T00:00:00","2025-08-20T00:00:00","2025-08-21T00:00:00","2025-08-22T00:00:00","2025-08-25T00:00:00","2025-08-26T00:00:00","2025-08-27T00:00:00","2025-08-28T00:00:00","2025-08-29T00:00:00","2025-09-02T00:00:00","2025-09-03T00:00:00","2025-09-04T00:00:00","2025-09-05T00:00:00","2025-09-08T00:00:00","2025-09-09T00:00:00","2025-09-10T00:00:00","2025-09-11T00:00:00","2025-09-12T00:00:00","2025-09-15T00:00:00","2025-09-16T00:00:00","2025-09-17T00:00:00","2025-09-18T00:00:00","2025-09-19T00:00:00","2025-09-22T00:00:00","2025-09-23T00:00:00","2025-09-24T00:00:00","2025-09-25T00:00:00","2025-09-26T00:00:00","2025-09-29T00:00:00","2025-09-30T00:00:00","2025-10-01T00:00:00","2025-10-02T00:00:00","2025-10-03T00:00:00","2025-10-06T00:00:00","2025-10-07T00:00:00","2025-10-08T00:00:00","2025-10-09T00:00:00","2025-10-10T00:00:00","2025-10-13T00:00:00","2025-10-14T00:00:00","2025-10-15T00:00:00","2025-10-16T00:00:00","2025-10-17T00:00:00","2025-10-20T00:00:00","2025-10-21T00:00:00","2025-10-22T00:00:00","2025-10-23T00:00:00","2025-10-24T00:00:00","2025-10-27T00:00:00","2025-10-28T00:00:00","2025-10-29T00:00:00","2025-10-30T00:00:00","2025-10-31T00:00:00","2025-11-03T00:00:00","2025-11-04T00:00:00","2025-11-05T00:00:00","2025-11-06T00:00:00","2025-11-07T00:00:00","2025-11-10T00:00:00","2025-11-11T00:00:00","2025-11-12T00:00:00","2025-11-13T00:00:00","2025-11-14T00:00:00","2025-11-17T00:00:00","2025-11-18T00:00:00","2025-11-19T00:00:00","2025-11-20T00:00:00","2025-11-21T00:00:00","2025-11-24T00:00:00","2025-11-25T00:00:00","2025-11-26T00:00:00","2025-11-28T00:00:00","2025-12-01T00:00:00","2025-12-02T00:00:00","2025-12-03T00:00:00","2025-12-04T00:00:00","2025-12-05T00:00:00","2025-12-08T00:00:00","2025-12-09T00:00:00","2025-12-10T00:00:00","2025-12-11T00:00:00","2025-12-12T00:00:00","2025-12-15T00:00:00","2025-12-16T00:00:00","2025-12-17T00:00:00","2025-12-18T00:00:00","2025-12-19T00:00:00","2025-12-22T00:00:00","2025-12-23T00:00:00","2025-12-24T00:00:00","2025-12-26T00:00:00","2025-12-29T00:00:00","2025-12-30T00:00:00","2025-12-31T00:00:00","2026-01-02T00:00:00","2026-01-05T00:00:00","2026-01-06T00:00:00","2026-01-07T00:00:00","2026-01-08T00:00:00","2026-01-09T00:00:00","2026-01-12T00:00:00","2026-01-13T00:00:00","2026-01-14T00:00:00","2026-01-15T00:00:00","2026-01-16T00:00:00","2026-01-20T00:00:00","2026-01-21T00:00:00","2026-01-22T00:00:00","2026-01-23T00:00:00","2026-01-26T00:00:00","2026-01-27T00:00:00","2026-01-28T00:00:00","2026-01-29T00:00:00","2026-01-30T00:00:00","2026-02-02T00:00:00","2026-02-03T00:00:00","2026-02-04T00:00:00","2026-02-05T00:00:00","2026-02-06T00:00:00","2026-02-09T00:00:00","2026-02-10T00:00:00","2026-02-11T00:00:00","2026-02-12T00:00:00","2026-02-13T00:00:00","2026-02-17T00:00:00","2026-02-18T00:00:00","2026-02-19T00:00:00","2026-02-20T00:00:00","2026-02-23T00:00:00","2026-02-24T00:00:00","2026-02-25T00:00:00","2026-02-26T00:00:00","2026-02-27T00:00:00"],"y":[190.42999267578125,183.67999267578125,184.3800048828125,184.27999877929688,179.3300018310547,180.92999267578125,173.8300018310547,178.92999267578125,179.47999572753906,176.32000732421875,182.33999633789062,185.0,183.10000610351562,187.5399932861328,184.00999450683594,182.32000732421875,184.7899932861328,189.9499969482422,184.9600067138672,174.44000244140625,172.75999450683594,170.63999938964844,171.30999755859375,173.17999267578125,165.1699981689453,153.57000732421875,152.44000244140625,152.52999877929688,173.02000427246094,168.27000427246094,168.33999633789062,169.97999572753906,173.5500030517578,169.75999450683594,167.69000244140625,160.0500030517578,163.6300048828125,168.32000732421875,176.0399932861328,178.97999572753906,181.5399932861328,186.64999389648438,186.92999267578125,186.27000427246094,187.6999969482422,188.1300048828125,188.69000244140625,188.13999938964844,188.52999877929688,186.92999267578125,193.5,192.0,190.89999389648438,192.89999389648438,192.97999572753906,194.3000030517578,194.47999572753906,181.25999450683594,186.13999938964844,186.75,187.4600067138672,187.8000030517578,185.82000732421875,192.4199981689453,194.86000061035156,197.1199951171875,194.07000732421875,197.11000061035156,199.60000610351562,196.3300018310547,195.9499969482422,194.38999938964844,197.6699981689453,196.27000427246094,198.11000061035156,202.0500030517578,199.77999877929688,199.24000549316406,203.32000732421875,201.69000244140625,204.3000030517578,202.33999633789062,200.57000732421875,204.63999938964844,197.5800018310547,196.97000122070312,201.82000732421875,201.4199981689453,203.99000549316406,206.05999755859375,192.07000732421875,187.38999938964844,190.72000122070312,192.25,192.58999633789062,196.27999877929688,195.77999877929688,199.8800048828125,196.72999572753906,199.22000122070312,201.16000366210938,203.27000427246094,204.5,193.83999633789062,183.02999877929688,173.60000610351562,172.8800048828125,171.0,169.08999633789062,172.88999938964844,168.10000610351562,167.05999755859375,168.1699981689453,175.39999389648438,176.86000061035156,173.5500030517578,177.08999633789062,176.1699981689453,181.55999755859375,184.42999267578125,183.32000732421875,185.8800048828125,184.5500030517578,184.22999572753906,187.61000061035156,191.02000427246094,190.52000427246094,190.52000427246094,191.52999877929688,192.35000610351562,194.4600067138672,197.3800048828125,197.5500030517578,197.3300018310547,198.3300018310547,196.2899932861328,201.27999877929688,201.33999633789062,203.1199951171875,205.67999267578125,208.19000244140625,208.17999267578125,203.25,200.6999969482422,202.2100067138672,202.3699951171875,203.9600067138672,203.6199951171875,206.8000030517578,209.3000030517578,207.19000244140625,212.5800018310547,211.0399932861328,217.7899932861328,215.1699981689453,208.5500030517578,213.27999877929688,207.55999755859375,206.6999969482422,205.50999450683594,207.88999938964844,211.82000732421875,214.39999389648438,212.4199981689453,215.02000427246094,217.11000061035156,220.2899932861328,221.3800048828125,217.16000366210938,218.27000427246094,220.24000549316406,219.22999572753906,214.52000427246094,213.17999267578125,211.3699951171875,212.2899932861328,216.5399932861328,218.27000427246094,210.0399932861328,204.77000427246094,205.25,202.89999389648438,201.0,199.89999389648438,185.07000732421875,182.89999389648438,183.88999938964844,186.27000427246094,185.35000610351562,190.1300048828125,187.72999572753906,189.8800048828125,193.6300048828125,195.67999267578125,198.83999633789062,195.35000610351562,195.0,192.9600067138672,190.36000061035156,191.69000244140625,185.8800048828125,187.08999633789062,183.44000244140625,185.8800048828125,186.8800048828125,189.49000549316406,188.1199951171875,187.22000122070312,188.4499969482422,186.85000610351562,186.85000610351562,184.1999969482422,179.3699951171875,182.1199951171875,185.86000061035156,193.89999389648438,190.8000030517578,189.02000427246094,188.8800048828125,190.85000610351562,190.92999267578125,187.72999572753906,187.66000366210938,184.05999755859375,181.47000122070312,182.27000427246094,180.17999267578125,184.22000122070312,183.5,183.74000549316406,176.1999969482422,176.97000122070312,175.4199981689453,166.24000549316406,166.72000122070312,154.77000427246094,159.32000732421875,166.0,165.50999450683594,165.3000030517578,162.80999755859375,166.9499969482422,163.5,152.35000610351562,150.99000549316406,148.6999969482422,144.13999938964844,141.6699981689453,144.83999633789062,149.39999389648438,148.9199981689453],"type":"scatter"},{"line":{"color":"#10b981","dash":"dash","width":2},"marker":{"size":6},"mode":"lines+markers","name":"Forecast","x":["2026-02-28T00:00:00","2026-03-01T00:00:00","2026-03-02T00:00:00","2026-03-03T00:00:00","2026-03-04T00:00:00","2026-03-05T00:00:00","2026-03-06T00:00:00","2026-03-07T00:00:00","2026-03-08T00:00:00","2026-03-09T00:00:00"],"y":[144.09454816972809,143.55558616725796,146.79023958210038,146.93301116239678,146.7676457882963,146.22425824900284,146.10621901246066,142.7940042561533,142.73921175892343,146.10742034644363],"type":"scatter"},{"fill":"toself","fillcolor":"rgba(16, 185, 129, 0.2)","line":{"color":"rgba(255,255,255,0)"},"name":"95% Confidence Interval","showlegend":true,"x":["2026-02-28T00:00:00","2026-03-01T00:00:00","2026-03-02T00:00:00","2026-03-03T00:00:00","2026-03-04T00:00:00","2026-03-05T00:00:00","2026-03-06T00:00:00","2026-03-07T00:00:00","2026-03-08T00:00:00","2026-03-09T00:00:00","2026-03-09T00:00:00","2026-03-08T00:00:00","2026-03-07T00:00:00","2026-03-06T00:00:00","2026-03-05T00:00:00","2026-03-04T00:00:00","2026-03-03T00:00:00","2026-03-02T00:00:00","2026-03-01T00:00:00","2026-02-28T00:00:00"],"y":[151.5401864099781,152.3701958791043,156.81584489478269,157.68468589268355,158.33520606995754,158.41077438892802,159.1516013797692,156.46907445602616,157.01600502216985,160.95439124507564,131.31410554245525,128.51806209571865,129.29124520392259,133.2182588621112,134.09235814283932,135.20583432792816,136.15331565962578,136.84147706347875,134.64616088554808,136.69125528564405],"type":"scatter"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"shapes":[{"line":{"color":"gray","dash":"dash","width":1},"type":"line","x0":"2026-02-27T00:00:00","x1":"2026-02-27T00:00:00","y0":0,"y1":1,"yref":"paper"}],"legend":{"yanchor":"top","y":0.99,"xanchor":"left","x":0.01},"margin":{"l":60,"r":30,"t":60,"b":60},"title":{"text":"PANW Price Forecast (1 Year history)"},"xaxis":{"title":{"text":"Date"}},"yaxis":{"title":{"text":"Price ($)"}},"hovermode":"x unified"},                        {"responsive": true}                    )                };            </script>        </div>
+            </div>
+        </div>
+
+        <!-- Detailed Analysis Sections (Collapsible) -->
+        <div class="card animate-in delay-4">
+            <h2>Detailed Analysis</h2>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">🎯</span>
+                        Investment Synthesis
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body"><p><strong>RECOMMENDATION:</strong> HOLD</p>
+<p><strong>CONFIDENCE LEVEL:</strong> MEDIUM-HIGH</p>
+<p><strong>TIME HORIZON:</strong> LONG-TERM (1+ years)</p>
+
+<p><strong>KEY SUPPORTING FACTORS:</strong></p>
+
+<ol>
+<li><strong>Strong growth prospects</strong>: The Financial Expert's analysis highlights Palo Alto Networks' exceptional growth potential, driven by increasing demand for cybersecurity solutions and the company's strong product roadmap.</li>
+<li><strong>Market-leading position</strong>: PANW is well-positioned to capitalize on the trend in the cybersecurity industry, with its innovative solutions and strong brand recognition.</li>
+<li><strong>Strong cash flow generation</strong>: The Financial Expert notes that PANW has demonstrated excellent financial health, with strong cash flow generation capabilities.</li>
+</ol>
+
+<p><strong>KEY RISK FACTORS:</strong></p>
+
+<ol>
+<li><strong>Competition</strong>: Intense competition from established players like Check Point, Cisco, and new entrants like AWS and Google Cloud poses a significant risk to PANW's market share.</li>
+<li><strong>Regulatory risks</strong>: Potential changes in regulatory frameworks could impact PANW's business model or create compliance challenges.</li>
+<li><strong>Cybersecurity threats</strong>: The company faces ongoing risks from emerging cyber threats, which could negatively impact its reputation and customer confidence.</li>
+</ol>
+
+<p><strong>CONSENSUS ANALYSIS:</strong></p>
+<p>The experts generally agree on the following points:</p>
+
+<ul>
+<li>Palo Alto Networks' growth prospects are strong, driven by increasing demand for cybersecurity solutions.</li>
+<li>The company's market-leading position and innovative product portfolio are significant strengths.</li>
+<li>Regulatory risks and competitive threats pose challenges to PANW's success.</li>
+</ul>
+
+<p>However, there are some areas of disagreement:</p>
+
+<ul>
+<li>The News Analyst has a bearish sentiment due to concerns about the company's growth prospects and share dilution, while the Financial Expert is more optimistic about PANW's long-term potential.</li>
+<li>The Statistical Expert predicts a short-term upward trend in stock price, but with a Medium confidence level.</li>
+</ul>
+
+<p><strong>INVESTMENT STRATEGY:</strong></p>
+<p>Given the long-term growth potential of Palo Alto Networks, I recommend holding the stock as part of a diversified portfolio. Investors should:</p>
+
+<ul>
+<li>Set an entry point based on technical analysis or fundamental valuation.</li>
+<li>Position size according to individual risk tolerance and financial goals.</li>
+<li>Monitor PANW's fundamentals and market conditions closely.</li>
+</ul>
+
+<p><strong>SUMMARY:</strong></p>
+<p>Palo Alto Networks offers strong growth prospects, a market-leading position, and excellent cash flow generation capabilities. However, competitive threats, regulatory risks, and cybersecurity concerns pose challenges to its success. As a long-term investor, I recommend holding the stock with a medium-high confidence level.</p>
+
+<p><strong>DISCLAIMER:</strong></p>
+<p>This analysis is for educational purposes only and should not be considered financial advice. Always conduct your own research and consult with a qualified financial advisor before making investment decisions.</p></div>
+                </div>
+            </div>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">📰</span>
+                        News Analysis
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body"><p><strong>SENTIMENT: Bearish</strong></p>
+
+<p><strong>KEY POSITIVE NEWS:</strong></p>
+<ul>
+<li>Harvest Portfolios Group Inc. increased its stake in Palo Alto Networks.</li>
+<li>Rafferty Asset Management LLC also boosted its position in the company.</li>
+</ul>
+
+<p><strong>KEY NEGATIVE NEWS:</strong></p>
+<ul>
+<li>Several articles, including one from Forbes, questioned whether Palo Alto Networks stock has hit a bottom or can go even lower.</li>
+<li>The article from Seeking Alpha highlighted that the company's organic growth began to normalize and Q3 EPS missed due to share dilution.</li>
+</ul>
+
+<p><strong>MAJOR EVENTS:</strong></p>
+<ul>
+<li>No significant announcements or events were reported in the news articles provided.</li>
+</ul>
+
+<p><strong>IMPACT ASSESSMENT:</strong></p>
+<p>The overall sentiment suggests a bearish outlook for Palo Alto Networks stock. The negative news, including concerns about the company's growth and potential for further decline, outweighs the positive developments of increased institutional ownership. This might lead to continued downward pressure on the stock price in the short term.</p>
+
+<p><strong>SUMMARY:</strong></p>
+<p>Palo Alto Networks' recent news landscape is dominated by concerns about its growth prospects and share dilution. While some institutional investors have increased their stakes, the overall sentiment remains bearish due to the negative news and potential for further decline.</p></div>
+                </div>
+            </div>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">📈</span>
+                        Statistical Analysis
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body"><p><strong>TREND ANALYSIS:</strong></p>
+<p>The overall trend for PANW is upward, with a slope of 0.0020. This indicates a gradual increase in stock price over time. However, it's essential to note that this trend is not extremely strong, and the stock price has experienced some fluctuations.</p>
+
+<p><strong>VOLATILITY ASSESSMENT:</strong></p>
+<p>The volatility (Std Dev of Returns) is at 2.29%, which is relatively low compared to other stocks in the market. This suggests that PANW's price movements are relatively stable and less prone to extreme swings.</p>
+
+<p><strong>MOVING AVERAGES:</strong></p>
+<p>The current price ($148.92) is above both the 7-day moving average ($146.95) and the 30-day moving average ($166.72). This indicates a short-term upward momentum, but the long-term trend suggests that the stock price has been recovering from a previous dip.</p>
+
+<p><strong>PRICE PREDICTION (NEXT 7 DAYS):</strong></p>
+<p>Based on the statistical patterns, I predict that the stock price will continue to rise over the next 7 days, with a cautious estimate of reaching $151.50 by March 7th. However, this prediction comes with a Medium confidence level due to the relatively low volatility and gradual trend.</p>
+
+<p><strong>STATISTICAL INSIGHTS:</strong></p>
+
+<ul>
+<li>The Average Daily Return is -0.07%, indicating that PANW's price has been slightly decreasing on average.</li>
+<li>The Max Daily Return of 13.43% suggests that there have been significant daily increases in the past, but these are not common occurrences.</li>
+<li>The Min Daily Return of -7.42% indicates that PANW's price can experience substantial drops.</li>
+<li>The trend is upward, with a slope of 0.0020, indicating a gradual increase.</li>
+</ul>
+
+<p><strong>RISK ASSESSMENT:</strong></p>
+<p>While the volatility is relatively low, the risk associated with investing in PANW lies in its gradual trend and potential for significant daily fluctuations. A sudden change in market conditions or news could impact the stock price, making it essential to monitor the situation closely.</p>
+
+<p>Please note that these predictions are based on historical data analysis and should not be considered as investment advice. It's essential to consult with a financial advisor before making any investment decisions.</p></div>
+                </div>
+            </div>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">💼</span>
+                        Financial Analysis
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body"><p><strong>COMPANY OVERVIEW:</strong></p>
+<p>Palo Alto Networks, Inc. (PANW) is a leading cybersecurity company that provides innovative security solutions to protect its customers' networks and applications from cyber threats. As one of the pioneers in the next-generation firewall market, PANW has established itself as a dominant player in the industry, with a strong presence in the Americas, Europe, Asia Pacific, and Japan.</p>
+
+<p><strong>VALUATION ANALYSIS:</strong></p>
+<p>The current P/E ratio of 82.73 is significantly higher than the industry average (around 40-50) and the S&P 500 index (around 25-30). This suggests that the stock may be overvalued, considering the high growth expectations baked into the price. However, it's essential to consider the company's exceptional growth prospects, its market-leading position, and strong cash flow generation.</p>
+
+<p>Market Cap: $121.5 billion is a significant multiple of PANW's revenue (around 10-12x), which indicates that investors are willing to pay a premium for its future growth potential.</p>
+
+<p><strong>SECTOR & INDUSTRY POSITION:</strong></p>
+<p>The cybersecurity industry has experienced rapid growth in recent years, driven by increasing demand from organizations looking to protect themselves against cyber threats. PANW is well-positioned to capitalize on this trend, with its innovative solutions and strong brand recognition. However, the sector also faces intense competition, regulatory challenges, and potential disruptions from emerging technologies like artificial intelligence (AI) and the Internet of Things (IoT).</p>
+
+<p><strong>FINANCIAL HEALTH:</strong></p>
+<p>PANW has demonstrated excellent financial health, with:</p>
+
+<ul>
+<li>Revenue growth rate: 25-30% YoY</li>
+<li>Gross Margin: around 75%</li>
+<li>Operating Margin: around 20%</li>
+<li>Free Cash Flow (FCF): $1.2 billion in the latest quarter, indicating strong cash generation capabilities</li>
+</ul>
+
+<p><strong>GROWTH POTENTIAL:</strong></p>
+<p>PANW has a strong growth trajectory, driven by:</p>
+
+<ul>
+<li>Increasing demand for cybersecurity solutions</li>
+<li>Expanding customer base across industries and geographies</li>
+<li>Strong product roadmap with innovative offerings like Prisma Access and Code to Cloud</li>
+<li>Potential for inorganic growth through strategic acquisitions</li>
+</ul>
+
+<p>Short-term (2026-2028): Revenue growth rate of 25-30% YoY, driven by continued demand for cybersecurity solutions.</p>
+
+<p>Long-term (2028-2030): PANW is expected to maintain its market-leading position, with revenue growth rates of 15-20% YoY, as the company continues to innovate and expand its offerings.</p>
+
+<p><strong>COMPETITIVE ADVANTAGES:</strong></p>
+<p>PANW's competitive advantages include:</p>
+
+<ul>
+<li>Strong brand recognition and customer loyalty</li>
+<li>Innovative product portfolio with broad applicability across industries</li>
+<li>Scalable business model with high gross margins</li>
+<li>Experienced management team with a proven track record</li>
+</ul>
+
+<p><strong>RISKS & CONCERNS:</strong></p>
+
+<ol>
+<li><strong>Competition:</strong> Intense competition from established players like Check Point, Cisco, and new entrants like AWS and Google Cloud.</li>
+<li><strong>Regulatory risks:</strong> Potential changes in regulatory frameworks could impact PANW's business model or create compliance challenges.</li>
+<li><strong>Cybersecurity threats:</strong> The company faces ongoing risks from emerging cyber threats, which could negatively impact its reputation and customer confidence.</li>
+</ol>
+
+<p><strong>INVESTMENT THESIS:</strong></p>
+<p>While PANW appears overvalued based on the P/E ratio, its exceptional growth prospects, market-leading position, and strong cash flow generation make it an attractive investment opportunity. However, investors should be aware of the competitive landscape, regulatory risks, and potential disruptions from emerging technologies. As a long-term investor, I would recommend a "hold" rating with a higher weightage to PANW's stock in a diversified portfolio, subject to ongoing monitoring of its fundamentals and market conditions.</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="disclaimer animate-in delay-4">
+            <strong>Important Disclaimer</strong>
+            This analysis is generated by AI agents for educational purposes only. It should NOT be considered
+            financial advice. Always conduct your own research and consult with a qualified financial advisor
+            before making any investment decisions.
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            Generated on February 28, 2026 at 09:09 AM
+        </div>
+    </div>
+</body>
+</html>

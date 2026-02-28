@@ -3,7 +3,7 @@ Configuration file for Stock Investment Planner
 """
 
 # Ollama Configuration
-OLLAMA_MODEL = "deepseek-r1:8b"  # Change to "llama3.1:8b" if preferred
+OLLAMA_MODEL = "llama3.1:8b"  # Fast instruction-following model
 OLLAMA_BASE_URL = "http://localhost:11434"
 
 # Stock Configuration
