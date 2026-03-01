@@ -863,15 +863,15 @@
         <!-- Stats Summary -->
         <div class="stats-row animate-in delay-1">
             <div class="stat-card">
-                <div class="stat-value" style="color: var(--success);">8</div>
+                <div class="stat-value" style="color: var(--success);">3</div>
                 <div class="stat-label">Buy Signals</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value" style="color: var(--warning);">6</div>
+                <div class="stat-value" style="color: var(--warning);">13</div>
                 <div class="stat-label">Hold Signals</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value" style="color: var(--danger);">4</div>
+                <div class="stat-value" style="color: var(--danger);">2</div>
                 <div class="stat-label">Sell Signals</div>
             </div>
             <div class="stat-card">
@@ -890,9 +890,9 @@
             </div>
             <div class="filter-buttons">
                 <button class="filter-btn active" data-filter="all" onclick="setFilter('all', this)">All (18)</button>
-                <button class="filter-btn" data-filter="buy" onclick="setFilter('buy', this)">Buy (8)</button>
-                <button class="filter-btn" data-filter="hold" onclick="setFilter('hold', this)">Hold (6)</button>
-                <button class="filter-btn" data-filter="sell" onclick="setFilter('sell', this)">Sell (4)</button>
+                <button class="filter-btn" data-filter="buy" onclick="setFilter('buy', this)">Buy (3)</button>
+                <button class="filter-btn" data-filter="hold" onclick="setFilter('hold', this)">Hold (13)</button>
+                <button class="filter-btn" data-filter="sell" onclick="setFilter('sell', this)">Sell (2)</button>
             </div>
         </div>
 
@@ -916,7 +916,7 @@
                 </thead>
                 <tbody id="stockTableBody">
 
-                    <tr data-rec="buy" data-symbol="GOOGL" data-company="Alphabet Inc." onclick="window.location='googl.html'">
+                    <tr data-rec="hold" data-symbol="GOOGL" data-company="Alphabet Inc." onclick="window.location='googl.html'">
                         <td class="col-stock">
                             <div class="cell-stock">
                                 <div>
@@ -938,8 +938,8 @@
             <path d="M4.0,7.8 L9.9,4.0 L15.8,6.7 L21.7,11.2 L27.6,12.4 L33.5,18.0 L39.4,17.0 L45.3,20.9 L51.2,26.0 L57.1,27.3 L62.9,29.5 L68.8,32.0 L74.7,31.1 L80.6,31.4 L86.5,23.3 L92.4,25.6 L98.3,26.0 L104.2,24.7 L110.1,28.4 L116.0,25.5" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             <circle cx="116.0" cy="25.5" r="3" fill="#ef4444"/>
         </svg></td>
-                        <td class="col-prediction" data-value="-0.13">
-                            <div class="cell-prediction">$311.35</div>
+                        <td class="col-prediction" data-value="-0.14">
+                            <div class="cell-prediction">$311.31</div>
                             <div class="pred-arrow down">
                                 <span class="arrow">▼</span>
                                 <span class="cell-change negative" style="font-size: 0.8rem;">-0.1%</span>
@@ -947,9 +947,9 @@
                         </td>
                         <td class="col-mcap cell-mcap" data-value="3771360870400">$3.77T</td>
                         <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-technical"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-fundamental"><span class="mini-badge bearish">Overvalued</span></td>
-                        <td class="col-rec" data-value="buy"><span class="rec-pill buy">BUY</span></td>
+                        <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
+                        <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
+                        <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="googl.html" class="view-link" title="View Details">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -981,17 +981,17 @@
             <path d="M4.0,4.0 L9.9,8.3 L15.8,15.9 L21.7,14.0 L27.6,26.8 L33.5,22.2 L39.4,14.4 L45.3,14.6 L51.2,20.1 L57.1,21.7 L62.9,22.0 L68.8,24.8 L74.7,23.1 L80.6,23.3 L86.5,24.0 L92.4,32.0 L98.3,29.2 L104.2,21.9 L110.1,21.2 L116.0,26.8" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             <circle cx="116.0" cy="26.8" r="3" fill="#ef4444"/>
         </svg></td>
-                        <td class="col-prediction" data-value="-0.37">
-                            <div class="cell-prediction">$391.28</div>
+                        <td class="col-prediction" data-value="-0.42">
+                            <div class="cell-prediction">$391.10</div>
                             <div class="pred-arrow down">
                                 <span class="arrow">▼</span>
                                 <span class="cell-change negative" style="font-size: 0.8rem;">-0.4%</span>
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="2918992052224">$2.92T</td>
-                        <td class="col-sentiment"><span class="mini-badge bearish">Bearish</span></td>
+                        <td class="col-sentiment"><span class="mini-badge bearish">Neutral/Bearish (leaning towards Bearish)</span></td>
                         <td class="col-technical"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
+                        <td class="col-fundamental"><span class="mini-badge bullish">Undervalued</span></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="msft.html" class="view-link" title="View Details">
@@ -1002,7 +1002,7 @@
                         </td>
                     </tr>
 
-                    <tr data-rec="hold" data-symbol="AAPL" data-company="Apple Inc." onclick="window.location='aapl.html'">
+                    <tr data-rec="buy" data-symbol="AAPL" data-company="Apple Inc." onclick="window.location='aapl.html'">
                         <td class="col-stock">
                             <div class="cell-stock">
                                 <div>
@@ -1032,10 +1032,10 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="3882897899520">$3.88T</td>
-                        <td class="col-sentiment"><span class="mini-badge neutral">Neutral</span></td>
+                        <td class="col-sentiment"><span class="mini-badge bullish">Neutral/Bullish</span></td>
                         <td class="col-technical"><span class="mini-badge bullish">Bullish</span></td>
                         <td class="col-fundamental"><span class="mini-badge bearish">Overvalued</span></td>
-                        <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
+                        <td class="col-rec" data-value="buy"><span class="rec-pill buy">BUY</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="aapl.html" class="view-link" title="View Details">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1045,7 +1045,7 @@
                         </td>
                     </tr>
 
-                    <tr data-rec="buy" data-symbol="AMZN" data-company="Amazon.com Inc." onclick="window.location='amzn.html'">
+                    <tr data-rec="hold" data-symbol="AMZN" data-company="Amazon.com Inc." onclick="window.location='amzn.html'">
                         <td class="col-stock">
                             <div class="cell-stock">
                                 <div>
@@ -1077,8 +1077,8 @@
                         <td class="col-mcap cell-mcap" data-value="2254333280256">$2.25T</td>
                         <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
                         <td class="col-technical"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-fundamental"><span class="mini-badge bearish">Overvalued</span></td>
-                        <td class="col-rec" data-value="buy"><span class="rec-pill buy">BUY</span></td>
+                        <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
+                        <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="amzn.html" class="view-link" title="View Details">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1088,7 +1088,7 @@
                         </td>
                     </tr>
 
-                    <tr data-rec="sell" data-symbol="NVDA" data-company="NVIDIA Corporation" onclick="window.location='nvda.html'">
+                    <tr data-rec="hold" data-symbol="NVDA" data-company="NVIDIA Corporation" onclick="window.location='nvda.html'">
                         <td class="col-stock">
                             <div class="cell-stock">
                                 <div>
@@ -1110,18 +1110,18 @@
             <path d="M4.0,9.2 L9.9,15.8 L15.8,22.0 L21.7,29.3 L27.6,32.0 L33.5,16.0 L39.4,10.5 L45.3,12.3 L51.2,10.5 L57.1,14.2 L62.9,19.1 L68.8,16.5 L74.7,13.0 L80.6,13.1 L86.5,10.8 L92.4,8.7 L98.3,7.2 L104.2,4.0 L110.1,16.6 L116.0,25.7" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             <circle cx="116.0" cy="25.7" r="3" fill="#ef4444"/>
         </svg></td>
-                        <td class="col-prediction" data-value="2.43">
-                            <div class="cell-prediction">$181.49</div>
+                        <td class="col-prediction" data-value="2.44">
+                            <div class="cell-prediction">$181.51</div>
                             <div class="pred-arrow up">
                                 <span class="arrow">▲</span>
                                 <span class="cell-change positive" style="font-size: 0.8rem;">+2.4%</span>
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="4306603081728">$4.31T</td>
-                        <td class="col-sentiment"><span class="mini-badge bearish">Bearish</span></td>
-                        <td class="col-technical"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-fundamental"><span class="mini-badge bearish">Overvalued</span></td>
-                        <td class="col-rec" data-value="sell"><span class="rec-pill sell">SELL</span></td>
+                        <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
+                        <td class="col-technical"><span class="mini-badge bearish">Bearish</span></td>
+                        <td class="col-fundamental"><span class="mini-badge bullish">Undervalued</span></td>
+                        <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="nvda.html" class="view-link" title="View Details">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1161,7 +1161,7 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="1639607173120">$1.64T</td>
-                        <td class="col-sentiment"><span class="mini-badge neutral">Neutral</span></td>
+                        <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
                         <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
                         <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
@@ -1174,7 +1174,7 @@
                         </td>
                     </tr>
 
-                    <tr data-rec="sell" data-symbol="TSLA" data-company="Tesla Inc." onclick="window.location='tsla.html'">
+                    <tr data-rec="hold" data-symbol="TSLA" data-company="Tesla Inc." onclick="window.location='tsla.html'">
                         <td class="col-stock">
                             <div class="cell-stock">
                                 <div>
@@ -1204,10 +1204,10 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="1510391414784">$1.51T</td>
-                        <td class="col-sentiment"><span class="mini-badge bearish">Bearish</span></td>
-                        <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
-                        <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
-                        <td class="col-rec" data-value="sell"><span class="rec-pill sell">SELL</span></td>
+                        <td class="col-sentiment"><span class="mini-badge neutral">Neutral</span></td>
+                        <td class="col-technical"><span class="mini-badge bullish">Bullish</span></td>
+                        <td class="col-fundamental"><span class="mini-badge bearish">Overvalued</span></td>
+                        <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="tsla.html" class="view-link" title="View Details">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1217,7 +1217,7 @@
                         </td>
                     </tr>
 
-                    <tr data-rec="buy" data-symbol="PLTR" data-company="Palantir Technologies Inc." onclick="window.location='pltr.html'">
+                    <tr data-rec="hold" data-symbol="PLTR" data-company="Palantir Technologies Inc." onclick="window.location='pltr.html'">
                         <td class="col-stock">
                             <div class="cell-stock">
                                 <div>
@@ -1250,7 +1250,7 @@
                         <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
                         <td class="col-technical"><span class="mini-badge bullish">Bullish</span></td>
                         <td class="col-fundamental"><span class="mini-badge bearish">Overvalued</span></td>
-                        <td class="col-rec" data-value="buy"><span class="rec-pill buy">BUY</span></td>
+                        <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="pltr.html" class="view-link" title="View Details">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1303,7 +1303,7 @@
                         </td>
                     </tr>
 
-                    <tr data-rec="buy" data-symbol="AVGO" data-company="Broadcom Inc." onclick="window.location='avgo.html'">
+                    <tr data-rec="hold" data-symbol="AVGO" data-company="Broadcom Inc." onclick="window.location='avgo.html'">
                         <td class="col-stock">
                             <div class="cell-stock">
                                 <div>
@@ -1325,18 +1325,18 @@
             <path d="M4.0,13.9 L9.9,14.0 L15.8,22.4 L21.7,32.0 L27.6,30.1 L33.5,12.6 L39.4,4.0 L45.3,6.7 L51.2,4.9 L57.1,14.0 L62.9,18.6 L68.8,12.9 L74.7,12.1 L80.6,11.8 L86.5,12.8 L92.4,14.6 L98.3,18.4 L104.2,13.1 L110.1,21.4 L116.0,23.0" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             <circle cx="116.0" cy="23.0" r="3" fill="#ef4444"/>
         </svg></td>
-                        <td class="col-prediction" data-value="0.74">
-                            <div class="cell-prediction">$321.92</div>
+                        <td class="col-prediction" data-value="0.57">
+                            <div class="cell-prediction">$321.39</div>
                             <div class="pred-arrow up">
                                 <span class="arrow">▲</span>
-                                <span class="cell-change positive" style="font-size: 0.8rem;">+0.7%</span>
+                                <span class="cell-change positive" style="font-size: 0.8rem;">+0.6%</span>
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="1515073961984">$1.52T</td>
-                        <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-technical"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-fundamental"><span class="mini-badge bearish">Overvalued</span></td>
-                        <td class="col-rec" data-value="buy"><span class="rec-pill buy">BUY</span></td>
+                        <td class="col-sentiment"><span class="mini-badge neutral">Neutral</span></td>
+                        <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
+                        <td class="col-fundamental"><span class="mini-badge bullish">Undervalued</span></td>
+                        <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="avgo.html" class="view-link" title="View Details">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1346,7 +1346,7 @@
                         </td>
                     </tr>
 
-                    <tr data-rec="buy" data-symbol="CRM" data-company="Salesforce Inc." onclick="window.location='crm.html'">
+                    <tr data-rec="hold" data-symbol="CRM" data-company="Salesforce Inc." onclick="window.location='crm.html'">
                         <td class="col-stock">
                             <div class="cell-stock">
                                 <div>
@@ -1378,8 +1378,8 @@
                         <td class="col-mcap cell-mcap" data-value="185440075776">$185.4B</td>
                         <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
                         <td class="col-technical"><span class="mini-badge bearish">Bearish</span></td>
-                        <td class="col-fundamental"><span class="mini-badge bullish">Undervalued</span></td>
-                        <td class="col-rec" data-value="buy"><span class="rec-pill buy">BUY</span></td>
+                        <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
+                        <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="crm.html" class="view-link" title="View Details">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1389,7 +1389,7 @@
                         </td>
                     </tr>
 
-                    <tr data-rec="buy" data-symbol="AMD" data-company="Advanced Micro Devices Inc." onclick="window.location='amd.html'">
+                    <tr data-rec="hold" data-symbol="AMD" data-company="Advanced Micro Devices Inc." onclick="window.location='amd.html'">
                         <td class="col-stock">
                             <div class="cell-stock">
                                 <div>
@@ -1421,8 +1421,8 @@
                         <td class="col-mcap cell-mcap" data-value="326424559616">$326.4B</td>
                         <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
                         <td class="col-technical"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
-                        <td class="col-rec" data-value="buy"><span class="rec-pill buy">BUY</span></td>
+                        <td class="col-fundamental"><span class="mini-badge bullish">Undervalued</span></td>
+                        <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="amd.html" class="view-link" title="View Details">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1432,7 +1432,7 @@
                         </td>
                     </tr>
 
-                    <tr data-rec="hold" data-symbol="NFLX" data-company="Netflix Inc." onclick="window.location='nflx.html'">
+                    <tr data-rec="buy" data-symbol="NFLX" data-company="Netflix Inc." onclick="window.location='nflx.html'">
                         <td class="col-stock">
                             <div class="cell-stock">
                                 <div>
@@ -1463,9 +1463,9 @@
                         </td>
                         <td class="col-mcap cell-mcap" data-value="408239439872">$408.2B</td>
                         <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
-                        <td class="col-fundamental"><span class="mini-badge bearish">Overvalued</span></td>
-                        <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
+                        <td class="col-technical"><span class="mini-badge bearish">Bearish</span></td>
+                        <td class="col-fundamental"><span class="mini-badge bullish">Undervalued</span></td>
+                        <td class="col-rec" data-value="buy"><span class="rec-pill buy">BUY</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="nflx.html" class="view-link" title="View Details">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1505,9 +1505,9 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="47419289600">$47.4B</td>
-                        <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
-                        <td class="col-fundamental"><span class="mini-badge bearish">Overvalued</span></td>
+                        <td class="col-sentiment"><span class="mini-badge bearish">Bearish</span></td>
+                        <td class="col-technical"><span class="mini-badge bullish">Bullish</span></td>
+                        <td class="col-fundamental"><span class="mini-badge bullish">Undervalued</span></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="coin.html" class="view-link" title="View Details">
@@ -1540,8 +1540,8 @@
             <path d="M4.0,22.9 L9.9,21.0 L15.8,32.0 L21.7,4.0 L27.6,27.3 L33.5,17.2 L39.4,20.9 L45.3,26.2 L51.2,28.8 L57.1,22.6 L62.9,21.7 L68.8,22.7 L74.7,26.9 L80.6,26.2 L86.5,29.9 L92.4,16.6 L98.3,21.1 L104.2,24.7 L110.1,26.5 L116.0,18.4" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             <circle cx="116.0" cy="18.4" r="3" fill="#10b981"/>
         </svg></td>
-                        <td class="col-prediction" data-value="-1.67">
-                            <div class="cell-prediction">$1034.37</div>
+                        <td class="col-prediction" data-value="-1.70">
+                            <div class="cell-prediction">$1034.10</div>
                             <div class="pred-arrow down">
                                 <span class="arrow">▼</span>
                                 <span class="cell-change negative" style="font-size: 0.8rem;">-1.7%</span>
@@ -1561,7 +1561,7 @@
                         </td>
                     </tr>
 
-                    <tr data-rec="buy" data-symbol="UBER" data-company="Uber Technologies Inc." onclick="window.location='uber.html'">
+                    <tr data-rec="hold" data-symbol="UBER" data-company="Uber Technologies Inc." onclick="window.location='uber.html'">
                         <td class="col-stock">
                             <div class="cell-stock">
                                 <div>
@@ -1592,9 +1592,9 @@
                         </td>
                         <td class="col-mcap cell-mcap" data-value="156709961728">$156.7B</td>
                         <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-technical"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-fundamental"><span class="mini-badge bearish">Overvalued</span></td>
-                        <td class="col-rec" data-value="buy"><span class="rec-pill buy">BUY</span></td>
+                        <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
+                        <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
+                        <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="uber.html" class="view-link" title="View Details">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1635,8 +1635,8 @@
                         </td>
                         <td class="col-mcap cell-mcap" data-value="121518718976">$121.5B</td>
                         <td class="col-sentiment"><span class="mini-badge bearish">Bearish</span></td>
-                        <td class="col-technical"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-fundamental"><span class="mini-badge bearish">Overvalued</span></td>
+                        <td class="col-technical"><span class="mini-badge bearish">Bearish</span></td>
+                        <td class="col-fundamental"><span class="mini-badge bullish">Undervalued</span></td>
                         <td class="col-rec" data-value="sell"><span class="rec-pill sell">SELL</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="panw.html" class="view-link" title="View Details">
@@ -1678,7 +1678,7 @@
                         </td>
                         <td class="col-mcap cell-mcap" data-value="157562748928">$157.6B</td>
                         <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
+                        <td class="col-technical"><span class="mini-badge bullish">Bullish</span></td>
                         <td class="col-fundamental"><span class="mini-badge bearish">Overvalued</span></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
