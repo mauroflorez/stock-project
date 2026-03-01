@@ -10,25 +10,23 @@ class InvestmentSynthesizerAgent:
     Agent that synthesizes insights from all other agents and provides final recommendation
     """
     
-    SYSTEM_PROMPT = """You are a decisive Investment Strategist who synthesizes multiple expert opinions to provide clear, actionable investment recommendations.
+    SYSTEM_PROMPT = """You are a decisive Investment Strategist who synthesizes analyses from 6 different AI agents to provide clear, actionable investment recommendations.
 
 Your role:
-- Review analyses from News Analyst, Statistical Expert, and Financial Expert
-- Identify agreements and conflicts between analyses
-- Weigh different factors (short-term vs long-term, technical vs fundamental)
-- Provide a clear BUY/HOLD/SELL recommendation
-- Assign a confidence level to your recommendation
-- Explain the key reasoning behind your decision
+- Review analyses from: News Analyst, Statistical Expert, Financial Expert, Price Forecaster, Momentum Analyst, and Sector Analyst.
+- Also factor in the comprehensive Quorum Scoring Result.
+- Identify agreements and conflicts between all agents.
+- Weigh different factors (short-term vs long-term, technical vs fundamental).
+- Provide a clear BUY/HOLD/SELL recommendation.
+- Assign a confidence level to your recommendation.
+- Explain the key reasoning behind your decision.
 
 IMPORTANT GUIDELINES FOR YOUR RECOMMENDATION:
 - Be DECISIVE. Do NOT default to HOLD. HOLD should only be used when the signals are genuinely mixed and contradictory.
-- If 2 out of 3 experts are bullish/positive → lean towards BUY
-- If 2 out of 3 experts are bearish/negative → lean towards SELL
-- Only recommend HOLD when there is a true 50/50 split with no clear direction
-- Consider the STRENGTH of each signal, not just the direction
-- A stock with strong fundamentals but slightly overvalued can still be a BUY if momentum is positive
-
-Remember: This is for educational purposes - always include appropriate disclaimers.
+- Use the Quorum Scoring Result as a primary guide, but justify it with the analysis details.
+- Consider the STRENGTH of each signal, not just the direction.
+- A stock with strong fundamentals but slightly overvalued can still be a BUY if momentum and technicals are positive.
+- Do NOT include any 'Disclaimer' section at the end of your response. The platform handles disclaimers automatically.
 """
     
     def __init__(self):
@@ -56,12 +54,12 @@ Remember: This is for educational purposes - always include appropriate disclaim
         prompt = f"""
 You are evaluating whether to BUY, HOLD, or SELL {stock_symbol}.
 
-Here are the expert analyses:
+Here are the expert analyses from our 6-agent system:
 
 === NEWS ANALYST ===
 {news_analysis}
 
-=== STATISTICAL EXPERT ===
+=== STATISTICAL EXPERT \u0026 ADDITIONAL AGENTS (Forecaster, Momentum, Sector, Quorum) ===
 {statistical_analysis}
 
 === FINANCIAL EXPERT ===
@@ -69,39 +67,29 @@ Here are the expert analyses:
 
 ======================
 
-STEP 1: Score each expert's signal:
-- News Analyst: Is the sentiment Bullish (+1), Neutral (0), or Bearish (-1)?
-- Statistical Expert: Is the trend Bullish (+1), Neutral (0), or Bearish (-1)?
-- Financial Expert: Is the valuation Undervalued (+1), Fair (0), or Overvalued (-1)?
+STEP 1: Review the signals from all 6 agents (News, Statistical, Financial, Forecaster, Momentum, Sector) and the overall Quorum Scoring Result.
+STEP 2: Synthesize their findings into a cohesive analysis.
 
-STEP 2: Add up the scores. 
-- Total >= +1 → Recommend BUY
-- Total <= -1 → Recommend SELL
-- Total = 0 → Recommend HOLD (only if signals truly conflict)
-
-Now provide your synthesis in the following format:
+Now provide your synthesis in the following format (DO NOT include a disclaimer at the end):
 
 RECOMMENDATION: [BUY / HOLD / SELL]
 CONFIDENCE LEVEL: [High / Medium / Low]
 TIME HORIZON: [Short-term (1-3 months) / Medium-term (3-12 months) / Long-term (1+ years)]
 
 KEY SUPPORTING FACTORS:
-- [List 3-5 main reasons supporting your recommendation]
+- [List 3-5 main reasons supporting your recommendation, drawing from the 6 agents]
 
 KEY RISK FACTORS:
 - [List 3-5 main risks or concerns]
 
 CONSENSUS ANALYSIS:
-[Where do the experts agree? Where do they disagree?]
+[Where do the 6 agents agree? Where do they disagree? Mention the Quorum Verdict.]
 
 INVESTMENT STRATEGY:
 [Specific advice - e.g., entry points, position sizing, stop-loss levels]
 
 SUMMARY:
 [2-3 sentence executive summary of your recommendation]
-
-DISCLAIMER:
-This analysis is for educational purposes only and should not be considered financial advice. Always conduct your own research and consult with a qualified financial advisor before making investment decisions.
 """
         
         print(f"🎯 {self.name} is synthesizing all analyses...")
