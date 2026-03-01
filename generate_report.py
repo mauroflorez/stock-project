@@ -1707,10 +1707,7 @@ class HTMLReportGenerator:
 
         /* Cell styles */
         .cell-stock {{
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            min-width: 180px;
+            min-width: 60px;
         }}
 
         .stock-symbol {{
@@ -1741,6 +1738,20 @@ class HTMLReportGenerator:
 
         .cell-change.positive {{ color: var(--success); }}
         .cell-change.negative {{ color: var(--danger); }}
+
+        /* Price change sub-row */
+        .price-change {{
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }}
+        .price-change .arrow {{
+            display: inline-block;
+            font-size: 0.65rem;
+            line-height: 1;
+        }}
+        .price-change.up .arrow {{ color: var(--success); }}
+        .price-change.down .arrow {{ color: var(--danger); }}
 
         .cell-sparkline {{
             line-height: 0;
@@ -1892,10 +1903,38 @@ class HTMLReportGenerator:
             display: block;
         }}
 
+        /* Table wrapper for mobile scroll */
+        .table-scroll-wrapper {{
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            position: relative;
+        }}
+        .table-scroll-wrapper::after {{
+            content: 'Scroll →';
+            display: none;
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            font-size: 0.7rem;
+            color: var(--primary-light);
+            background: rgba(99, 102, 241, 0.15);
+            padding: 4px 10px;
+            border-radius: 8px;
+            pointer-events: none;
+            animation: fadeInOut 3s ease-in-out infinite;
+        }}
+        @keyframes fadeInOut {{
+            0%, 100% {{ opacity: 0; }}
+            50% {{ opacity: 1; }}
+        }}
+
         /* Responsive */
         @media (max-width: 1024px) {{
             .stock-table {{
-                min-width: 900px;
+                min-width: 700px;
+            }}
+            .table-scroll-wrapper::after {{
+                display: block;
             }}
         }}
 
@@ -1905,11 +1944,11 @@ class HTMLReportGenerator:
             .controls {{ flex-direction: column; align-items: stretch; }}
             .search-box {{ max-width: none; }}
             .stock-table {{
-                min-width: 800px;
+                min-width: 620px;
             }}
             .stock-table td, .stock-table thead th {{
-                padding: 10px 10px;
-                font-size: 0.8rem;
+                padding: 8px 6px;
+                font-size: 0.78rem;
             }}
         }}
     </style>
@@ -1961,17 +2000,17 @@ class HTMLReportGenerator:
 
         <!-- Stock Table -->
         <div class="table-card animate-in delay-2">
+          <div class="table-scroll-wrapper">
             <table class="stock-table" id="stockTable">
                 <thead>
                     <tr>
                         <th onclick="sortTable(0, 'text')" class="col-stock">Stock <span class="sort-icon">▲▼</span></th>
                         <th onclick="sortTable(1, 'number')" class="col-price">Price <span class="sort-icon">▲▼</span></th>
-                        <th onclick="sortTable(2, 'number')" class="col-change">Change <span class="sort-icon">▲▼</span></th>
                         <th class="col-sparkline">20D Trend</th>
-                        <th onclick="sortTable(4, 'number')" class="col-prediction">10D Target <span class="sort-icon">▲▼</span></th>
-                        <th onclick="sortTable(5, 'number')" class="col-mcap">Mkt Cap <span class="sort-icon">▲▼</span></th>
+                        <th onclick="sortTable(3, 'number')" class="col-prediction">10D Target <span class="sort-icon">▲▼</span></th>
+                        <th onclick="sortTable(4, 'number')" class="col-mcap">Mkt Cap <span class="sort-icon">▲▼</span></th>
                         <th class="col-agents">Agents</th>
-                        <th onclick="sortTable(7, 'rec')" class="col-rec">Signal <span class="sort-icon">▲▼</span></th>
+                        <th onclick="sortTable(6, 'rec')" class="col-rec">Signal <span class="sort-icon">▲▼</span></th>
                         <th class="col-action"></th>
                     </tr>
                 </thead>
@@ -1989,25 +2028,26 @@ class HTMLReportGenerator:
             pred_symbol = "+" if report['pred_change'] >= 0 else ""
 
             # Arrow helper for agent signals
-            def _arrow(signal):
+            def _arrow(signal, label):
                 s = signal.upper() if signal else ''
                 if s in ('BULLISH', 'UNDERVALUED', 'UP'):
-                    return '<span class="agent-arrow bullish" title="' + signal + '">▲</span>'
+                    return f'<span class="agent-arrow bullish" title="{label}: {signal}">\u25b2</span>'
                 elif s in ('BEARISH', 'OVERVALUED', 'DOWN'):
-                    return '<span class="agent-arrow bearish" title="' + signal + '">▼</span>'
-                return '<span class="agent-arrow neutral" title="' + signal + '">●</span>'
+                    return f'<span class="agent-arrow bearish" title="{label}: {signal}">\u25bc</span>'
+                return f'<span class="agent-arrow neutral" title="{label}: {signal}">\u25cf</span>'
 
             agents_html = (
                 '<div class="agents-row">'
-                + _arrow(report['news_sentiment'])
-                + _arrow(report['stat_trend'])
-                + _arrow(report['fin_outlook'])
-                + _arrow(report['momentum_signal'])
-                + _arrow(report['sector_signal'])
-                + _arrow(report['forecast_dir'])
+                + _arrow(report['news_sentiment'], 'News')
+                + _arrow(report['stat_trend'], 'Technical')
+                + _arrow(report['fin_outlook'], 'Fundamental')
+                + _arrow(report['momentum_signal'], 'Momentum')
+                + _arrow(report['sector_signal'], 'Sector')
+                + _arrow(report['forecast_dir'], 'Forecast')
                 + '</div>'
                 + '<div class="agents-labels">'
-                + '<span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span>'
+                + '<span title="News">N</span><span title="Technical">T</span><span title="Fundamental">F</span>'
+                + '<span title="Momentum">M</span><span title="Sector">S</span><span title="Forecast">P</span>'
                 + '</div>'
             )
 
@@ -2021,25 +2061,24 @@ class HTMLReportGenerator:
                 f"Forecast: {report['forecast_dir']}",
                 f"Confidence: {report['conf_score']:.0%}"
             ]
-            tooltip_text = '&#10;'.join(tooltip_lines)
+            tooltip_text = '\n'.join(tooltip_lines)
 
-            html += f"""
-                    <tr data-rec="{rec_class}" data-symbol="{report['symbol']}" data-company="{report['company']}" onclick="window.location='{report['file']}'">
-                        <td class="col-stock">
-                            <div class="cell-stock">
-                                <div>
-                                    <div class="stock-symbol">{report['symbol']}</div>
-                                    <div class="stock-company">{report['company']}</div>
-                                </div>
+            html += f"""\n                    <tr data-rec="{rec_class}" data-symbol="{report['symbol']}" data-company="{report['company']}" onclick="window.location='{report['file']}'">
+                        <td class="col-stock" title="{report['company']}">
+                            <div class="stock-symbol">{report['symbol']}</div>
+                        </td>
+                        <td class="col-price" data-value="{report['price']:.2f}">
+                            <div class="cell-price">${report['price']:.2f}</div>
+                            <div class="price-change {'up' if report['day_change'] >= 0 else 'down'}">
+                                <span class="arrow">{'\u25b2' if report['day_change'] >= 0 else '\u25bc'}</span>
+                                <span class="cell-change {change_class}" style="font-size: 0.8rem;">{change_symbol}{report['day_change_pct']:.2f}%</span>
                             </div>
                         </td>
-                        <td class="col-price cell-price" data-value="{report['price']:.2f}">${report['price']:.2f}</td>
-                        <td class="col-change cell-change {change_class}" data-value="{report['day_change_pct']:.2f}">{change_symbol}{report['day_change_pct']:.2f}%</td>
                         <td class="col-sparkline cell-sparkline">{report['sparkline']}</td>
                         <td class="col-prediction" data-value="{report['pred_change']:.2f}">
                             <div class="cell-prediction">${report['prediction']:.2f}</div>
                             <div class="pred-arrow {'up' if report['pred_change'] >= 0 else 'down'}">
-                                <span class="arrow">{'▲' if report['pred_change'] >= 0 else '▼'}</span>
+                                <span class="arrow">{'\u25b2' if report['pred_change'] >= 0 else '\u25bc'}</span>
                                 <span class="cell-change {pred_change_class}" style="font-size: 0.8rem;">{pred_symbol}{report['pred_change']:.1f}%</span>
                             </div>
                         </td>
@@ -2062,6 +2101,7 @@ class HTMLReportGenerator:
             <div class="no-results" id="noResults">
                 <p>No stocks match your search.</p>
             </div>
+          </div>
         </div>
 
         <!-- Legend -->

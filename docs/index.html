@@ -692,10 +692,7 @@
 
         /* Cell styles */
         .cell-stock {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            min-width: 180px;
+            min-width: 60px;
         }
 
         .stock-symbol {
@@ -726,6 +723,20 @@
 
         .cell-change.positive { color: var(--success); }
         .cell-change.negative { color: var(--danger); }
+
+        /* Price change sub-row */
+        .price-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .price-change .arrow {
+            display: inline-block;
+            font-size: 0.65rem;
+            line-height: 1;
+        }
+        .price-change.up .arrow { color: var(--success); }
+        .price-change.down .arrow { color: var(--danger); }
 
         .cell-sparkline {
             line-height: 0;
@@ -877,10 +888,38 @@
             display: block;
         }
 
+        /* Table wrapper for mobile scroll */
+        .table-scroll-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            position: relative;
+        }
+        .table-scroll-wrapper::after {
+            content: 'Scroll →';
+            display: none;
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            font-size: 0.7rem;
+            color: var(--primary-light);
+            background: rgba(99, 102, 241, 0.15);
+            padding: 4px 10px;
+            border-radius: 8px;
+            pointer-events: none;
+            animation: fadeInOut 3s ease-in-out infinite;
+        }
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
         /* Responsive */
         @media (max-width: 1024px) {
             .stock-table {
-                min-width: 900px;
+                min-width: 700px;
+            }
+            .table-scroll-wrapper::after {
+                display: block;
             }
         }
 
@@ -890,11 +929,11 @@
             .controls { flex-direction: column; align-items: stretch; }
             .search-box { max-width: none; }
             .stock-table {
-                min-width: 800px;
+                min-width: 620px;
             }
             .stock-table td, .stock-table thead th {
-                padding: 10px 10px;
-                font-size: 0.8rem;
+                padding: 8px 6px;
+                font-size: 0.78rem;
             }
         }
     </style>
@@ -946,33 +985,33 @@
 
         <!-- Stock Table -->
         <div class="table-card animate-in delay-2">
+          <div class="table-scroll-wrapper">
             <table class="stock-table" id="stockTable">
                 <thead>
                     <tr>
                         <th onclick="sortTable(0, 'text')" class="col-stock">Stock <span class="sort-icon">▲▼</span></th>
                         <th onclick="sortTable(1, 'number')" class="col-price">Price <span class="sort-icon">▲▼</span></th>
-                        <th onclick="sortTable(2, 'number')" class="col-change">Change <span class="sort-icon">▲▼</span></th>
                         <th class="col-sparkline">20D Trend</th>
-                        <th onclick="sortTable(4, 'number')" class="col-prediction">10D Target <span class="sort-icon">▲▼</span></th>
-                        <th onclick="sortTable(5, 'number')" class="col-mcap">Mkt Cap <span class="sort-icon">▲▼</span></th>
+                        <th onclick="sortTable(3, 'number')" class="col-prediction">10D Target <span class="sort-icon">▲▼</span></th>
+                        <th onclick="sortTable(4, 'number')" class="col-mcap">Mkt Cap <span class="sort-icon">▲▼</span></th>
                         <th class="col-agents">Agents</th>
-                        <th onclick="sortTable(7, 'rec')" class="col-rec">Signal <span class="sort-icon">▲▼</span></th>
+                        <th onclick="sortTable(6, 'rec')" class="col-rec">Signal <span class="sort-icon">▲▼</span></th>
                         <th class="col-action"></th>
                     </tr>
                 </thead>
                 <tbody id="stockTableBody">
 
                     <tr data-rec="hold" data-symbol="GOOGL" data-company="Alphabet Inc." onclick="window.location='googl.html'">
-                        <td class="col-stock">
-                            <div class="cell-stock">
-                                <div>
-                                    <div class="stock-symbol">GOOGL</div>
-                                    <div class="stock-company">Alphabet Inc.</div>
-                                </div>
+                        <td class="col-stock" title="Alphabet Inc.">
+                            <div class="stock-symbol">GOOGL</div>
+                        </td>
+                        <td class="col-price" data-value="311.76">
+                            <div class="cell-price">$311.76</div>
+                            <div class="price-change up">
+                                <span class="arrow">▲</span>
+                                <span class="cell-change positive" style="font-size: 0.8rem;">+1.42%</span>
                             </div>
                         </td>
-                        <td class="col-price cell-price" data-value="311.76">$311.76</td>
-                        <td class="col-change cell-change positive" data-value="1.42">+1.42%</td>
                         <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
             <defs>
                 <linearGradient id="grad_5490" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -992,7 +1031,13 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="3771360870400">$3.77T</td>
-                        <td class="col-agents" title="News: Bullish&#10;Technical: Neutral&#10;Fundamental: Fair&#10;Momentum: BEARISH&#10;Sector: BEARISH&#10;Forecast: Flat&#10;Confidence: 50%"><div class="agents-row"><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow neutral" title="Neutral">●</span><span class="agent-arrow neutral" title="Fair">●</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow neutral" title="Flat">●</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
+                        <td class="col-agents" title="News: Bullish
+Technical: Neutral
+Fundamental: Fair
+Momentum: BEARISH
+Sector: BEARISH
+Forecast: Flat
+Confidence: 50%"><div class="agents-row"><span class="agent-arrow bullish" title="News: Bullish">▲</span><span class="agent-arrow neutral" title="Technical: Neutral">●</span><span class="agent-arrow neutral" title="Fundamental: Fair">●</span><span class="agent-arrow bearish" title="Momentum: BEARISH">▼</span><span class="agent-arrow bearish" title="Sector: BEARISH">▼</span><span class="agent-arrow neutral" title="Forecast: Flat">●</span></div><div class="agents-labels"><span title="News">N</span><span title="Technical">T</span><span title="Fundamental">F</span><span title="Momentum">M</span><span title="Sector">S</span><span title="Forecast">P</span></div></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="googl.html" class="view-link" title="View Details">
@@ -1004,16 +1049,16 @@
                     </tr>
 
                     <tr data-rec="hold" data-symbol="MSFT" data-company="Microsoft Corporation" onclick="window.location='msft.html'">
-                        <td class="col-stock">
-                            <div class="cell-stock">
-                                <div>
-                                    <div class="stock-symbol">MSFT</div>
-                                    <div class="stock-company">Microsoft Corporation</div>
-                                </div>
+                        <td class="col-stock" title="Microsoft Corporation">
+                            <div class="stock-symbol">MSFT</div>
+                        </td>
+                        <td class="col-price" data-value="392.74">
+                            <div class="cell-price">$392.74</div>
+                            <div class="price-change down">
+                                <span class="arrow">▼</span>
+                                <span class="cell-change negative" style="font-size: 0.8rem;">-2.24%</span>
                             </div>
                         </td>
-                        <td class="col-price cell-price" data-value="392.74">$392.74</td>
-                        <td class="col-change cell-change negative" data-value="-2.24">-2.24%</td>
                         <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
             <defs>
                 <linearGradient id="grad_4969" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -1033,7 +1078,13 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="2918992052224">$2.92T</td>
-                        <td class="col-agents" title="News: Neutral/Bearish (leaning towards Bearish)&#10;Technical: Bullish&#10;Fundamental: Undervalued&#10;Momentum: BEARISH&#10;Sector: BEARISH&#10;Forecast: Down&#10;Confidence: 46%"><div class="agents-row"><span class="agent-arrow neutral" title="Neutral/Bearish (leaning towards Bearish)">●</span><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow bullish" title="Undervalued">▲</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="Down">▼</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
+                        <td class="col-agents" title="News: Neutral/Bearish (leaning towards Bearish)
+Technical: Bullish
+Fundamental: Undervalued
+Momentum: BEARISH
+Sector: BEARISH
+Forecast: Down
+Confidence: 46%"><div class="agents-row"><span class="agent-arrow neutral" title="News: Neutral/Bearish (leaning towards Bearish)">●</span><span class="agent-arrow bullish" title="Technical: Bullish">▲</span><span class="agent-arrow bullish" title="Fundamental: Undervalued">▲</span><span class="agent-arrow bearish" title="Momentum: BEARISH">▼</span><span class="agent-arrow bearish" title="Sector: BEARISH">▼</span><span class="agent-arrow bearish" title="Forecast: Down">▼</span></div><div class="agents-labels"><span title="News">N</span><span title="Technical">T</span><span title="Fundamental">F</span><span title="Momentum">M</span><span title="Sector">S</span><span title="Forecast">P</span></div></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="msft.html" class="view-link" title="View Details">
@@ -1045,16 +1096,16 @@
                     </tr>
 
                     <tr data-rec="buy" data-symbol="AAPL" data-company="Apple Inc." onclick="window.location='aapl.html'">
-                        <td class="col-stock">
-                            <div class="cell-stock">
-                                <div>
-                                    <div class="stock-symbol">AAPL</div>
-                                    <div class="stock-company">Apple Inc.</div>
-                                </div>
+                        <td class="col-stock" title="Apple Inc.">
+                            <div class="stock-symbol">AAPL</div>
+                        </td>
+                        <td class="col-price" data-value="264.18">
+                            <div class="cell-price">$264.18</div>
+                            <div class="price-change down">
+                                <span class="arrow">▼</span>
+                                <span class="cell-change negative" style="font-size: 0.8rem;">-3.21%</span>
                             </div>
                         </td>
-                        <td class="col-price cell-price" data-value="264.18">$264.18</td>
-                        <td class="col-change cell-change negative" data-value="-3.21">-3.21%</td>
                         <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
             <defs>
                 <linearGradient id="grad_6738" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -1074,7 +1125,13 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="3882897899520">$3.88T</td>
-                        <td class="col-agents" title="News: Neutral/Bullish&#10;Technical: Bullish&#10;Fundamental: Overvalued&#10;Momentum: BULLISH&#10;Sector: NEUTRAL&#10;Forecast: Flat&#10;Confidence: 66%"><div class="agents-row"><span class="agent-arrow neutral" title="Neutral/Bullish">●</span><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow bearish" title="Overvalued">▼</span><span class="agent-arrow bullish" title="BULLISH">▲</span><span class="agent-arrow neutral" title="NEUTRAL">●</span><span class="agent-arrow neutral" title="Flat">●</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
+                        <td class="col-agents" title="News: Neutral/Bullish
+Technical: Bullish
+Fundamental: Overvalued
+Momentum: BULLISH
+Sector: NEUTRAL
+Forecast: Flat
+Confidence: 66%"><div class="agents-row"><span class="agent-arrow neutral" title="News: Neutral/Bullish">●</span><span class="agent-arrow bullish" title="Technical: Bullish">▲</span><span class="agent-arrow bearish" title="Fundamental: Overvalued">▼</span><span class="agent-arrow bullish" title="Momentum: BULLISH">▲</span><span class="agent-arrow neutral" title="Sector: NEUTRAL">●</span><span class="agent-arrow neutral" title="Forecast: Flat">●</span></div><div class="agents-labels"><span title="News">N</span><span title="Technical">T</span><span title="Fundamental">F</span><span title="Momentum">M</span><span title="Sector">S</span><span title="Forecast">P</span></div></td>
                         <td class="col-rec" data-value="buy"><span class="rec-pill buy">BUY</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="aapl.html" class="view-link" title="View Details">
@@ -1086,16 +1143,16 @@
                     </tr>
 
                     <tr data-rec="hold" data-symbol="AMZN" data-company="Amazon.com Inc." onclick="window.location='amzn.html'">
-                        <td class="col-stock">
-                            <div class="cell-stock">
-                                <div>
-                                    <div class="stock-symbol">AMZN</div>
-                                    <div class="stock-company">Amazon.com Inc.</div>
-                                </div>
+                        <td class="col-stock" title="Amazon.com Inc.">
+                            <div class="stock-symbol">AMZN</div>
+                        </td>
+                        <td class="col-price" data-value="210.00">
+                            <div class="cell-price">$210.00</div>
+                            <div class="price-change up">
+                                <span class="arrow">▲</span>
+                                <span class="cell-change positive" style="font-size: 0.8rem;">+1.00%</span>
                             </div>
                         </td>
-                        <td class="col-price cell-price" data-value="210.00">$210.00</td>
-                        <td class="col-change cell-change positive" data-value="1.00">+1.00%</td>
                         <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
             <defs>
                 <linearGradient id="grad_4611" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -1115,7 +1172,13 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="2254333280256">$2.25T</td>
-                        <td class="col-agents" title="News: Bullish&#10;Technical: Bullish&#10;Fundamental: Fair&#10;Momentum: BEARISH&#10;Sector: BEARISH&#10;Forecast: Down&#10;Confidence: 52%"><div class="agents-row"><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow neutral" title="Fair">●</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="Down">▼</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
+                        <td class="col-agents" title="News: Bullish
+Technical: Bullish
+Fundamental: Fair
+Momentum: BEARISH
+Sector: BEARISH
+Forecast: Down
+Confidence: 52%"><div class="agents-row"><span class="agent-arrow bullish" title="News: Bullish">▲</span><span class="agent-arrow bullish" title="Technical: Bullish">▲</span><span class="agent-arrow neutral" title="Fundamental: Fair">●</span><span class="agent-arrow bearish" title="Momentum: BEARISH">▼</span><span class="agent-arrow bearish" title="Sector: BEARISH">▼</span><span class="agent-arrow bearish" title="Forecast: Down">▼</span></div><div class="agents-labels"><span title="News">N</span><span title="Technical">T</span><span title="Fundamental">F</span><span title="Momentum">M</span><span title="Sector">S</span><span title="Forecast">P</span></div></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="amzn.html" class="view-link" title="View Details">
@@ -1127,16 +1190,16 @@
                     </tr>
 
                     <tr data-rec="hold" data-symbol="NVDA" data-company="NVIDIA Corporation" onclick="window.location='nvda.html'">
-                        <td class="col-stock">
-                            <div class="cell-stock">
-                                <div>
-                                    <div class="stock-symbol">NVDA</div>
-                                    <div class="stock-company">NVIDIA Corporation</div>
-                                </div>
+                        <td class="col-stock" title="NVIDIA Corporation">
+                            <div class="stock-symbol">NVDA</div>
+                        </td>
+                        <td class="col-price" data-value="177.19">
+                            <div class="cell-price">$177.19</div>
+                            <div class="price-change down">
+                                <span class="arrow">▼</span>
+                                <span class="cell-change negative" style="font-size: 0.8rem;">-4.16%</span>
                             </div>
                         </td>
-                        <td class="col-price cell-price" data-value="177.19">$177.19</td>
-                        <td class="col-change cell-change negative" data-value="-4.16">-4.16%</td>
                         <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
             <defs>
                 <linearGradient id="grad_1159" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -1156,7 +1219,13 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="4306603081728">$4.31T</td>
-                        <td class="col-agents" title="News: Bullish&#10;Technical: Bearish&#10;Fundamental: Undervalued&#10;Momentum: BEARISH&#10;Sector: BEARISH&#10;Forecast: Up&#10;Confidence: 54%"><div class="agents-row"><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow bearish" title="Bearish">▼</span><span class="agent-arrow bullish" title="Undervalued">▲</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bullish" title="Up">▲</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
+                        <td class="col-agents" title="News: Bullish
+Technical: Bearish
+Fundamental: Undervalued
+Momentum: BEARISH
+Sector: BEARISH
+Forecast: Up
+Confidence: 54%"><div class="agents-row"><span class="agent-arrow bullish" title="News: Bullish">▲</span><span class="agent-arrow bearish" title="Technical: Bearish">▼</span><span class="agent-arrow bullish" title="Fundamental: Undervalued">▲</span><span class="agent-arrow bearish" title="Momentum: BEARISH">▼</span><span class="agent-arrow bearish" title="Sector: BEARISH">▼</span><span class="agent-arrow bullish" title="Forecast: Up">▲</span></div><div class="agents-labels"><span title="News">N</span><span title="Technical">T</span><span title="Fundamental">F</span><span title="Momentum">M</span><span title="Sector">S</span><span title="Forecast">P</span></div></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="nvda.html" class="view-link" title="View Details">
@@ -1168,16 +1237,16 @@
                     </tr>
 
                     <tr data-rec="hold" data-symbol="META" data-company="Meta Platforms Inc." onclick="window.location='meta.html'">
-                        <td class="col-stock">
-                            <div class="cell-stock">
-                                <div>
-                                    <div class="stock-symbol">META</div>
-                                    <div class="stock-company">Meta Platforms Inc.</div>
-                                </div>
+                        <td class="col-stock" title="Meta Platforms Inc.">
+                            <div class="stock-symbol">META</div>
+                        </td>
+                        <td class="col-price" data-value="648.18">
+                            <div class="cell-price">$648.18</div>
+                            <div class="price-change down">
+                                <span class="arrow">▼</span>
+                                <span class="cell-change negative" style="font-size: 0.8rem;">-1.34%</span>
                             </div>
                         </td>
-                        <td class="col-price cell-price" data-value="648.18">$648.18</td>
-                        <td class="col-change cell-change negative" data-value="-1.34">-1.34%</td>
                         <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
             <defs>
                 <linearGradient id="grad_1406" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -1197,7 +1266,13 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="1639607173120">$1.64T</td>
-                        <td class="col-agents" title="News: Bullish&#10;Technical: Neutral&#10;Fundamental: Fair&#10;Momentum: BEARISH&#10;Sector: BEARISH&#10;Forecast: Down&#10;Confidence: 38%"><div class="agents-row"><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow neutral" title="Neutral">●</span><span class="agent-arrow neutral" title="Fair">●</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="Down">▼</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
+                        <td class="col-agents" title="News: Bullish
+Technical: Neutral
+Fundamental: Fair
+Momentum: BEARISH
+Sector: BEARISH
+Forecast: Down
+Confidence: 38%"><div class="agents-row"><span class="agent-arrow bullish" title="News: Bullish">▲</span><span class="agent-arrow neutral" title="Technical: Neutral">●</span><span class="agent-arrow neutral" title="Fundamental: Fair">●</span><span class="agent-arrow bearish" title="Momentum: BEARISH">▼</span><span class="agent-arrow bearish" title="Sector: BEARISH">▼</span><span class="agent-arrow bearish" title="Forecast: Down">▼</span></div><div class="agents-labels"><span title="News">N</span><span title="Technical">T</span><span title="Fundamental">F</span><span title="Momentum">M</span><span title="Sector">S</span><span title="Forecast">P</span></div></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="meta.html" class="view-link" title="View Details">
@@ -1209,16 +1284,16 @@
                     </tr>
 
                     <tr data-rec="hold" data-symbol="TSLA" data-company="Tesla Inc." onclick="window.location='tsla.html'">
-                        <td class="col-stock">
-                            <div class="cell-stock">
-                                <div>
-                                    <div class="stock-symbol">TSLA</div>
-                                    <div class="stock-company">Tesla Inc.</div>
-                                </div>
+                        <td class="col-stock" title="Tesla Inc.">
+                            <div class="stock-symbol">TSLA</div>
+                        </td>
+                        <td class="col-price" data-value="402.51">
+                            <div class="cell-price">$402.51</div>
+                            <div class="price-change down">
+                                <span class="arrow">▼</span>
+                                <span class="cell-change negative" style="font-size: 0.8rem;">-1.49%</span>
                             </div>
                         </td>
-                        <td class="col-price cell-price" data-value="402.51">$402.51</td>
-                        <td class="col-change cell-change negative" data-value="-1.49">-1.49%</td>
                         <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
             <defs>
                 <linearGradient id="grad_595" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -1238,7 +1313,13 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="1510391414784">$1.51T</td>
-                        <td class="col-agents" title="News: Neutral&#10;Technical: Bullish&#10;Fundamental: Overvalued&#10;Momentum: NEUTRAL&#10;Sector: NEUTRAL&#10;Forecast: Down&#10;Confidence: 45%"><div class="agents-row"><span class="agent-arrow neutral" title="Neutral">●</span><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow bearish" title="Overvalued">▼</span><span class="agent-arrow neutral" title="NEUTRAL">●</span><span class="agent-arrow neutral" title="NEUTRAL">●</span><span class="agent-arrow bearish" title="Down">▼</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
+                        <td class="col-agents" title="News: Neutral
+Technical: Bullish
+Fundamental: Overvalued
+Momentum: NEUTRAL
+Sector: NEUTRAL
+Forecast: Down
+Confidence: 45%"><div class="agents-row"><span class="agent-arrow neutral" title="News: Neutral">●</span><span class="agent-arrow bullish" title="Technical: Bullish">▲</span><span class="agent-arrow bearish" title="Fundamental: Overvalued">▼</span><span class="agent-arrow neutral" title="Momentum: NEUTRAL">●</span><span class="agent-arrow neutral" title="Sector: NEUTRAL">●</span><span class="agent-arrow bearish" title="Forecast: Down">▼</span></div><div class="agents-labels"><span title="News">N</span><span title="Technical">T</span><span title="Fundamental">F</span><span title="Momentum">M</span><span title="Sector">S</span><span title="Forecast">P</span></div></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="tsla.html" class="view-link" title="View Details">
@@ -1250,16 +1331,16 @@
                     </tr>
 
                     <tr data-rec="hold" data-symbol="PLTR" data-company="Palantir Technologies Inc." onclick="window.location='pltr.html'">
-                        <td class="col-stock">
-                            <div class="cell-stock">
-                                <div>
-                                    <div class="stock-symbol">PLTR</div>
-                                    <div class="stock-company">Palantir Technologies Inc.</div>
-                                </div>
+                        <td class="col-stock" title="Palantir Technologies Inc.">
+                            <div class="stock-symbol">PLTR</div>
+                        </td>
+                        <td class="col-price" data-value="137.19">
+                            <div class="cell-price">$137.19</div>
+                            <div class="price-change up">
+                                <span class="arrow">▲</span>
+                                <span class="cell-change positive" style="font-size: 0.8rem;">+0.92%</span>
                             </div>
                         </td>
-                        <td class="col-price cell-price" data-value="137.19">$137.19</td>
-                        <td class="col-change cell-change positive" data-value="0.92">+0.92%</td>
                         <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
             <defs>
                 <linearGradient id="grad_9422" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -1279,7 +1360,13 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="328113979392">$328.1B</td>
-                        <td class="col-agents" title="News: Bullish&#10;Technical: Bullish&#10;Fundamental: Overvalued&#10;Momentum: BEARISH&#10;Sector: BEARISH&#10;Forecast: Down&#10;Confidence: 59%"><div class="agents-row"><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow bearish" title="Overvalued">▼</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="Down">▼</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
+                        <td class="col-agents" title="News: Bullish
+Technical: Bullish
+Fundamental: Overvalued
+Momentum: BEARISH
+Sector: BEARISH
+Forecast: Down
+Confidence: 59%"><div class="agents-row"><span class="agent-arrow bullish" title="News: Bullish">▲</span><span class="agent-arrow bullish" title="Technical: Bullish">▲</span><span class="agent-arrow bearish" title="Fundamental: Overvalued">▼</span><span class="agent-arrow bearish" title="Momentum: BEARISH">▼</span><span class="agent-arrow bearish" title="Sector: BEARISH">▼</span><span class="agent-arrow bearish" title="Forecast: Down">▼</span></div><div class="agents-labels"><span title="News">N</span><span title="Technical">T</span><span title="Fundamental">F</span><span title="Momentum">M</span><span title="Sector">S</span><span title="Forecast">P</span></div></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="pltr.html" class="view-link" title="View Details">
@@ -1291,16 +1378,16 @@
                     </tr>
 
                     <tr data-rec="sell" data-symbol="DUOL" data-company="Duolingo Inc." onclick="window.location='duol.html'">
-                        <td class="col-stock">
-                            <div class="cell-stock">
-                                <div>
-                                    <div class="stock-symbol">DUOL</div>
-                                    <div class="stock-company">Duolingo Inc.</div>
-                                </div>
+                        <td class="col-stock" title="Duolingo Inc.">
+                            <div class="stock-symbol">DUOL</div>
+                        </td>
+                        <td class="col-price" data-value="101.00">
+                            <div class="cell-price">$101.00</div>
+                            <div class="price-change down">
+                                <span class="arrow">▼</span>
+                                <span class="cell-change negative" style="font-size: 0.8rem;">-14.01%</span>
                             </div>
                         </td>
-                        <td class="col-price cell-price" data-value="101.00">$101.00</td>
-                        <td class="col-change cell-change negative" data-value="-14.01">-14.01%</td>
                         <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
             <defs>
                 <linearGradient id="grad_6892" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -1320,7 +1407,13 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="4668962816">$4.7B</td>
-                        <td class="col-agents" title="News: Bearish&#10;Technical: Bearish&#10;Fundamental: Undervalued&#10;Momentum: BEARISH&#10;Sector: BEARISH&#10;Forecast: Down&#10;Confidence: 38%"><div class="agents-row"><span class="agent-arrow bearish" title="Bearish">▼</span><span class="agent-arrow bearish" title="Bearish">▼</span><span class="agent-arrow bullish" title="Undervalued">▲</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="Down">▼</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
+                        <td class="col-agents" title="News: Bearish
+Technical: Bearish
+Fundamental: Undervalued
+Momentum: BEARISH
+Sector: BEARISH
+Forecast: Down
+Confidence: 38%"><div class="agents-row"><span class="agent-arrow bearish" title="News: Bearish">▼</span><span class="agent-arrow bearish" title="Technical: Bearish">▼</span><span class="agent-arrow bullish" title="Fundamental: Undervalued">▲</span><span class="agent-arrow bearish" title="Momentum: BEARISH">▼</span><span class="agent-arrow bearish" title="Sector: BEARISH">▼</span><span class="agent-arrow bearish" title="Forecast: Down">▼</span></div><div class="agents-labels"><span title="News">N</span><span title="Technical">T</span><span title="Fundamental">F</span><span title="Momentum">M</span><span title="Sector">S</span><span title="Forecast">P</span></div></td>
                         <td class="col-rec" data-value="sell"><span class="rec-pill sell">SELL</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="duol.html" class="view-link" title="View Details">
@@ -1332,16 +1425,16 @@
                     </tr>
 
                     <tr data-rec="hold" data-symbol="AVGO" data-company="Broadcom Inc." onclick="window.location='avgo.html'">
-                        <td class="col-stock">
-                            <div class="cell-stock">
-                                <div>
-                                    <div class="stock-symbol">AVGO</div>
-                                    <div class="stock-company">Broadcom Inc.</div>
-                                </div>
+                        <td class="col-stock" title="Broadcom Inc.">
+                            <div class="stock-symbol">AVGO</div>
+                        </td>
+                        <td class="col-price" data-value="319.55">
+                            <div class="cell-price">$319.55</div>
+                            <div class="price-change down">
+                                <span class="arrow">▼</span>
+                                <span class="cell-change negative" style="font-size: 0.8rem;">-0.67%</span>
                             </div>
                         </td>
-                        <td class="col-price cell-price" data-value="319.55">$319.55</td>
-                        <td class="col-change cell-change negative" data-value="-0.67">-0.67%</td>
                         <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
             <defs>
                 <linearGradient id="grad_2661" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -1361,7 +1454,13 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="1515073961984">$1.52T</td>
-                        <td class="col-agents" title="News: Neutral&#10;Technical: Neutral&#10;Fundamental: Undervalued&#10;Momentum: BEARISH&#10;Sector: NEUTRAL&#10;Forecast: Down&#10;Confidence: 46%"><div class="agents-row"><span class="agent-arrow neutral" title="Neutral">●</span><span class="agent-arrow neutral" title="Neutral">●</span><span class="agent-arrow bullish" title="Undervalued">▲</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow neutral" title="NEUTRAL">●</span><span class="agent-arrow bearish" title="Down">▼</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
+                        <td class="col-agents" title="News: Neutral
+Technical: Neutral
+Fundamental: Undervalued
+Momentum: BEARISH
+Sector: NEUTRAL
+Forecast: Down
+Confidence: 46%"><div class="agents-row"><span class="agent-arrow neutral" title="News: Neutral">●</span><span class="agent-arrow neutral" title="Technical: Neutral">●</span><span class="agent-arrow bullish" title="Fundamental: Undervalued">▲</span><span class="agent-arrow bearish" title="Momentum: BEARISH">▼</span><span class="agent-arrow neutral" title="Sector: NEUTRAL">●</span><span class="agent-arrow bearish" title="Forecast: Down">▼</span></div><div class="agents-labels"><span title="News">N</span><span title="Technical">T</span><span title="Fundamental">F</span><span title="Momentum">M</span><span title="Sector">S</span><span title="Forecast">P</span></div></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="avgo.html" class="view-link" title="View Details">
@@ -1373,16 +1472,16 @@
                     </tr>
 
                     <tr data-rec="hold" data-symbol="CRM" data-company="Salesforce Inc." onclick="window.location='crm.html'">
-                        <td class="col-stock">
-                            <div class="cell-stock">
-                                <div>
-                                    <div class="stock-symbol">CRM</div>
-                                    <div class="stock-company">Salesforce Inc.</div>
-                                </div>
+                        <td class="col-stock" title="Salesforce Inc.">
+                            <div class="stock-symbol">CRM</div>
+                        </td>
+                        <td class="col-price" data-value="194.79">
+                            <div class="cell-price">$194.79</div>
+                            <div class="price-change down">
+                                <span class="arrow">▼</span>
+                                <span class="cell-change negative" style="font-size: 0.8rem;">-2.35%</span>
                             </div>
                         </td>
-                        <td class="col-price cell-price" data-value="194.79">$194.79</td>
-                        <td class="col-change cell-change negative" data-value="-2.35">-2.35%</td>
                         <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
             <defs>
                 <linearGradient id="grad_3640" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -1402,7 +1501,13 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="185440075776">$185.4B</td>
-                        <td class="col-agents" title="News: Bullish&#10;Technical: Bearish&#10;Fundamental: Fair&#10;Momentum: BEARISH&#10;Sector: BEARISH&#10;Forecast: Down&#10;Confidence: 57%"><div class="agents-row"><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow bearish" title="Bearish">▼</span><span class="agent-arrow neutral" title="Fair">●</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="Down">▼</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
+                        <td class="col-agents" title="News: Bullish
+Technical: Bearish
+Fundamental: Fair
+Momentum: BEARISH
+Sector: BEARISH
+Forecast: Down
+Confidence: 57%"><div class="agents-row"><span class="agent-arrow bullish" title="News: Bullish">▲</span><span class="agent-arrow bearish" title="Technical: Bearish">▼</span><span class="agent-arrow neutral" title="Fundamental: Fair">●</span><span class="agent-arrow bearish" title="Momentum: BEARISH">▼</span><span class="agent-arrow bearish" title="Sector: BEARISH">▼</span><span class="agent-arrow bearish" title="Forecast: Down">▼</span></div><div class="agents-labels"><span title="News">N</span><span title="Technical">T</span><span title="Fundamental">F</span><span title="Momentum">M</span><span title="Sector">S</span><span title="Forecast">P</span></div></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="crm.html" class="view-link" title="View Details">
@@ -1414,16 +1519,16 @@
                     </tr>
 
                     <tr data-rec="hold" data-symbol="AMD" data-company="Advanced Micro Devices Inc." onclick="window.location='amd.html'">
-                        <td class="col-stock">
-                            <div class="cell-stock">
-                                <div>
-                                    <div class="stock-symbol">AMD</div>
-                                    <div class="stock-company">Advanced Micro Devices Inc.</div>
-                                </div>
+                        <td class="col-stock" title="Advanced Micro Devices Inc.">
+                            <div class="stock-symbol">AMD</div>
+                        </td>
+                        <td class="col-price" data-value="200.21">
+                            <div class="cell-price">$200.21</div>
+                            <div class="price-change down">
+                                <span class="arrow">▼</span>
+                                <span class="cell-change negative" style="font-size: 0.8rem;">-1.70%</span>
                             </div>
                         </td>
-                        <td class="col-price cell-price" data-value="200.21">$200.21</td>
-                        <td class="col-change cell-change negative" data-value="-1.70">-1.70%</td>
                         <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
             <defs>
                 <linearGradient id="grad_5962" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -1443,7 +1548,13 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="326424559616">$326.4B</td>
-                        <td class="col-agents" title="News: Bullish&#10;Technical: Bullish&#10;Fundamental: Undervalued&#10;Momentum: BEARISH&#10;Sector: BEARISH&#10;Forecast: Flat&#10;Confidence: 41%"><div class="agents-row"><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow bullish" title="Undervalued">▲</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow neutral" title="Flat">●</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
+                        <td class="col-agents" title="News: Bullish
+Technical: Bullish
+Fundamental: Undervalued
+Momentum: BEARISH
+Sector: BEARISH
+Forecast: Flat
+Confidence: 41%"><div class="agents-row"><span class="agent-arrow bullish" title="News: Bullish">▲</span><span class="agent-arrow bullish" title="Technical: Bullish">▲</span><span class="agent-arrow bullish" title="Fundamental: Undervalued">▲</span><span class="agent-arrow bearish" title="Momentum: BEARISH">▼</span><span class="agent-arrow bearish" title="Sector: BEARISH">▼</span><span class="agent-arrow neutral" title="Forecast: Flat">●</span></div><div class="agents-labels"><span title="News">N</span><span title="Technical">T</span><span title="Fundamental">F</span><span title="Momentum">M</span><span title="Sector">S</span><span title="Forecast">P</span></div></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="amd.html" class="view-link" title="View Details">
@@ -1455,16 +1566,16 @@
                     </tr>
 
                     <tr data-rec="buy" data-symbol="NFLX" data-company="Netflix Inc." onclick="window.location='nflx.html'">
-                        <td class="col-stock">
-                            <div class="cell-stock">
-                                <div>
-                                    <div class="stock-symbol">NFLX</div>
-                                    <div class="stock-company">Netflix Inc.</div>
-                                </div>
+                        <td class="col-stock" title="Netflix Inc.">
+                            <div class="stock-symbol">NFLX</div>
+                        </td>
+                        <td class="col-price" data-value="96.24">
+                            <div class="cell-price">$96.24</div>
+                            <div class="price-change up">
+                                <span class="arrow">▲</span>
+                                <span class="cell-change positive" style="font-size: 0.8rem;">+13.75%</span>
                             </div>
                         </td>
-                        <td class="col-price cell-price" data-value="96.24">$96.24</td>
-                        <td class="col-change cell-change positive" data-value="13.75">+13.75%</td>
                         <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
             <defs>
                 <linearGradient id="grad_861" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -1484,7 +1595,13 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="408239439872">$408.2B</td>
-                        <td class="col-agents" title="News: Bullish&#10;Technical: Bearish&#10;Fundamental: Undervalued&#10;Momentum: BULLISH&#10;Sector: BULLISH&#10;Forecast: Down&#10;Confidence: 72%"><div class="agents-row"><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow bearish" title="Bearish">▼</span><span class="agent-arrow bullish" title="Undervalued">▲</span><span class="agent-arrow bullish" title="BULLISH">▲</span><span class="agent-arrow bullish" title="BULLISH">▲</span><span class="agent-arrow bearish" title="Down">▼</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
+                        <td class="col-agents" title="News: Bullish
+Technical: Bearish
+Fundamental: Undervalued
+Momentum: BULLISH
+Sector: BULLISH
+Forecast: Down
+Confidence: 72%"><div class="agents-row"><span class="agent-arrow bullish" title="News: Bullish">▲</span><span class="agent-arrow bearish" title="Technical: Bearish">▼</span><span class="agent-arrow bullish" title="Fundamental: Undervalued">▲</span><span class="agent-arrow bullish" title="Momentum: BULLISH">▲</span><span class="agent-arrow bullish" title="Sector: BULLISH">▲</span><span class="agent-arrow bearish" title="Forecast: Down">▼</span></div><div class="agents-labels"><span title="News">N</span><span title="Technical">T</span><span title="Fundamental">F</span><span title="Momentum">M</span><span title="Sector">S</span><span title="Forecast">P</span></div></td>
                         <td class="col-rec" data-value="buy"><span class="rec-pill buy">BUY</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="nflx.html" class="view-link" title="View Details">
@@ -1496,16 +1613,16 @@
                     </tr>
 
                     <tr data-rec="hold" data-symbol="COIN" data-company="Coinbase Global Inc." onclick="window.location='coin.html'">
-                        <td class="col-stock">
-                            <div class="cell-stock">
-                                <div>
-                                    <div class="stock-symbol">COIN</div>
-                                    <div class="stock-company">Coinbase Global Inc.</div>
-                                </div>
+                        <td class="col-stock" title="Coinbase Global Inc.">
+                            <div class="stock-symbol">COIN</div>
+                        </td>
+                        <td class="col-price" data-value="175.85">
+                            <div class="cell-price">$175.85</div>
+                            <div class="price-change down">
+                                <span class="arrow">▼</span>
+                                <span class="cell-change negative" style="font-size: 0.8rem;">-2.88%</span>
                             </div>
                         </td>
-                        <td class="col-price cell-price" data-value="175.85">$175.85</td>
-                        <td class="col-change cell-change negative" data-value="-2.88">-2.88%</td>
                         <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
             <defs>
                 <linearGradient id="grad_87" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -1525,7 +1642,13 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="47419289600">$47.4B</td>
-                        <td class="col-agents" title="News: Bearish&#10;Technical: Bullish&#10;Fundamental: Undervalued&#10;Momentum: BEARISH&#10;Sector: BEARISH&#10;Forecast: Down&#10;Confidence: 38%"><div class="agents-row"><span class="agent-arrow bearish" title="Bearish">▼</span><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow bullish" title="Undervalued">▲</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="Down">▼</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
+                        <td class="col-agents" title="News: Bearish
+Technical: Bullish
+Fundamental: Undervalued
+Momentum: BEARISH
+Sector: BEARISH
+Forecast: Down
+Confidence: 38%"><div class="agents-row"><span class="agent-arrow bearish" title="News: Bearish">▼</span><span class="agent-arrow bullish" title="Technical: Bullish">▲</span><span class="agent-arrow bullish" title="Fundamental: Undervalued">▲</span><span class="agent-arrow bearish" title="Momentum: BEARISH">▼</span><span class="agent-arrow bearish" title="Sector: BEARISH">▼</span><span class="agent-arrow bearish" title="Forecast: Down">▼</span></div><div class="agents-labels"><span title="News">N</span><span title="Technical">T</span><span title="Fundamental">F</span><span title="Momentum">M</span><span title="Sector">S</span><span title="Forecast">P</span></div></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="coin.html" class="view-link" title="View Details">
@@ -1537,16 +1660,16 @@
                     </tr>
 
                     <tr data-rec="buy" data-symbol="LLY" data-company="Eli Lilly and Company" onclick="window.location='lly.html'">
-                        <td class="col-stock">
-                            <div class="cell-stock">
-                                <div>
-                                    <div class="stock-symbol">LLY</div>
-                                    <div class="stock-company">Eli Lilly and Company</div>
-                                </div>
+                        <td class="col-stock" title="Eli Lilly and Company">
+                            <div class="stock-symbol">LLY</div>
+                        </td>
+                        <td class="col-price" data-value="1051.99">
+                            <div class="cell-price">$1051.99</div>
+                            <div class="price-change up">
+                                <span class="arrow">▲</span>
+                                <span class="cell-change positive" style="font-size: 0.8rem;">+2.93%</span>
                             </div>
                         </td>
-                        <td class="col-price cell-price" data-value="1051.99">$1051.99</td>
-                        <td class="col-change cell-change positive" data-value="2.93">+2.93%</td>
                         <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
             <defs>
                 <linearGradient id="grad_4682" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -1566,7 +1689,13 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="992402604032">$992.4B</td>
-                        <td class="col-agents" title="News: Bullish&#10;Technical: Bullish&#10;Fundamental: Overvalued&#10;Momentum: BULLISH&#10;Sector: NEUTRAL&#10;Forecast: Up&#10;Confidence: 88%"><div class="agents-row"><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow bearish" title="Overvalued">▼</span><span class="agent-arrow bullish" title="BULLISH">▲</span><span class="agent-arrow neutral" title="NEUTRAL">●</span><span class="agent-arrow bullish" title="Up">▲</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
+                        <td class="col-agents" title="News: Bullish
+Technical: Bullish
+Fundamental: Overvalued
+Momentum: BULLISH
+Sector: NEUTRAL
+Forecast: Up
+Confidence: 88%"><div class="agents-row"><span class="agent-arrow bullish" title="News: Bullish">▲</span><span class="agent-arrow bullish" title="Technical: Bullish">▲</span><span class="agent-arrow bearish" title="Fundamental: Overvalued">▼</span><span class="agent-arrow bullish" title="Momentum: BULLISH">▲</span><span class="agent-arrow neutral" title="Sector: NEUTRAL">●</span><span class="agent-arrow bullish" title="Forecast: Up">▲</span></div><div class="agents-labels"><span title="News">N</span><span title="Technical">T</span><span title="Fundamental">F</span><span title="Momentum">M</span><span title="Sector">S</span><span title="Forecast">P</span></div></td>
                         <td class="col-rec" data-value="buy"><span class="rec-pill buy">BUY</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="lly.html" class="view-link" title="View Details">
@@ -1578,16 +1707,16 @@
                     </tr>
 
                     <tr data-rec="hold" data-symbol="UBER" data-company="Uber Technologies Inc." onclick="window.location='uber.html'">
-                        <td class="col-stock">
-                            <div class="cell-stock">
-                                <div>
-                                    <div class="stock-symbol">UBER</div>
-                                    <div class="stock-company">Uber Technologies Inc.</div>
-                                </div>
+                        <td class="col-stock" title="Uber Technologies Inc.">
+                            <div class="stock-symbol">UBER</div>
+                        </td>
+                        <td class="col-price" data-value="75.42">
+                            <div class="cell-price">$75.42</div>
+                            <div class="price-change up">
+                                <span class="arrow">▲</span>
+                                <span class="cell-change positive" style="font-size: 0.8rem;">+0.83%</span>
                             </div>
                         </td>
-                        <td class="col-price cell-price" data-value="75.42">$75.42</td>
-                        <td class="col-change cell-change positive" data-value="0.83">+0.83%</td>
                         <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
             <defs>
                 <linearGradient id="grad_1144" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -1607,7 +1736,13 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="156709961728">$156.7B</td>
-                        <td class="col-agents" title="News: Bullish&#10;Technical: Neutral&#10;Fundamental: Fair&#10;Momentum: BEARISH&#10;Sector: BEARISH&#10;Forecast: Down&#10;Confidence: 45%"><div class="agents-row"><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow neutral" title="Neutral">●</span><span class="agent-arrow neutral" title="Fair">●</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="Down">▼</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
+                        <td class="col-agents" title="News: Bullish
+Technical: Neutral
+Fundamental: Fair
+Momentum: BEARISH
+Sector: BEARISH
+Forecast: Down
+Confidence: 45%"><div class="agents-row"><span class="agent-arrow bullish" title="News: Bullish">▲</span><span class="agent-arrow neutral" title="Technical: Neutral">●</span><span class="agent-arrow neutral" title="Fundamental: Fair">●</span><span class="agent-arrow bearish" title="Momentum: BEARISH">▼</span><span class="agent-arrow bearish" title="Sector: BEARISH">▼</span><span class="agent-arrow bearish" title="Forecast: Down">▼</span></div><div class="agents-labels"><span title="News">N</span><span title="Technical">T</span><span title="Fundamental">F</span><span title="Momentum">M</span><span title="Sector">S</span><span title="Forecast">P</span></div></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="uber.html" class="view-link" title="View Details">
@@ -1619,16 +1754,16 @@
                     </tr>
 
                     <tr data-rec="sell" data-symbol="PANW" data-company="Palo Alto Networks Inc." onclick="window.location='panw.html'">
-                        <td class="col-stock">
-                            <div class="cell-stock">
-                                <div>
-                                    <div class="stock-symbol">PANW</div>
-                                    <div class="stock-company">Palo Alto Networks Inc.</div>
-                                </div>
+                        <td class="col-stock" title="Palo Alto Networks Inc.">
+                            <div class="stock-symbol">PANW</div>
+                        </td>
+                        <td class="col-price" data-value="148.92">
+                            <div class="cell-price">$148.92</div>
+                            <div class="price-change down">
+                                <span class="arrow">▼</span>
+                                <span class="cell-change negative" style="font-size: 0.8rem;">-0.32%</span>
                             </div>
                         </td>
-                        <td class="col-price cell-price" data-value="148.92">$148.92</td>
-                        <td class="col-change cell-change negative" data-value="-0.32">-0.32%</td>
                         <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
             <defs>
                 <linearGradient id="grad_8458" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -1648,7 +1783,13 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="121518718976">$121.5B</td>
-                        <td class="col-agents" title="News: Bearish&#10;Technical: Bearish&#10;Fundamental: Undervalued&#10;Momentum: BEARISH&#10;Sector: BEARISH&#10;Forecast: Down&#10;Confidence: 23%"><div class="agents-row"><span class="agent-arrow bearish" title="Bearish">▼</span><span class="agent-arrow bearish" title="Bearish">▼</span><span class="agent-arrow bullish" title="Undervalued">▲</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="Down">▼</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
+                        <td class="col-agents" title="News: Bearish
+Technical: Bearish
+Fundamental: Undervalued
+Momentum: BEARISH
+Sector: BEARISH
+Forecast: Down
+Confidence: 23%"><div class="agents-row"><span class="agent-arrow bearish" title="News: Bearish">▼</span><span class="agent-arrow bearish" title="Technical: Bearish">▼</span><span class="agent-arrow bullish" title="Fundamental: Undervalued">▲</span><span class="agent-arrow bearish" title="Momentum: BEARISH">▼</span><span class="agent-arrow bearish" title="Sector: BEARISH">▼</span><span class="agent-arrow bearish" title="Forecast: Down">▼</span></div><div class="agents-labels"><span title="News">N</span><span title="Technical">T</span><span title="Fundamental">F</span><span title="Momentum">M</span><span title="Sector">S</span><span title="Forecast">P</span></div></td>
                         <td class="col-rec" data-value="sell"><span class="rec-pill sell">SELL</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="panw.html" class="view-link" title="View Details">
@@ -1660,16 +1801,16 @@
                     </tr>
 
                     <tr data-rec="hold" data-symbol="SHOP" data-company="Shopify Inc." onclick="window.location='shop.html'">
-                        <td class="col-stock">
-                            <div class="cell-stock">
-                                <div>
-                                    <div class="stock-symbol">SHOP</div>
-                                    <div class="stock-company">Shopify Inc.</div>
-                                </div>
+                        <td class="col-stock" title="Shopify Inc.">
+                            <div class="stock-symbol">SHOP</div>
+                        </td>
+                        <td class="col-price" data-value="120.73">
+                            <div class="cell-price">$120.73</div>
+                            <div class="price-change down">
+                                <span class="arrow">▼</span>
+                                <span class="cell-change negative" style="font-size: 0.8rem;">-4.16%</span>
                             </div>
                         </td>
-                        <td class="col-price cell-price" data-value="120.73">$120.73</td>
-                        <td class="col-change cell-change negative" data-value="-4.16">-4.16%</td>
                         <td class="col-sparkline cell-sparkline"><svg width="120" height="36" viewBox="0 0 120 36" style="vertical-align: middle;">
             <defs>
                 <linearGradient id="grad_6900" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -1689,7 +1830,13 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="157562748928">$157.6B</td>
-                        <td class="col-agents" title="News: Bullish&#10;Technical: Bullish&#10;Fundamental: Overvalued&#10;Momentum: BEARISH&#10;Sector: BEARISH&#10;Forecast: Down&#10;Confidence: 45%"><div class="agents-row"><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow bearish" title="Overvalued">▼</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="Down">▼</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
+                        <td class="col-agents" title="News: Bullish
+Technical: Bullish
+Fundamental: Overvalued
+Momentum: BEARISH
+Sector: BEARISH
+Forecast: Down
+Confidence: 45%"><div class="agents-row"><span class="agent-arrow bullish" title="News: Bullish">▲</span><span class="agent-arrow bullish" title="Technical: Bullish">▲</span><span class="agent-arrow bearish" title="Fundamental: Overvalued">▼</span><span class="agent-arrow bearish" title="Momentum: BEARISH">▼</span><span class="agent-arrow bearish" title="Sector: BEARISH">▼</span><span class="agent-arrow bearish" title="Forecast: Down">▼</span></div><div class="agents-labels"><span title="News">N</span><span title="Technical">T</span><span title="Fundamental">F</span><span title="Momentum">M</span><span title="Sector">S</span><span title="Forecast">P</span></div></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="shop.html" class="view-link" title="View Details">
@@ -1705,6 +1852,7 @@
             <div class="no-results" id="noResults">
                 <p>No stocks match your search.</p>
             </div>
+          </div>
         </div>
 
         <!-- Legend -->
