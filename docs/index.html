@@ -305,8 +305,20 @@
         /* Summary cards */
         .summary-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        @media (max-width: 900px) {
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 560px) {
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .summary-card {
@@ -761,6 +773,42 @@
         .mini-badge.bearish { background: rgba(239, 68, 68, 0.15); color: #f87171; }
         .mini-badge.neutral { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
 
+        /* Compact agents column */
+        .col-agents {
+            min-width: 110px;
+            text-align: center;
+            cursor: help;
+        }
+        .agents-row {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+        }
+        .agent-arrow {
+            font-size: 0.85rem;
+            width: 16px;
+            text-align: center;
+            display: inline-block;
+            line-height: 1;
+        }
+        .agent-arrow.bullish { color: #34d399; }
+        .agent-arrow.bearish { color: #f87171; }
+        .agent-arrow.neutral { color: #94a3b8; }
+        .agents-labels {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            margin-top: 2px;
+        }
+        .agents-labels span {
+            font-size: 0.55rem;
+            color: var(--text-muted);
+            opacity: 0.6;
+            width: 16px;
+            text-align: center;
+            display: inline-block;
+        }
+
         .rec-pill {
             display: inline-block;
             padding: 6px 16px;
@@ -907,10 +955,8 @@
                         <th class="col-sparkline">20D Trend</th>
                         <th onclick="sortTable(4, 'number')" class="col-prediction">10D Target <span class="sort-icon">▲▼</span></th>
                         <th onclick="sortTable(5, 'number')" class="col-mcap">Mkt Cap <span class="sort-icon">▲▼</span></th>
-                        <th class="col-sentiment">News</th>
-                        <th class="col-technical">Technical</th>
-                        <th class="col-fundamental">Fundamental</th>
-                        <th onclick="sortTable(9, 'rec')" class="col-rec">Signal <span class="sort-icon">▲▼</span></th>
+                        <th class="col-agents">Agents</th>
+                        <th onclick="sortTable(7, 'rec')" class="col-rec">Signal <span class="sort-icon">▲▼</span></th>
                         <th class="col-action"></th>
                     </tr>
                 </thead>
@@ -946,9 +992,7 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="3771360870400">$3.77T</td>
-                        <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
-                        <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
+                        <td class="col-agents" title="News: Bullish&#10;Technical: Neutral&#10;Fundamental: Fair&#10;Momentum: BEARISH&#10;Sector: BEARISH&#10;Forecast: Flat&#10;Confidence: 50%"><div class="agents-row"><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow neutral" title="Neutral">●</span><span class="agent-arrow neutral" title="Fair">●</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow neutral" title="Flat">●</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="googl.html" class="view-link" title="View Details">
@@ -989,9 +1033,7 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="2918992052224">$2.92T</td>
-                        <td class="col-sentiment"><span class="mini-badge bearish">Neutral/Bearish (leaning towards Bearish)</span></td>
-                        <td class="col-technical"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-fundamental"><span class="mini-badge bullish">Undervalued</span></td>
+                        <td class="col-agents" title="News: Neutral/Bearish (leaning towards Bearish)&#10;Technical: Bullish&#10;Fundamental: Undervalued&#10;Momentum: BEARISH&#10;Sector: BEARISH&#10;Forecast: Down&#10;Confidence: 46%"><div class="agents-row"><span class="agent-arrow neutral" title="Neutral/Bearish (leaning towards Bearish)">●</span><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow bullish" title="Undervalued">▲</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="Down">▼</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="msft.html" class="view-link" title="View Details">
@@ -1032,9 +1074,7 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="3882897899520">$3.88T</td>
-                        <td class="col-sentiment"><span class="mini-badge bullish">Neutral/Bullish</span></td>
-                        <td class="col-technical"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-fundamental"><span class="mini-badge bearish">Overvalued</span></td>
+                        <td class="col-agents" title="News: Neutral/Bullish&#10;Technical: Bullish&#10;Fundamental: Overvalued&#10;Momentum: BULLISH&#10;Sector: NEUTRAL&#10;Forecast: Flat&#10;Confidence: 66%"><div class="agents-row"><span class="agent-arrow neutral" title="Neutral/Bullish">●</span><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow bearish" title="Overvalued">▼</span><span class="agent-arrow bullish" title="BULLISH">▲</span><span class="agent-arrow neutral" title="NEUTRAL">●</span><span class="agent-arrow neutral" title="Flat">●</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
                         <td class="col-rec" data-value="buy"><span class="rec-pill buy">BUY</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="aapl.html" class="view-link" title="View Details">
@@ -1075,9 +1115,7 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="2254333280256">$2.25T</td>
-                        <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-technical"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
+                        <td class="col-agents" title="News: Bullish&#10;Technical: Bullish&#10;Fundamental: Fair&#10;Momentum: BEARISH&#10;Sector: BEARISH&#10;Forecast: Down&#10;Confidence: 52%"><div class="agents-row"><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow neutral" title="Fair">●</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="Down">▼</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="amzn.html" class="view-link" title="View Details">
@@ -1118,9 +1156,7 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="4306603081728">$4.31T</td>
-                        <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-technical"><span class="mini-badge bearish">Bearish</span></td>
-                        <td class="col-fundamental"><span class="mini-badge bullish">Undervalued</span></td>
+                        <td class="col-agents" title="News: Bullish&#10;Technical: Bearish&#10;Fundamental: Undervalued&#10;Momentum: BEARISH&#10;Sector: BEARISH&#10;Forecast: Up&#10;Confidence: 54%"><div class="agents-row"><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow bearish" title="Bearish">▼</span><span class="agent-arrow bullish" title="Undervalued">▲</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bullish" title="Up">▲</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="nvda.html" class="view-link" title="View Details">
@@ -1161,9 +1197,7 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="1639607173120">$1.64T</td>
-                        <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
-                        <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
+                        <td class="col-agents" title="News: Bullish&#10;Technical: Neutral&#10;Fundamental: Fair&#10;Momentum: BEARISH&#10;Sector: BEARISH&#10;Forecast: Down&#10;Confidence: 38%"><div class="agents-row"><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow neutral" title="Neutral">●</span><span class="agent-arrow neutral" title="Fair">●</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="Down">▼</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="meta.html" class="view-link" title="View Details">
@@ -1204,9 +1238,7 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="1510391414784">$1.51T</td>
-                        <td class="col-sentiment"><span class="mini-badge neutral">Neutral</span></td>
-                        <td class="col-technical"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-fundamental"><span class="mini-badge bearish">Overvalued</span></td>
+                        <td class="col-agents" title="News: Neutral&#10;Technical: Bullish&#10;Fundamental: Overvalued&#10;Momentum: NEUTRAL&#10;Sector: NEUTRAL&#10;Forecast: Down&#10;Confidence: 45%"><div class="agents-row"><span class="agent-arrow neutral" title="Neutral">●</span><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow bearish" title="Overvalued">▼</span><span class="agent-arrow neutral" title="NEUTRAL">●</span><span class="agent-arrow neutral" title="NEUTRAL">●</span><span class="agent-arrow bearish" title="Down">▼</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="tsla.html" class="view-link" title="View Details">
@@ -1247,9 +1279,7 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="328113979392">$328.1B</td>
-                        <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-technical"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-fundamental"><span class="mini-badge bearish">Overvalued</span></td>
+                        <td class="col-agents" title="News: Bullish&#10;Technical: Bullish&#10;Fundamental: Overvalued&#10;Momentum: BEARISH&#10;Sector: BEARISH&#10;Forecast: Down&#10;Confidence: 59%"><div class="agents-row"><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow bearish" title="Overvalued">▼</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="Down">▼</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="pltr.html" class="view-link" title="View Details">
@@ -1290,9 +1320,7 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="4668962816">$4.7B</td>
-                        <td class="col-sentiment"><span class="mini-badge bearish">Bearish</span></td>
-                        <td class="col-technical"><span class="mini-badge bearish">Bearish</span></td>
-                        <td class="col-fundamental"><span class="mini-badge bullish">Undervalued</span></td>
+                        <td class="col-agents" title="News: Bearish&#10;Technical: Bearish&#10;Fundamental: Undervalued&#10;Momentum: BEARISH&#10;Sector: BEARISH&#10;Forecast: Down&#10;Confidence: 38%"><div class="agents-row"><span class="agent-arrow bearish" title="Bearish">▼</span><span class="agent-arrow bearish" title="Bearish">▼</span><span class="agent-arrow bullish" title="Undervalued">▲</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="Down">▼</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
                         <td class="col-rec" data-value="sell"><span class="rec-pill sell">SELL</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="duol.html" class="view-link" title="View Details">
@@ -1333,9 +1361,7 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="1515073961984">$1.52T</td>
-                        <td class="col-sentiment"><span class="mini-badge neutral">Neutral</span></td>
-                        <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
-                        <td class="col-fundamental"><span class="mini-badge bullish">Undervalued</span></td>
+                        <td class="col-agents" title="News: Neutral&#10;Technical: Neutral&#10;Fundamental: Undervalued&#10;Momentum: BEARISH&#10;Sector: NEUTRAL&#10;Forecast: Down&#10;Confidence: 46%"><div class="agents-row"><span class="agent-arrow neutral" title="Neutral">●</span><span class="agent-arrow neutral" title="Neutral">●</span><span class="agent-arrow bullish" title="Undervalued">▲</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow neutral" title="NEUTRAL">●</span><span class="agent-arrow bearish" title="Down">▼</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="avgo.html" class="view-link" title="View Details">
@@ -1376,9 +1402,7 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="185440075776">$185.4B</td>
-                        <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-technical"><span class="mini-badge bearish">Bearish</span></td>
-                        <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
+                        <td class="col-agents" title="News: Bullish&#10;Technical: Bearish&#10;Fundamental: Fair&#10;Momentum: BEARISH&#10;Sector: BEARISH&#10;Forecast: Down&#10;Confidence: 57%"><div class="agents-row"><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow bearish" title="Bearish">▼</span><span class="agent-arrow neutral" title="Fair">●</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="Down">▼</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="crm.html" class="view-link" title="View Details">
@@ -1419,9 +1443,7 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="326424559616">$326.4B</td>
-                        <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-technical"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-fundamental"><span class="mini-badge bullish">Undervalued</span></td>
+                        <td class="col-agents" title="News: Bullish&#10;Technical: Bullish&#10;Fundamental: Undervalued&#10;Momentum: BEARISH&#10;Sector: BEARISH&#10;Forecast: Flat&#10;Confidence: 41%"><div class="agents-row"><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow bullish" title="Undervalued">▲</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow neutral" title="Flat">●</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="amd.html" class="view-link" title="View Details">
@@ -1462,9 +1484,7 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="408239439872">$408.2B</td>
-                        <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-technical"><span class="mini-badge bearish">Bearish</span></td>
-                        <td class="col-fundamental"><span class="mini-badge bullish">Undervalued</span></td>
+                        <td class="col-agents" title="News: Bullish&#10;Technical: Bearish&#10;Fundamental: Undervalued&#10;Momentum: BULLISH&#10;Sector: BULLISH&#10;Forecast: Down&#10;Confidence: 72%"><div class="agents-row"><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow bearish" title="Bearish">▼</span><span class="agent-arrow bullish" title="Undervalued">▲</span><span class="agent-arrow bullish" title="BULLISH">▲</span><span class="agent-arrow bullish" title="BULLISH">▲</span><span class="agent-arrow bearish" title="Down">▼</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
                         <td class="col-rec" data-value="buy"><span class="rec-pill buy">BUY</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="nflx.html" class="view-link" title="View Details">
@@ -1505,9 +1525,7 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="47419289600">$47.4B</td>
-                        <td class="col-sentiment"><span class="mini-badge bearish">Bearish</span></td>
-                        <td class="col-technical"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-fundamental"><span class="mini-badge bullish">Undervalued</span></td>
+                        <td class="col-agents" title="News: Bearish&#10;Technical: Bullish&#10;Fundamental: Undervalued&#10;Momentum: BEARISH&#10;Sector: BEARISH&#10;Forecast: Down&#10;Confidence: 38%"><div class="agents-row"><span class="agent-arrow bearish" title="Bearish">▼</span><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow bullish" title="Undervalued">▲</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="Down">▼</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="coin.html" class="view-link" title="View Details">
@@ -1548,9 +1566,7 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="992402604032">$992.4B</td>
-                        <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-technical"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-fundamental"><span class="mini-badge bearish">Overvalued</span></td>
+                        <td class="col-agents" title="News: Bullish&#10;Technical: Bullish&#10;Fundamental: Overvalued&#10;Momentum: BULLISH&#10;Sector: NEUTRAL&#10;Forecast: Up&#10;Confidence: 88%"><div class="agents-row"><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow bearish" title="Overvalued">▼</span><span class="agent-arrow bullish" title="BULLISH">▲</span><span class="agent-arrow neutral" title="NEUTRAL">●</span><span class="agent-arrow bullish" title="Up">▲</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
                         <td class="col-rec" data-value="buy"><span class="rec-pill buy">BUY</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="lly.html" class="view-link" title="View Details">
@@ -1591,9 +1607,7 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="156709961728">$156.7B</td>
-                        <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-technical"><span class="mini-badge neutral">Neutral</span></td>
-                        <td class="col-fundamental"><span class="mini-badge neutral">Fair</span></td>
+                        <td class="col-agents" title="News: Bullish&#10;Technical: Neutral&#10;Fundamental: Fair&#10;Momentum: BEARISH&#10;Sector: BEARISH&#10;Forecast: Down&#10;Confidence: 45%"><div class="agents-row"><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow neutral" title="Neutral">●</span><span class="agent-arrow neutral" title="Fair">●</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="Down">▼</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="uber.html" class="view-link" title="View Details">
@@ -1634,9 +1648,7 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="121518718976">$121.5B</td>
-                        <td class="col-sentiment"><span class="mini-badge bearish">Bearish</span></td>
-                        <td class="col-technical"><span class="mini-badge bearish">Bearish</span></td>
-                        <td class="col-fundamental"><span class="mini-badge bullish">Undervalued</span></td>
+                        <td class="col-agents" title="News: Bearish&#10;Technical: Bearish&#10;Fundamental: Undervalued&#10;Momentum: BEARISH&#10;Sector: BEARISH&#10;Forecast: Down&#10;Confidence: 23%"><div class="agents-row"><span class="agent-arrow bearish" title="Bearish">▼</span><span class="agent-arrow bearish" title="Bearish">▼</span><span class="agent-arrow bullish" title="Undervalued">▲</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="Down">▼</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
                         <td class="col-rec" data-value="sell"><span class="rec-pill sell">SELL</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="panw.html" class="view-link" title="View Details">
@@ -1677,9 +1689,7 @@
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="157562748928">$157.6B</td>
-                        <td class="col-sentiment"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-technical"><span class="mini-badge bullish">Bullish</span></td>
-                        <td class="col-fundamental"><span class="mini-badge bearish">Overvalued</span></td>
+                        <td class="col-agents" title="News: Bullish&#10;Technical: Bullish&#10;Fundamental: Overvalued&#10;Momentum: BEARISH&#10;Sector: BEARISH&#10;Forecast: Down&#10;Confidence: 45%"><div class="agents-row"><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow bullish" title="Bullish">▲</span><span class="agent-arrow bearish" title="Overvalued">▼</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="BEARISH">▼</span><span class="agent-arrow bearish" title="Down">▼</span></div><div class="agents-labels"><span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span></div></td>
                         <td class="col-rec" data-value="hold"><span class="rec-pill hold">HOLD</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="shop.html" class="view-link" title="View Details">

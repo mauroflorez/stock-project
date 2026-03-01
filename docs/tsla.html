@@ -305,8 +305,20 @@
         /* Summary cards */
         .summary-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        @media (max-width: 900px) {
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 560px) {
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .summary-card {
@@ -557,6 +569,14 @@
                         <span class="badge badge-neutral">NEUTRAL</span>
                     </div>
                     <p class="summary-text">In-line with sector (+0.6pp vs XLY); Sector (Consumer Cyclical) in downtrend: -3.5% (20d)</p>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <span class="summary-icon">🔮</span>
+                        <span class="summary-title">Forecast</span>
+                        <span class="badge badge-bearish">-1.35%</span>
+                    </div>
+                    <p class="summary-text">10-day target: $391.88 (-2.64%). Confidence: Medium</p>
                 </div>
             </div>
             <div class="conclusion-box">
@@ -839,6 +859,50 @@
 <p><strong>VALUATION ASSESSMENT:</strong></p>
 
 <p>Given the extremely high P/E ratios, declining earnings growth, and poor capital efficiency (ROE < 8%), I conclude that Tesla's stock is OVERVALUED by approximately 30-50% based on fundamental analysis.</p></div>
+                </div>
+            </div>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">🚀</span>
+                        Momentum Analysis
+                        <span class="badge badge-neutral" style="margin-left:8px;">NEUTRAL</span>
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body">
+                        <p><strong>Signal:</strong> NEUTRAL &nbsp;|&nbsp; <strong>Score:</strong> +0.00</p>
+                        <h4>Key Findings</h4>
+                        <ul><li>Tracking S&P 500 (diff: -1.9pp)</li><li>OBV trending up (accumulation, vol ratio: 0.97x)</li><li>All timeframe ROCs negative (consistent downtrend)</li></ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">🏢</span>
+                        Sector Analysis (Consumer Cyclical)
+                        <span class="badge badge-neutral" style="margin-left:8px;">NEUTRAL</span>
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body">
+                        <p><strong>Signal:</strong> NEUTRAL &nbsp;|&nbsp; <strong>Score:</strong> -0.5</p>
+                        <h4>Key Findings</h4>
+                        <ul><li>In-line with sector (+0.6pp vs XLY)</li><li>Sector (Consumer Cyclical) in downtrend: -3.5% (20d)</li></ul>
+                    </div>
                 </div>
             </div>
         </div>

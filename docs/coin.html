@@ -305,8 +305,20 @@
         /* Summary cards */
         .summary-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        @media (max-width: 900px) {
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 560px) {
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .summary-card {
@@ -557,6 +569,14 @@
                         <span class="badge badge-bearish">BEARISH</span>
                     </div>
                     <p class="summary-text">Underperforming sector by 3.5pp vs XLF; Sector (Financial Services) in downtrend: -3.8% (20d)</p>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <span class="summary-icon">🔮</span>
+                        <span class="summary-title">Forecast</span>
+                        <span class="badge badge-bearish">-5.84%</span>
+                    </div>
+                    <p class="summary-text">10-day target: $175.86 (+0.01%). Confidence: Medium</p>
                 </div>
             </div>
             <div class="conclusion-box">
@@ -829,6 +849,50 @@
 
 <p><strong>VALUATION ASSESSMENT:</strong></p>
 <p>Based on my analysis, I would recommend buying Coinbase at its current price. The stock is undervalued, with significant growth potential and a solid underlying business model. While there are potential risks and concerns, I believe the benefits of investing in Coinbase outweigh the drawbacks.</p></div>
+                </div>
+            </div>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">🚀</span>
+                        Momentum Analysis
+                        <span class="badge badge-bearish" style="margin-left:8px;">BEARISH</span>
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body">
+                        <p><strong>Signal:</strong> BEARISH &nbsp;|&nbsp; <strong>Score:</strong> -1.50</p>
+                        <h4>Key Findings</h4>
+                        <ul><li>20-day ROC: -11.7% (weak medium-term momentum)</li><li>Underperforming S&P 500 by 6.3pp (20d)</li></ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">🏢</span>
+                        Sector Analysis (Financial Services)
+                        <span class="badge badge-bearish" style="margin-left:8px;">BEARISH</span>
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body">
+                        <p><strong>Signal:</strong> BEARISH &nbsp;|&nbsp; <strong>Score:</strong> -1.5</p>
+                        <h4>Key Findings</h4>
+                        <ul><li>Underperforming sector by 3.5pp vs XLF</li><li>Sector (Financial Services) in downtrend: -3.8% (20d)</li><li>Weak absolute momentum: -9.7% (20d)</li></ul>
+                    </div>
                 </div>
             </div>
         </div>

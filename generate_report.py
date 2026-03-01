@@ -795,8 +795,20 @@ class HTMLReportGenerator:
         /* Summary cards */
         .summary-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        @media (max-width: 900px) {
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 560px) {
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .summary-card {
@@ -1146,6 +1158,14 @@ class HTMLReportGenerator:
                     </div>
                     <p class="summary-text">{'; '.join(sector_data.get('sector_reasons', [])[:2]) if sector_data.get('sector_reasons') else 'Sector performance evaluated.'}</p>
                 </div>
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <span class="summary-icon">🔮</span>
+                        <span class="summary-title">Forecast</span>
+                        <span class="badge {self._get_badge_class('Bullish' if forecast_summary.get('next_day_expected_return','').startswith('+') else 'Bearish' if forecast_summary.get('next_day_expected_return','').startswith('-') else 'Neutral')}">{forecast_summary.get('next_day_expected_return', 'N/A')}</span>
+                    </div>
+                    <p class="summary-text">10-day target: ${forecast_summary.get('day_10_prediction', 0):.2f} ({forecast_summary.get('day_10_expected_return', 'N/A')}). Confidence: {forecast_summary.get('confidence', 'N/A')}</p>
+                </div>
             </div>
             <div class="conclusion-box">
                 <strong>Conclusion</strong>{f' <span class="badge" style="margin-left: 8px; font-size: 0.75rem;">{quorum_consensus}</span>' if quorum_consensus else ''}
@@ -1277,6 +1297,50 @@ class HTMLReportGenerator:
                     <div class="collapsible-body">{self.markdown_to_html(financial_analysis)}</div>
                 </div>
             </div>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">🚀</span>
+                        Momentum Analysis
+                        <span class="badge {self._get_badge_class(momentum_signal)}" style="margin-left:8px;">{momentum_signal}</span>
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body">
+                        <p><strong>Signal:</strong> {momentum_signal} &nbsp;|&nbsp; <strong>Score:</strong> {momentum_score:+.2f}</p>
+                        <h4>Key Findings</h4>
+                        <ul>{''.join(f'<li>{r}</li>' for r in momentum_data.get('momentum_reasons', ['No momentum data available']))}</ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">🏢</span>
+                        Sector Analysis ({sector_name})
+                        <span class="badge {self._get_badge_class(sector_signal)}" style="margin-left:8px;">{sector_signal}</span>
+                    </div>
+                    <div class="collapsible-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body">
+                        <p><strong>Signal:</strong> {sector_signal} &nbsp;|&nbsp; <strong>Score:</strong> {sector_score:+.1f}</p>
+                        <h4>Key Findings</h4>
+                        <ul>{''.join(f'<li>{r}</li>' for r in sector_data.get('sector_reasons', ['No sector data available']))}</ul>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Disclaimer -->
@@ -1356,6 +1420,21 @@ class HTMLReportGenerator:
                     elif conf_score <= 0.33 and 'SELL' not in recommendation.upper():
                         recommendation = 'SELL'
 
+                # Extract momentum/sector/forecast signals
+                momentum_data = data['agents'].get('momentum_analyst', {})
+                sector_data = data['agents'].get('sector_analyst', {})
+                momentum_signal = momentum_data.get('momentum_signal', 'N/A')
+                sector_signal = sector_data.get('sector_signal', 'N/A')
+                
+                # Forecast direction
+                forecast_dir = 'Flat'
+                try:
+                    fret = forecast_summary.get('next_day_expected_return', '0%')
+                    fval = float(fret.replace('%','').replace('+',''))
+                    if fval > 0.5: forecast_dir = 'Up'
+                    elif fval < -0.5: forecast_dir = 'Down'
+                except: pass
+
                 # Market cap formatting
                 market_cap = stock_data.get('market_cap', 0)
                 if market_cap:
@@ -1382,6 +1461,9 @@ class HTMLReportGenerator:
                     'news_sentiment': news_sentiment,
                     'stat_trend': stat_trend,
                     'fin_outlook': fin_outlook,
+                    'momentum_signal': momentum_signal,
+                    'sector_signal': sector_signal,
+                    'forecast_dir': forecast_dir,
                     'recommendation': recommendation,
                     'confidence': confidence,
                     'conf_score': conf_score,
@@ -1706,6 +1788,42 @@ class HTMLReportGenerator:
         .mini-badge.bearish {{ background: rgba(239, 68, 68, 0.15); color: #f87171; }}
         .mini-badge.neutral {{ background: rgba(245, 158, 11, 0.15); color: #fbbf24; }}
 
+        /* Compact agents column */
+        .col-agents {{
+            min-width: 110px;
+            text-align: center;
+            cursor: help;
+        }}
+        .agents-row {{
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+        }}
+        .agent-arrow {{
+            font-size: 0.85rem;
+            width: 16px;
+            text-align: center;
+            display: inline-block;
+            line-height: 1;
+        }}
+        .agent-arrow.bullish {{ color: #34d399; }}
+        .agent-arrow.bearish {{ color: #f87171; }}
+        .agent-arrow.neutral {{ color: #94a3b8; }}
+        .agents-labels {{
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            margin-top: 2px;
+        }}
+        .agents-labels span {{
+            font-size: 0.55rem;
+            color: var(--text-muted);
+            opacity: 0.6;
+            width: 16px;
+            text-align: center;
+            display: inline-block;
+        }}
+
         .rec-pill {{
             display: inline-block;
             padding: 6px 16px;
@@ -1852,10 +1970,8 @@ class HTMLReportGenerator:
                         <th class="col-sparkline">20D Trend</th>
                         <th onclick="sortTable(4, 'number')" class="col-prediction">10D Target <span class="sort-icon">▲▼</span></th>
                         <th onclick="sortTable(5, 'number')" class="col-mcap">Mkt Cap <span class="sort-icon">▲▼</span></th>
-                        <th class="col-sentiment">News</th>
-                        <th class="col-technical">Technical</th>
-                        <th class="col-fundamental">Fundamental</th>
-                        <th onclick="sortTable(9, 'rec')" class="col-rec">Signal <span class="sort-icon">▲▼</span></th>
+                        <th class="col-agents">Agents</th>
+                        <th onclick="sortTable(7, 'rec')" class="col-rec">Signal <span class="sort-icon">▲▼</span></th>
                         <th class="col-action"></th>
                     </tr>
                 </thead>
@@ -1863,10 +1979,6 @@ class HTMLReportGenerator:
 """
 
         for report in reports:
-            news_badge_class = self._get_badge_class(report['news_sentiment'])
-            stat_badge_class = self._get_badge_class(report['stat_trend'])
-            fin_badge_class = self._get_valuation_badge_class(report['fin_outlook'])
-
             rec_upper = report['recommendation'].upper()
             rec_class = "buy" if "BUY" in rec_upper else "sell" if "SELL" in rec_upper else "hold"
 
@@ -1876,13 +1988,40 @@ class HTMLReportGenerator:
             pred_change_class = "positive" if report['pred_change'] >= 0 else "negative"
             pred_symbol = "+" if report['pred_change'] >= 0 else ""
 
-            # Mini badge class mapping
-            def _mini_class(badge_class):
-                if 'bullish' in badge_class or 'undervalued' in badge_class:
-                    return 'bullish'
-                elif 'bearish' in badge_class or 'overvalued' in badge_class:
-                    return 'bearish'
-                return 'neutral'
+            # Arrow helper for agent signals
+            def _arrow(signal):
+                s = signal.upper() if signal else ''
+                if s in ('BULLISH', 'UNDERVALUED', 'UP'):
+                    return '<span class="agent-arrow bullish" title="' + signal + '">▲</span>'
+                elif s in ('BEARISH', 'OVERVALUED', 'DOWN'):
+                    return '<span class="agent-arrow bearish" title="' + signal + '">▼</span>'
+                return '<span class="agent-arrow neutral" title="' + signal + '">●</span>'
+
+            agents_html = (
+                '<div class="agents-row">'
+                + _arrow(report['news_sentiment'])
+                + _arrow(report['stat_trend'])
+                + _arrow(report['fin_outlook'])
+                + _arrow(report['momentum_signal'])
+                + _arrow(report['sector_signal'])
+                + _arrow(report['forecast_dir'])
+                + '</div>'
+                + '<div class="agents-labels">'
+                + '<span>N</span><span>T</span><span>F</span><span>M</span><span>S</span><span>P</span>'
+                + '</div>'
+            )
+
+            # Tooltip content for hover
+            tooltip_lines = [
+                f"News: {report['news_sentiment']}",
+                f"Technical: {report['stat_trend']}",
+                f"Fundamental: {report['fin_outlook']}",
+                f"Momentum: {report['momentum_signal']}",
+                f"Sector: {report['sector_signal']}",
+                f"Forecast: {report['forecast_dir']}",
+                f"Confidence: {report['conf_score']:.0%}"
+            ]
+            tooltip_text = '&#10;'.join(tooltip_lines)
 
             html += f"""
                     <tr data-rec="{rec_class}" data-symbol="{report['symbol']}" data-company="{report['company']}" onclick="window.location='{report['file']}'">
@@ -1905,9 +2044,7 @@ class HTMLReportGenerator:
                             </div>
                         </td>
                         <td class="col-mcap cell-mcap" data-value="{report['market_cap']}">{report['market_cap_str']}</td>
-                        <td class="col-sentiment"><span class="mini-badge {_mini_class(news_badge_class)}">{report['news_sentiment']}</span></td>
-                        <td class="col-technical"><span class="mini-badge {_mini_class(stat_badge_class)}">{report['stat_trend']}</span></td>
-                        <td class="col-fundamental"><span class="mini-badge {_mini_class(fin_badge_class)}">{report['fin_outlook']}</span></td>
+                        <td class="col-agents" title="{tooltip_text}">{agents_html}</td>
                         <td class="col-rec" data-value="{rec_class}"><span class="rec-pill {rec_class}">{report['recommendation']}</span></td>
                         <td class="col-action" style="text-align:center;">
                             <a href="{report['file']}" class="view-link" title="View Details">
