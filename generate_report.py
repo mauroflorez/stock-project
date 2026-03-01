@@ -1235,6 +1235,7 @@ class HTMLReportGenerator:
                     <div class="collapsible-title">
                         <span class="collapsible-icon">🎯</span>
                         Investment Synthesis
+                        <span class="badge {rec_class.replace('rec-', '')}" style="margin-left:8px;">{recommendation}</span>
                     </div>
                     <div class="collapsible-toggle">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1252,6 +1253,7 @@ class HTMLReportGenerator:
                     <div class="collapsible-title">
                         <span class="collapsible-icon">📰</span>
                         News Analysis
+                        <span class="badge {news_badge_class}" style="margin-left:8px;">{news_sentiment.upper()}</span>
                     </div>
                     <div class="collapsible-toggle">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1269,6 +1271,7 @@ class HTMLReportGenerator:
                     <div class="collapsible-title">
                         <span class="collapsible-icon">📈</span>
                         Statistical Analysis
+                        <span class="badge {stat_badge_class}" style="margin-left:8px;">{stat_trend.upper()}</span>
                     </div>
                     <div class="collapsible-toggle">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1286,6 +1289,7 @@ class HTMLReportGenerator:
                     <div class="collapsible-title">
                         <span class="collapsible-icon">💼</span>
                         Financial Analysis
+                        <span class="badge {fin_badge_class}" style="margin-left:8px;">{fin_outlook.upper()}</span>
                     </div>
                     <div class="collapsible-toggle">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1543,6 +1547,12 @@ class HTMLReportGenerator:
         .stat-card:hover {{
             border-color: var(--primary);
             background: rgba(30, 41, 59, 0.8);
+        }}
+
+        .stat-card.active {{
+            background: rgba(99, 102, 241, 0.15);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
         }}
 
         .stat-value {{
@@ -1904,27 +1914,22 @@ class HTMLReportGenerator:
         }}
 
         /* Table wrapper for mobile scroll */
+        .mobile-scroll-hint {{
+            display: none;
+            padding: 8px 16px;
+            font-size: 0.75rem;
+            color: var(--primary-light);
+            background: rgba(99, 102, 241, 0.1);
+            border-bottom: 1px solid var(--border-dark);
+            text-align: right;
+            animation: fadeInOut 3s ease-in-out infinite;
+        }}
         .table-scroll-wrapper {{
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
-            position: relative;
-        }}
-        .table-scroll-wrapper::after {{
-            content: 'Scroll →';
-            display: none;
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            font-size: 0.7rem;
-            color: var(--primary-light);
-            background: rgba(99, 102, 241, 0.15);
-            padding: 4px 10px;
-            border-radius: 8px;
-            pointer-events: none;
-            animation: fadeInOut 3s ease-in-out infinite;
         }}
         @keyframes fadeInOut {{
-            0%, 100% {{ opacity: 0; }}
+            0%, 100% {{ opacity: 0.5; }}
             50% {{ opacity: 1; }}
         }}
 
@@ -1933,7 +1938,7 @@ class HTMLReportGenerator:
             .stock-table {{
                 min-width: 700px;
             }}
-            .table-scroll-wrapper::after {{
+            .mobile-scroll-hint {{
                 display: block;
             }}
         }}
@@ -1964,21 +1969,21 @@ class HTMLReportGenerator:
 
         <!-- Stats Summary -->
         <div class="stats-row animate-in delay-1">
-            <div class="stat-card">
+            <div class="stat-card" data-filter="buy" onclick="setFilter('buy', this)" style="cursor: pointer;">
                 <div class="stat-value" style="color: var(--success);">{buy_count}</div>
                 <div class="stat-label">Buy Signals</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card" data-filter="hold" onclick="setFilter('hold', this)" style="cursor: pointer;">
                 <div class="stat-value" style="color: var(--warning);">{hold_count}</div>
                 <div class="stat-label">Hold Signals</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card" data-filter="sell" onclick="setFilter('sell', this)" style="cursor: pointer;">
                 <div class="stat-value" style="color: var(--danger);">{sell_count}</div>
                 <div class="stat-label">Sell Signals</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card active" data-filter="all" onclick="setFilter('all', this)" style="cursor: pointer;">
                 <div class="stat-value" style="color: var(--primary-light);">{len(reports)}</div>
-                <div class="stat-label">Stocks Analyzed</div>
+                <div class="stat-label">All Stocks</div>
             </div>
         </div>
 
@@ -1990,16 +1995,11 @@ class HTMLReportGenerator:
                 </svg>
                 <input type="text" id="searchInput" placeholder="Search stocks..." oninput="filterTable()">
             </div>
-            <div class="filter-buttons">
-                <button class="filter-btn active" data-filter="all" onclick="setFilter('all', this)">All ({len(reports)})</button>
-                <button class="filter-btn" data-filter="buy" onclick="setFilter('buy', this)">Buy ({buy_count})</button>
-                <button class="filter-btn" data-filter="hold" onclick="setFilter('hold', this)">Hold ({hold_count})</button>
-                <button class="filter-btn" data-filter="sell" onclick="setFilter('sell', this)">Sell ({sell_count})</button>
-            </div>
         </div>
 
         <!-- Stock Table -->
         <div class="table-card animate-in delay-2">
+          <div class="mobile-scroll-hint">Scroll →</div>
           <div class="table-scroll-wrapper">
             <table class="stock-table" id="stockTable">
                 <thead>
@@ -2160,7 +2160,7 @@ class HTMLReportGenerator:
 
         function setFilter(filter, btn) {
             currentFilter = filter;
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.stat-card').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             filterTable();
         }
