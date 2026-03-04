@@ -1006,5 +1006,1409 @@
       }
     },
     "evaluation": null
+  },
+  {
+    "symbol": "CRM",
+    "timestamp": "2026-02-28T19:51:49.153438",
+    "price_at_prediction": 194.79,
+    "recommendation": "HOLD",
+    "confidence": 0.572,
+    "weighted_score": 0.144,
+    "consensus": "Mixed Signals",
+    "agent_signals": {
+      "news": {
+        "signal": "Bullish",
+        "vote": 1.0
+      },
+      "technical": {
+        "signal": "NEUTRAL",
+        "vote": 0.0
+      },
+      "fundamental": {
+        "signal": "UNDERVALUED",
+        "vote": 0.875
+      },
+      "momentum": {
+        "signal": "BEARISH",
+        "vote": -0.5
+      },
+      "sector": {
+        "signal": "BEARISH",
+        "vote": -0.75
+      },
+      "forecast": {
+        "signal": "down",
+        "vote": -1.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "AMD",
+    "timestamp": "2026-02-28T19:54:09.369858",
+    "price_at_prediction": 200.21,
+    "recommendation": "HOLD",
+    "confidence": 0.409,
+    "weighted_score": -0.181,
+    "consensus": "Mixed Signals",
+    "agent_signals": {
+      "news": {
+        "signal": "Bullish",
+        "vote": 1.0
+      },
+      "technical": {
+        "signal": "BEARISH",
+        "vote": -0.5
+      },
+      "fundamental": {
+        "signal": "FAIR",
+        "vote": 0.375
+      },
+      "momentum": {
+        "signal": "BEARISH",
+        "vote": -1
+      },
+      "sector": {
+        "signal": "BEARISH",
+        "vote": -1
+      },
+      "forecast": {
+        "signal": "flat",
+        "vote": 0.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "NFLX",
+    "timestamp": "2026-02-28T19:56:21.862151",
+    "price_at_prediction": 96.24,
+    "recommendation": "BUY",
+    "confidence": 0.719,
+    "weighted_score": 0.438,
+    "consensus": "Bullish Majority",
+    "agent_signals": {
+      "news": {
+        "signal": "Bullish",
+        "vote": 1.0
+      },
+      "technical": {
+        "signal": "BEARISH",
+        "vote": -0.5
+      },
+      "fundamental": {
+        "signal": "UNDERVALUED",
+        "vote": 0.75
+      },
+      "momentum": {
+        "signal": "BULLISH",
+        "vote": 1
+      },
+      "sector": {
+        "signal": "BULLISH",
+        "vote": 0.75
+      },
+      "forecast": {
+        "signal": "down",
+        "vote": -1.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "GOOGL",
+    "timestamp": "2026-03-01T08:04:19.855995",
+    "price_at_prediction": 311.76,
+    "recommendation": "HOLD",
+    "confidence": 0.497,
+    "weighted_score": -0.006,
+    "consensus": "Mixed Signals",
+    "agent_signals": {
+      "news": {
+        "signal": "Bullish",
+        "vote": 1.0
+      },
+      "technical": {
+        "signal": "BEARISH",
+        "vote": -0.5
+      },
+      "fundamental": {
+        "signal": "UNDERVALUED",
+        "vote": 0.875
+      },
+      "momentum": {
+        "signal": "BEARISH",
+        "vote": -1
+      },
+      "sector": {
+        "signal": "BEARISH",
+        "vote": -0.5
+      },
+      "forecast": {
+        "signal": "flat",
+        "vote": 0.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "MSFT",
+    "timestamp": "2026-03-01T08:08:02.843594",
+    "price_at_prediction": 392.74,
+    "recommendation": "HOLD",
+    "confidence": 0.387,
+    "weighted_score": -0.225,
+    "consensus": "Bearish Majority",
+    "agent_signals": {
+      "news": {
+        "signal": "Bearish",
+        "vote": -1.0
+      },
+      "technical": {
+        "signal": "NEUTRAL",
+        "vote": 0.0
+      },
+      "fundamental": {
+        "signal": "UNDERVALUED",
+        "vote": 1
+      },
+      "momentum": {
+        "signal": "BEARISH",
+        "vote": -1
+      },
+      "sector": {
+        "signal": "BEARISH",
+        "vote": -0.75
+      },
+      "forecast": {
+        "signal": "down",
+        "vote": -1.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "AAPL",
+    "timestamp": "2026-03-01T08:11:40.487986",
+    "price_at_prediction": 264.18,
+    "recommendation": "BUY",
+    "confidence": 0.656,
+    "weighted_score": 0.312,
+    "consensus": "Bullish Majority",
+    "agent_signals": {
+      "news": {
+        "signal": "Neutral",
+        "vote": 0.0
+      },
+      "technical": {
+        "signal": "BULLISH",
+        "vote": 0.5
+      },
+      "fundamental": {
+        "signal": "FAIR",
+        "vote": 0.25
+      },
+      "momentum": {
+        "signal": "BULLISH",
+        "vote": 0.5
+      },
+      "sector": {
+        "signal": "NEUTRAL",
+        "vote": 0.25
+      },
+      "forecast": {
+        "signal": "flat",
+        "vote": 0.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "AMZN",
+    "timestamp": "2026-03-01T08:15:31.009901",
+    "price_at_prediction": 210.0,
+    "recommendation": "HOLD",
+    "confidence": 0.525,
+    "weighted_score": 0.05,
+    "consensus": "Split Opinion",
+    "agent_signals": {
+      "news": {
+        "signal": "Bullish",
+        "vote": 1.0
+      },
+      "technical": {
+        "signal": "BULLISH",
+        "vote": 0.5
+      },
+      "fundamental": {
+        "signal": "FAIR",
+        "vote": 0.5
+      },
+      "momentum": {
+        "signal": "BEARISH",
+        "vote": -1
+      },
+      "sector": {
+        "signal": "BEARISH",
+        "vote": -1
+      },
+      "forecast": {
+        "signal": "down",
+        "vote": -1.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "NVDA",
+    "timestamp": "2026-03-01T08:19:06.293825",
+    "price_at_prediction": 177.19,
+    "recommendation": "HOLD",
+    "confidence": 0.537,
+    "weighted_score": 0.075,
+    "consensus": "Split Opinion",
+    "agent_signals": {
+      "news": {
+        "signal": "Bullish",
+        "vote": 1.0
+      },
+      "technical": {
+        "signal": "BEARISH",
+        "vote": -0.5
+      },
+      "fundamental": {
+        "signal": "UNDERVALUED",
+        "vote": 1
+      },
+      "momentum": {
+        "signal": "BEARISH",
+        "vote": -1
+      },
+      "sector": {
+        "signal": "BEARISH",
+        "vote": -0.5
+      },
+      "forecast": {
+        "signal": "up",
+        "vote": 1.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "META",
+    "timestamp": "2026-03-01T08:22:54.033255",
+    "price_at_prediction": 648.18,
+    "recommendation": "HOLD",
+    "confidence": 0.381,
+    "weighted_score": -0.238,
+    "consensus": "Bearish Majority",
+    "agent_signals": {
+      "news": {
+        "signal": "Bullish",
+        "vote": 1.0
+      },
+      "technical": {
+        "signal": "BEARISH",
+        "vote": -1
+      },
+      "fundamental": {
+        "signal": "UNDERVALUED",
+        "vote": 0.75
+      },
+      "momentum": {
+        "signal": "BEARISH",
+        "vote": -1
+      },
+      "sector": {
+        "signal": "BEARISH",
+        "vote": -0.75
+      },
+      "forecast": {
+        "signal": "down",
+        "vote": -1.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "TSLA",
+    "timestamp": "2026-03-01T08:26:26.397610",
+    "price_at_prediction": 402.51,
+    "recommendation": "HOLD",
+    "confidence": 0.522,
+    "weighted_score": 0.044,
+    "consensus": "Mixed Signals",
+    "agent_signals": {
+      "news": {
+        "signal": "Bullish",
+        "vote": 1.0
+      },
+      "technical": {
+        "signal": "BULLISH",
+        "vote": 0.5
+      },
+      "fundamental": {
+        "signal": "OVERVALUED",
+        "vote": -0.625
+      },
+      "momentum": {
+        "signal": "NEUTRAL",
+        "vote": 0.0
+      },
+      "sector": {
+        "signal": "NEUTRAL",
+        "vote": -0.25
+      },
+      "forecast": {
+        "signal": "down",
+        "vote": -1.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "PLTR",
+    "timestamp": "2026-03-01T08:29:58.683018",
+    "price_at_prediction": 137.19,
+    "recommendation": "HOLD",
+    "confidence": 0.591,
+    "weighted_score": 0.181,
+    "consensus": "Split Opinion",
+    "agent_signals": {
+      "news": {
+        "signal": "Bullish",
+        "vote": 1.0
+      },
+      "technical": {
+        "signal": "BULLISH",
+        "vote": 0.5
+      },
+      "fundamental": {
+        "signal": "FAIR",
+        "vote": 0.625
+      },
+      "momentum": {
+        "signal": "BEARISH",
+        "vote": -0.75
+      },
+      "sector": {
+        "signal": "BEARISH",
+        "vote": -0.5
+      },
+      "forecast": {
+        "signal": "down",
+        "vote": -1.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "DUOL",
+    "timestamp": "2026-03-01T08:33:52.400129",
+    "price_at_prediction": 101.0,
+    "recommendation": "SELL",
+    "confidence": 0.375,
+    "weighted_score": -0.25,
+    "consensus": "Bearish Majority",
+    "agent_signals": {
+      "news": {
+        "signal": "Bearish",
+        "vote": -1.0
+      },
+      "technical": {
+        "signal": "NEUTRAL",
+        "vote": 0.0
+      },
+      "fundamental": {
+        "signal": "UNDERVALUED",
+        "vote": 1
+      },
+      "momentum": {
+        "signal": "BEARISH",
+        "vote": -1
+      },
+      "sector": {
+        "signal": "BEARISH",
+        "vote": -1
+      },
+      "forecast": {
+        "signal": "down",
+        "vote": -1.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "AVGO",
+    "timestamp": "2026-03-01T08:37:40.923076",
+    "price_at_prediction": 319.55,
+    "recommendation": "HOLD",
+    "confidence": 0.531,
+    "weighted_score": 0.062,
+    "consensus": "Mixed Signals",
+    "agent_signals": {
+      "news": {
+        "signal": "Bullish",
+        "vote": 1.0
+      },
+      "technical": {
+        "signal": "BEARISH",
+        "vote": -0.5
+      },
+      "fundamental": {
+        "signal": "UNDERVALUED",
+        "vote": 0.75
+      },
+      "momentum": {
+        "signal": "BEARISH",
+        "vote": -0.5
+      },
+      "sector": {
+        "signal": "NEUTRAL",
+        "vote": 0.0
+      },
+      "forecast": {
+        "signal": "down",
+        "vote": -1.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "CRM",
+    "timestamp": "2026-03-01T08:41:44.193014",
+    "price_at_prediction": 194.79,
+    "recommendation": "HOLD",
+    "confidence": 0.572,
+    "weighted_score": 0.144,
+    "consensus": "Mixed Signals",
+    "agent_signals": {
+      "news": {
+        "signal": "Bullish",
+        "vote": 1.0
+      },
+      "technical": {
+        "signal": "NEUTRAL",
+        "vote": 0.0
+      },
+      "fundamental": {
+        "signal": "UNDERVALUED",
+        "vote": 0.875
+      },
+      "momentum": {
+        "signal": "BEARISH",
+        "vote": -0.5
+      },
+      "sector": {
+        "signal": "BEARISH",
+        "vote": -0.75
+      },
+      "forecast": {
+        "signal": "down",
+        "vote": -1.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "AMD",
+    "timestamp": "2026-03-01T08:45:31.116171",
+    "price_at_prediction": 200.21,
+    "recommendation": "HOLD",
+    "confidence": 0.409,
+    "weighted_score": -0.181,
+    "consensus": "Mixed Signals",
+    "agent_signals": {
+      "news": {
+        "signal": "Bullish",
+        "vote": 1.0
+      },
+      "technical": {
+        "signal": "BEARISH",
+        "vote": -0.5
+      },
+      "fundamental": {
+        "signal": "FAIR",
+        "vote": 0.375
+      },
+      "momentum": {
+        "signal": "BEARISH",
+        "vote": -1
+      },
+      "sector": {
+        "signal": "BEARISH",
+        "vote": -1
+      },
+      "forecast": {
+        "signal": "flat",
+        "vote": 0.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "NFLX",
+    "timestamp": "2026-03-01T08:49:22.559088",
+    "price_at_prediction": 96.24,
+    "recommendation": "BUY",
+    "confidence": 0.719,
+    "weighted_score": 0.438,
+    "consensus": "Bullish Majority",
+    "agent_signals": {
+      "news": {
+        "signal": "Bullish",
+        "vote": 1.0
+      },
+      "technical": {
+        "signal": "BEARISH",
+        "vote": -0.5
+      },
+      "fundamental": {
+        "signal": "UNDERVALUED",
+        "vote": 0.75
+      },
+      "momentum": {
+        "signal": "BULLISH",
+        "vote": 1
+      },
+      "sector": {
+        "signal": "BULLISH",
+        "vote": 0.75
+      },
+      "forecast": {
+        "signal": "down",
+        "vote": -1.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "COIN",
+    "timestamp": "2026-03-01T08:52:52.457995",
+    "price_at_prediction": 175.85,
+    "recommendation": "HOLD",
+    "confidence": 0.531,
+    "weighted_score": 0.062,
+    "consensus": "Mixed Signals",
+    "agent_signals": {
+      "news": {
+        "signal": "Bullish",
+        "vote": 1.0
+      },
+      "technical": {
+        "signal": "NEUTRAL",
+        "vote": 0.0
+      },
+      "fundamental": {
+        "signal": "UNDERVALUED",
+        "vote": 0.75
+      },
+      "momentum": {
+        "signal": "BEARISH",
+        "vote": -0.75
+      },
+      "sector": {
+        "signal": "BEARISH",
+        "vote": -0.75
+      },
+      "forecast": {
+        "signal": "down",
+        "vote": -1.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "LLY",
+    "timestamp": "2026-03-01T08:56:41.893880",
+    "price_at_prediction": 1051.99,
+    "recommendation": "BUY",
+    "confidence": 0.875,
+    "weighted_score": 0.75,
+    "consensus": "Strong Bullish Consensus",
+    "agent_signals": {
+      "news": {
+        "signal": "Bullish",
+        "vote": 1.0
+      },
+      "technical": {
+        "signal": "BULLISH",
+        "vote": 1
+      },
+      "fundamental": {
+        "signal": "FAIR",
+        "vote": 0.5
+      },
+      "momentum": {
+        "signal": "BULLISH",
+        "vote": 0.75
+      },
+      "sector": {
+        "signal": "NEUTRAL",
+        "vote": 0.25
+      },
+      "forecast": {
+        "signal": "up",
+        "vote": 1.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "UBER",
+    "timestamp": "2026-03-01T09:00:34.830808",
+    "price_at_prediction": 75.42,
+    "recommendation": "HOLD",
+    "confidence": 0.45,
+    "weighted_score": -0.1,
+    "consensus": "Mixed Signals",
+    "agent_signals": {
+      "news": {
+        "signal": "Bullish",
+        "vote": 1.0
+      },
+      "technical": {
+        "signal": "NEUTRAL",
+        "vote": 0.0
+      },
+      "fundamental": {
+        "signal": "FAIR",
+        "vote": 0.0
+      },
+      "momentum": {
+        "signal": "BEARISH",
+        "vote": -0.75
+      },
+      "sector": {
+        "signal": "BEARISH",
+        "vote": -0.5
+      },
+      "forecast": {
+        "signal": "down",
+        "vote": -1.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "PANW",
+    "timestamp": "2026-03-01T09:04:23.293334",
+    "price_at_prediction": 148.92,
+    "recommendation": "SELL",
+    "confidence": 0.234,
+    "weighted_score": -0.531,
+    "consensus": "Strong Bearish Consensus",
+    "agent_signals": {
+      "news": {
+        "signal": "Bearish",
+        "vote": -1.0
+      },
+      "technical": {
+        "signal": "BEARISH",
+        "vote": -1
+      },
+      "fundamental": {
+        "signal": "UNDERVALUED",
+        "vote": 0.875
+      },
+      "momentum": {
+        "signal": "BEARISH",
+        "vote": -1
+      },
+      "sector": {
+        "signal": "BEARISH",
+        "vote": -1
+      },
+      "forecast": {
+        "signal": "down",
+        "vote": -1.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "SHOP",
+    "timestamp": "2026-03-01T09:08:02.548716",
+    "price_at_prediction": 120.73,
+    "recommendation": "HOLD",
+    "confidence": 0.447,
+    "weighted_score": -0.106,
+    "consensus": "Bearish Majority",
+    "agent_signals": {
+      "news": {
+        "signal": "Bullish",
+        "vote": 1.0
+      },
+      "technical": {
+        "signal": "BULLISH",
+        "vote": 0.5
+      },
+      "fundamental": {
+        "signal": "FAIR",
+        "vote": -0.125
+      },
+      "momentum": {
+        "signal": "BEARISH",
+        "vote": -1
+      },
+      "sector": {
+        "signal": "BEARISH",
+        "vote": -1
+      },
+      "forecast": {
+        "signal": "down",
+        "vote": -1.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "GOOGL",
+    "timestamp": "2026-03-03T17:57:53.347413",
+    "price_at_prediction": 303.58,
+    "recommendation": "HOLD",
+    "confidence": 0.5,
+    "weighted_score": -0.0,
+    "consensus": "Mixed Signals",
+    "agent_signals": {
+      "news": {
+        "signal": "Bullish",
+        "vote": 1.0
+      },
+      "technical": {
+        "signal": "BEARISH",
+        "vote": -0.5
+      },
+      "fundamental": {
+        "signal": "UNDERVALUED",
+        "vote": 1
+      },
+      "momentum": {
+        "signal": "BEARISH",
+        "vote": -1
+      },
+      "sector": {
+        "signal": "BEARISH",
+        "vote": -0.75
+      },
+      "forecast": {
+        "signal": "flat",
+        "vote": 0.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "MSFT",
+    "timestamp": "2026-03-03T17:59:46.543616",
+    "price_at_prediction": 403.93,
+    "recommendation": "BUY",
+    "confidence": 0.688,
+    "weighted_score": 0.375,
+    "consensus": "Mixed Signals",
+    "agent_signals": {
+      "news": {
+        "signal": "Bullish",
+        "vote": 1.0
+      },
+      "technical": {
+        "signal": "NEUTRAL",
+        "vote": 0.0
+      },
+      "fundamental": {
+        "signal": "UNDERVALUED",
+        "vote": 1
+      },
+      "momentum": {
+        "signal": "NEUTRAL",
+        "vote": 0.0
+      },
+      "sector": {
+        "signal": "NEUTRAL",
+        "vote": -0.25
+      },
+      "forecast": {
+        "signal": "flat",
+        "vote": 0.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "AAPL",
+    "timestamp": "2026-03-03T18:01:32.298204",
+    "price_at_prediction": 263.75,
+    "recommendation": "HOLD",
+    "confidence": 0.469,
+    "weighted_score": -0.063,
+    "consensus": "Mixed Signals",
+    "agent_signals": {
+      "news": {
+        "signal": "Bullish",
+        "vote": 1.0
+      },
+      "technical": {
+        "signal": "BEARISH",
+        "vote": -0.5
+      },
+      "fundamental": {
+        "signal": "FAIR",
+        "vote": 0.25
+      },
+      "momentum": {
+        "signal": "BEARISH",
+        "vote": -0.5
+      },
+      "sector": {
+        "signal": "NEUTRAL",
+        "vote": 0.0
+      },
+      "forecast": {
+        "signal": "down",
+        "vote": -1.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "AMZN",
+    "timestamp": "2026-03-03T18:03:21.334958",
+    "price_at_prediction": 208.73,
+    "recommendation": "HOLD",
+    "confidence": 0.55,
+    "weighted_score": 0.1,
+    "consensus": "Mixed Signals",
+    "agent_signals": {
+      "news": {
+        "signal": "Bullish",
+        "vote": 1.0
+      },
+      "technical": {
+        "signal": "BULLISH",
+        "vote": 0.5
+      },
+      "fundamental": {
+        "signal": "FAIR",
+        "vote": 0.5
+      },
+      "momentum": {
+        "signal": "BEARISH",
+        "vote": -1
+      },
+      "sector": {
+        "signal": "BEARISH",
+        "vote": -1
+      },
+      "forecast": {
+        "signal": "flat",
+        "vote": 0.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "NVDA",
+    "timestamp": "2026-03-03T18:05:22.541857",
+    "price_at_prediction": 180.05,
+    "recommendation": "BUY",
+    "confidence": 0.637,
+    "weighted_score": 0.275,
+    "consensus": "Mixed Signals",
+    "agent_signals": {
+      "news": {
+        "signal": "Bullish",
+        "vote": 1.0
+      },
+      "technical": {
+        "signal": "BEARISH",
+        "vote": -0.5
+      },
+      "fundamental": {
+        "signal": "UNDERVALUED",
+        "vote": 1
+      },
+      "momentum": {
+        "signal": "NEUTRAL",
+        "vote": -0.25
+      },
+      "sector": {
+        "signal": "NEUTRAL",
+        "vote": 0.0
+      },
+      "forecast": {
+        "signal": "up",
+        "vote": 1.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "META",
+    "timestamp": "2026-03-03T18:07:06.023998",
+    "price_at_prediction": 655.08,
+    "recommendation": "HOLD",
+    "confidence": 0.419,
+    "weighted_score": -0.163,
+    "consensus": "Bearish Majority",
+    "agent_signals": {
+      "news": {
+        "signal": "Bullish",
+        "vote": 1.0
+      },
+      "technical": {
+        "signal": "BEARISH",
+        "vote": -1
+      },
+      "fundamental": {
+        "signal": "UNDERVALUED",
+        "vote": 0.75
+      },
+      "momentum": {
+        "signal": "BEARISH",
+        "vote": -0.75
+      },
+      "sector": {
+        "signal": "BEARISH",
+        "vote": -0.5
+      },
+      "forecast": {
+        "signal": "down",
+        "vote": -1.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "TSLA",
+    "timestamp": "2026-03-03T18:08:53.809736",
+    "price_at_prediction": 392.43,
+    "recommendation": "SELL",
+    "confidence": 0.309,
+    "weighted_score": -0.381,
+    "consensus": "Mixed Signals",
+    "agent_signals": {
+      "news": {
+        "signal": "Neutral",
+        "vote": 0.0
+      },
+      "technical": {
+        "signal": "NEUTRAL",
+        "vote": 0.0
+      },
+      "fundamental": {
+        "signal": "OVERVALUED",
+        "vote": -0.625
+      },
+      "momentum": {
+        "signal": "BEARISH",
+        "vote": -1
+      },
+      "sector": {
+        "signal": "NEUTRAL",
+        "vote": -0.25
+      },
+      "forecast": {
+        "signal": "flat",
+        "vote": 0.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "PLTR",
+    "timestamp": "2026-03-03T18:10:36.007852",
+    "price_at_prediction": 147.22,
+    "recommendation": "BUY",
+    "confidence": 0.778,
+    "weighted_score": 0.556,
+    "consensus": "Strong Bullish Consensus",
+    "agent_signals": {
+      "news": {
+        "signal": "Bullish",
+        "vote": 1.0
+      },
+      "technical": {
+        "signal": "BULLISH",
+        "vote": 0.5
+      },
+      "fundamental": {
+        "signal": "FAIR",
+        "vote": 0.625
+      },
+      "momentum": {
+        "signal": "BULLISH",
+        "vote": 0.75
+      },
+      "sector": {
+        "signal": "NEUTRAL",
+        "vote": 0.25
+      },
+      "forecast": {
+        "signal": "down",
+        "vote": -1.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "DUOL",
+    "timestamp": "2026-03-03T18:12:22.669665",
+    "price_at_prediction": 101.61,
+    "recommendation": "SELL",
+    "confidence": 0.375,
+    "weighted_score": -0.25,
+    "consensus": "Bearish Majority",
+    "agent_signals": {
+      "news": {
+        "signal": "Bearish",
+        "vote": -1.0
+      },
+      "technical": {
+        "signal": "NEUTRAL",
+        "vote": 0.0
+      },
+      "fundamental": {
+        "signal": "UNDERVALUED",
+        "vote": 1
+      },
+      "momentum": {
+        "signal": "BEARISH",
+        "vote": -1
+      },
+      "sector": {
+        "signal": "BEARISH",
+        "vote": -1
+      },
+      "forecast": {
+        "signal": "down",
+        "vote": -1.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "AVGO",
+    "timestamp": "2026-03-03T18:14:09.378091",
+    "price_at_prediction": 313.84,
+    "recommendation": "HOLD",
+    "confidence": 0.544,
+    "weighted_score": 0.087,
+    "consensus": "Split Opinion",
+    "agent_signals": {
+      "news": {
+        "signal": "Bullish",
+        "vote": 1.0
+      },
+      "technical": {
+        "signal": "BEARISH",
+        "vote": -0.5
+      },
+      "fundamental": {
+        "signal": "UNDERVALUED",
+        "vote": 0.75
+      },
+      "momentum": {
+        "signal": "BEARISH",
+        "vote": -0.75
+      },
+      "sector": {
+        "signal": "NEUTRAL",
+        "vote": -0.25
+      },
+      "forecast": {
+        "signal": "up",
+        "vote": 1.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "CRM",
+    "timestamp": "2026-03-03T18:15:56.507838",
+    "price_at_prediction": 196.05,
+    "recommendation": "HOLD",
+    "confidence": 0.522,
+    "weighted_score": 0.044,
+    "consensus": "Mixed Signals",
+    "agent_signals": {
+      "news": {
+        "signal": "Neutral",
+        "vote": 0.0
+      },
+      "technical": {
+        "signal": "NEUTRAL",
+        "vote": 0.0
+      },
+      "fundamental": {
+        "signal": "UNDERVALUED",
+        "vote": 0.875
+      },
+      "momentum": {
+        "signal": "BEARISH",
+        "vote": -0.5
+      },
+      "sector": {
+        "signal": "NEUTRAL",
+        "vote": -0.25
+      },
+      "forecast": {
+        "signal": "down",
+        "vote": -1.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "AMD",
+    "timestamp": "2026-03-03T18:17:40.986473",
+    "price_at_prediction": 190.95,
+    "recommendation": "SELL",
+    "confidence": 0.284,
+    "weighted_score": -0.431,
+    "consensus": "Bearish Majority",
+    "agent_signals": {
+      "news": {
+        "signal": "Bearish",
+        "vote": -1.0
+      },
+      "technical": {
+        "signal": "BEARISH",
+        "vote": -0.5
+      },
+      "fundamental": {
+        "signal": "FAIR",
+        "vote": 0.375
+      },
+      "momentum": {
+        "signal": "BEARISH",
+        "vote": -1
+      },
+      "sector": {
+        "signal": "BEARISH",
+        "vote": -1
+      },
+      "forecast": {
+        "signal": "up",
+        "vote": 1.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "NFLX",
+    "timestamp": "2026-03-03T18:19:29.920264",
+    "price_at_prediction": 97.7,
+    "recommendation": "BUY",
+    "confidence": 0.719,
+    "weighted_score": 0.438,
+    "consensus": "Bullish Majority",
+    "agent_signals": {
+      "news": {
+        "signal": "Bullish",
+        "vote": 1.0
+      },
+      "technical": {
+        "signal": "BEARISH",
+        "vote": -0.5
+      },
+      "fundamental": {
+        "signal": "UNDERVALUED",
+        "vote": 0.75
+      },
+      "momentum": {
+        "signal": "BULLISH",
+        "vote": 1
+      },
+      "sector": {
+        "signal": "BULLISH",
+        "vote": 0.75
+      },
+      "forecast": {
+        "signal": "down",
+        "vote": -1.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "COIN",
+    "timestamp": "2026-03-03T18:21:15.945799",
+    "price_at_prediction": 182.36,
+    "recommendation": "BUY",
+    "confidence": 0.775,
+    "weighted_score": 0.55,
+    "consensus": "Strong Bullish Consensus",
+    "agent_signals": {
+      "news": {
+        "signal": "Bullish",
+        "vote": 1.0
+      },
+      "technical": {
+        "signal": "NEUTRAL",
+        "vote": 0.0
+      },
+      "fundamental": {
+        "signal": "FAIR",
+        "vote": 0.5
+      },
+      "momentum": {
+        "signal": "BULLISH",
+        "vote": 1
+      },
+      "sector": {
+        "signal": "NEUTRAL",
+        "vote": 0.25
+      },
+      "forecast": {
+        "signal": "up",
+        "vote": 1.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "LLY",
+    "timestamp": "2026-03-03T18:23:01.440645",
+    "price_at_prediction": 1007.73,
+    "recommendation": "SELL",
+    "confidence": 0.369,
+    "weighted_score": -0.263,
+    "consensus": "Bearish Majority",
+    "agent_signals": {
+      "news": {
+        "signal": "Bearish",
+        "vote": -1.0
+      },
+      "technical": {
+        "signal": "BEARISH",
+        "vote": -0.5
+      },
+      "fundamental": {
+        "signal": "UNDERVALUED",
+        "vote": 0.75
+      },
+      "momentum": {
+        "signal": "BEARISH",
+        "vote": -0.75
+      },
+      "sector": {
+        "signal": "NEUTRAL",
+        "vote": -0.25
+      },
+      "forecast": {
+        "signal": "flat",
+        "vote": 0.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "UBER",
+    "timestamp": "2026-03-03T18:24:45.911820",
+    "price_at_prediction": 76.36,
+    "recommendation": "HOLD",
+    "confidence": 0.512,
+    "weighted_score": 0.025,
+    "consensus": "Mixed Signals",
+    "agent_signals": {
+      "news": {
+        "signal": "Bullish",
+        "vote": 1.0
+      },
+      "technical": {
+        "signal": "NEUTRAL",
+        "vote": 0.0
+      },
+      "fundamental": {
+        "signal": "FAIR",
+        "vote": 0.0
+      },
+      "momentum": {
+        "signal": "NEUTRAL",
+        "vote": -0.25
+      },
+      "sector": {
+        "signal": "NEUTRAL",
+        "vote": -0.25
+      },
+      "forecast": {
+        "signal": "down",
+        "vote": -1.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "PANW",
+    "timestamp": "2026-03-03T18:26:37.520364",
+    "price_at_prediction": 156.09,
+    "recommendation": "HOLD",
+    "confidence": 0.547,
+    "weighted_score": 0.094,
+    "consensus": "Mixed Signals",
+    "agent_signals": {
+      "news": {
+        "signal": "Bullish",
+        "vote": 1.0
+      },
+      "technical": {
+        "signal": "NEUTRAL",
+        "vote": 0.0
+      },
+      "fundamental": {
+        "signal": "UNDERVALUED",
+        "vote": 0.875
+      },
+      "momentum": {
+        "signal": "BEARISH",
+        "vote": -0.75
+      },
+      "sector": {
+        "signal": "BEARISH",
+        "vote": -0.75
+      },
+      "forecast": {
+        "signal": "down",
+        "vote": -1.0
+      }
+    },
+    "evaluation": null
+  },
+  {
+    "symbol": "SHOP",
+    "timestamp": "2026-03-03T18:28:20.308069",
+    "price_at_prediction": 121.87,
+    "recommendation": "HOLD",
+    "confidence": 0.559,
+    "weighted_score": 0.119,
+    "consensus": "Mixed Signals",
+    "agent_signals": {
+      "news": {
+        "signal": "Bullish",
+        "vote": 1.0
+      },
+      "technical": {
+        "signal": "BULLISH",
+        "vote": 0.5
+      },
+      "fundamental": {
+        "signal": "FAIR",
+        "vote": -0.125
+      },
+      "momentum": {
+        "signal": "BEARISH",
+        "vote": -0.5
+      },
+      "sector": {
+        "signal": "NEUTRAL",
+        "vote": -0.25
+      },
+      "forecast": {
+        "signal": "flat",
+        "vote": 0.0
+      }
+    },
+    "evaluation": null
   }
 ]
